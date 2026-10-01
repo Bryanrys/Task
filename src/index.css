@@ -1,0 +1,254 @@
+@import "tailwindcss";
+
+@layer utilities {
+  /* ========================================================
+     CYBER-LUXE PRISMATIC AESTHETIC BACKGROUNDS
+     Deep abyssal obsidian with subtle ambient radial nebula lights
+     which provide frosted glass cards luminous diffraction to blur!
+     ======================================================== */
+  .bg-black-canvas {
+    background-color: #07070b;
+    background-image: 
+      radial-gradient(ellipse 70% 45% at 85% -5%, rgba(139, 92, 246, 0.16), transparent 70%),
+      radial-gradient(ellipse 55% 40% at -5% 45%, rgba(6, 182, 212, 0.12), transparent 70%),
+      radial-gradient(ellipse 65% 50% at 95% 95%, rgba(244, 63, 94, 0.10), transparent 75%),
+      radial-gradient(ellipse 50% 30% at 50% 105%, rgba(16, 185, 129, 0.08), transparent 70%);
+    background-attachment: fixed;
+  }
+
+  .bg-light-canvas {
+    background-color: #f7f8fc;
+    background-image: 
+      radial-gradient(ellipse 70% 45% at 85% -5%, rgba(168, 85, 247, 0.08), transparent 70%),
+      radial-gradient(ellipse 55% 40% at -5% 45%, rgba(14, 165, 233, 0.07), transparent 70%),
+      radial-gradient(ellipse 65% 50% at 95% 95%, rgba(251, 113, 133, 0.06), transparent 75%);
+    background-attachment: fixed;
+  }
+
+  /* ========================================================
+     TRUE FROSTED GLASS PANELS (Visible with Luminous Blur)
+     ======================================================== */
+  .liquid-glass-dark {
+    background: linear-gradient(
+      135deg, 
+      rgba(255, 255, 255, 0.09) 0%, 
+      rgba(255, 255, 255, 0.035) 50%, 
+      rgba(255, 255, 255, 0.015) 100%
+    );
+    backdrop-filter: blur(28px) saturate(190%);
+    -webkit-backdrop-filter: blur(28px) saturate(190%);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-top: 1px solid rgba(255, 255, 255, 0.32);
+    box-shadow: 
+      inset 0 1px 1.5px 0 rgba(255, 255, 255, 0.25),
+      inset 0 -1px 1px 0 rgba(0, 0, 0, 0.50),
+      0 20px 45px -12px rgba(0, 0, 0, 0.85);
+  }
+
+  .liquid-glass-light {
+    background: linear-gradient(
+      135deg, 
+      rgba(255, 255, 255, 0.88) 0%, 
+      rgba(255, 255, 255, 0.65) 100%
+    );
+    backdrop-filter: blur(24px) saturate(170%);
+    -webkit-backdrop-filter: blur(24px) saturate(170%);
+    border: 1px solid rgba(255, 255, 255, 0.95);
+    box-shadow: 
+      inset 0 1.5px 2px 0 rgba(255, 255, 255, 1),
+      0 16px 36px -10px rgba(100, 116, 139, 0.12);
+  }
+
+  .liquid-card-dark {
+    background: linear-gradient(
+      140deg, 
+      rgba(255, 255, 255, 0.08) 0%, 
+      rgba(255, 255, 255, 0.03) 50%, 
+      rgba(255, 255, 255, 0.01) 100%
+    );
+    backdrop-filter: blur(22px) saturate(190%);
+    -webkit-backdrop-filter: blur(22px) saturate(190%);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-top: 1px solid rgba(255, 255, 255, 0.28);
+    box-shadow: 
+      inset 0 1px 1px 0 rgba(255, 255, 255, 0.22),
+      0 16px 36px -10px rgba(0, 0, 0, 0.75);
+  }
+
+  .liquid-card-light {
+    background: linear-gradient(
+      140deg, 
+      rgba(255, 255, 255, 0.90) 0%, 
+      rgba(255, 255, 255, 0.70) 100%
+    );
+    backdrop-filter: blur(20px) saturate(160%);
+    -webkit-backdrop-filter: blur(20px) saturate(160%);
+    border: 1px solid rgba(255, 255, 255, 0.95);
+    box-shadow: 
+      inset 0 1.5px 2px 0 rgba(255, 255, 255, 0.95),
+      0 12px 30px -10px rgba(110, 125, 160, 0.12);
+  }
+
+  /* ========================================================
+     THEMATIC PRISMATIC CARD BORDERS & GLOWS (Aesthetic Look)
+     ======================================================== */
+  .card-theme-violet {
+    border-color: rgba(168, 85, 247, 0.35) !important;
+    border-top-color: rgba(216, 180, 254, 0.55) !important;
+    box-shadow: 
+      inset 0 1px 1px 0 rgba(216, 180, 254, 0.30),
+      0 16px 36px -8px rgba(168, 85, 247, 0.18) !important;
+  }
+  .card-theme-violet:hover {
+    border-color: rgba(168, 85, 247, 0.55) !important;
+    box-shadow: 
+      inset 0 1px 1px 0 rgba(216, 180, 254, 0.40),
+      0 18px 40px -6px rgba(168, 85, 247, 0.28) !important;
+  }
+
+  .card-theme-cyan {
+    border-color: rgba(6, 182, 212, 0.35) !important;
+    border-top-color: rgba(103, 232, 249, 0.55) !important;
+    box-shadow: 
+      inset 0 1px 1px 0 rgba(103, 232, 249, 0.30),
+      0 16px 36px -8px rgba(6, 182, 212, 0.18) !important;
+  }
+  .card-theme-cyan:hover {
+    border-color: rgba(6, 182, 212, 0.55) !important;
+    box-shadow: 
+      inset 0 1px 1px 0 rgba(103, 232, 249, 0.40),
+      0 18px 40px -6px rgba(6, 182, 212, 0.28) !important;
+  }
+
+  .card-theme-rose {
+    border-color: rgba(244, 63, 94, 0.35) !important;
+    border-top-color: rgba(253, 164, 175, 0.55) !important;
+    box-shadow: 
+      inset 0 1px 1px 0 rgba(253, 164, 175, 0.30),
+      0 16px 36px -8px rgba(244, 63, 94, 0.18) !important;
+  }
+  .card-theme-rose:hover {
+    border-color: rgba(244, 63, 94, 0.55) !important;
+    box-shadow: 
+      inset 0 1px 1px 0 rgba(253, 164, 175, 0.40),
+      0 18px 40px -6px rgba(244, 63, 94, 0.28) !important;
+  }
+
+  .card-theme-emerald {
+    border-color: rgba(16, 185, 129, 0.35) !important;
+    border-top-color: rgba(110, 231, 183, 0.55) !important;
+    box-shadow: 
+      inset 0 1px 1px 0 rgba(110, 231, 183, 0.30),
+      0 16px 36px -8px rgba(16, 185, 129, 0.18) !important;
+  }
+  .card-theme-emerald:hover {
+    border-color: rgba(16, 185, 129, 0.55) !important;
+    box-shadow: 
+      inset 0 1px 1px 0 rgba(110, 231, 183, 0.40),
+      0 18px 40px -6px rgba(16, 185, 129, 0.28) !important;
+  }
+
+  .card-theme-amber {
+    border-color: rgba(245, 158, 11, 0.35) !important;
+    border-top-color: rgba(253, 230, 138, 0.55) !important;
+    box-shadow: 
+      inset 0 1px 1px 0 rgba(253, 230, 138, 0.30),
+      0 16px 36px -8px rgba(245, 158, 11, 0.18) !important;
+  }
+  .card-theme-amber:hover {
+    border-color: rgba(245, 158, 11, 0.55) !important;
+    box-shadow: 
+      inset 0 1px 1px 0 rgba(253, 230, 138, 0.40),
+      0 18px 40px -6px rgba(245, 158, 11, 0.28) !important;
+  }
+
+  .card-theme-fuchsia {
+    border-color: rgba(217, 70, 239, 0.35) !important;
+    border-top-color: rgba(245, 208, 254, 0.55) !important;
+    box-shadow: 
+      inset 0 1px 1px 0 rgba(245, 208, 254, 0.30),
+      0 16px 36px -8px rgba(217, 70, 239, 0.18) !important;
+  }
+  .card-theme-fuchsia:hover {
+    border-color: rgba(217, 70, 239, 0.55) !important;
+    box-shadow: 
+      inset 0 1px 1px 0 rgba(245, 208, 254, 0.40),
+      0 18px 40px -6px rgba(217, 70, 239, 0.28) !important;
+  }
+
+  /* Modals & Overlays */
+  .liquid-modal-dark {
+    background: linear-gradient(
+      150deg, 
+      rgba(24, 24, 32, 0.88) 0%, 
+      rgba(10, 10, 15, 0.96) 100%
+    );
+    backdrop-filter: blur(34px) saturate(200%);
+    -webkit-backdrop-filter: blur(34px) saturate(200%);
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    border-top: 1px solid rgba(255, 255, 255, 0.34);
+    box-shadow: 
+      inset 0 1.5px 1px 0 rgba(255, 255, 255, 0.30),
+      0 30px 70px -15px rgba(0, 0, 0, 0.95);
+  }
+
+  .liquid-modal-light {
+    background: linear-gradient(
+      150deg, 
+      rgba(255, 255, 255, 0.92) 0%, 
+      rgba(246, 248, 252, 0.96) 100%
+    );
+    backdrop-filter: blur(32px) saturate(170%);
+    -webkit-backdrop-filter: blur(32px) saturate(170%);
+    border: 1px solid rgba(255, 255, 255, 1);
+    box-shadow: 
+      inset 0 2px 2px 0 rgba(255, 255, 255, 1),
+      0 25px 60px -15px rgba(70, 80, 100, 0.16);
+  }
+
+  .liquid-pill-dark {
+    background: linear-gradient(
+      135deg, 
+      rgba(255, 255, 255, 0.10) 0%, 
+      rgba(255, 255, 255, 0.03) 100%
+    );
+    backdrop-filter: blur(18px) saturate(190%);
+    -webkit-backdrop-filter: blur(18px) saturate(190%);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-top: 1px solid rgba(255, 255, 255, 0.30);
+    box-shadow: inset 0 1px 1px 0 rgba(255, 255, 255, 0.22);
+  }
+
+  .liquid-pill-light {
+    background: linear-gradient(
+      135deg, 
+      rgba(255, 255, 255, 0.90) 0%, 
+      rgba(255, 255, 255, 0.72) 100%
+    );
+    backdrop-filter: blur(16px) saturate(160%);
+    -webkit-backdrop-filter: blur(16px) saturate(160%);
+    border: 1px solid rgba(255, 255, 255, 1);
+    box-shadow: 
+      inset 0 1px 1.5px 0 rgba(255, 255, 255, 0.95), 
+      0 3px 10px 0 rgba(0, 0, 0, 0.05);
+  }
+
+  /* Glass Gloss Specular Reflection Top Highlight */
+  .liquid-gloss {
+    position: relative;
+    overflow: hidden;
+  }
+  .liquid-gloss::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 40%;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.07) 0%, rgba(255, 255, 255, 0) 100%);
+    pointer-events: none;
+    border-top-left-radius: inherit;
+    border-top-right-radius: inherit;
+    z-index: 1;
+  }
+}

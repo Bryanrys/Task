@@ -4,7 +4,7 @@ import { X, Copy, Check, Share2, Globe, ExternalLink, MessageCircle, Edit3, Spar
 export const PRESET_HOSTING_OPTIONS = [
   {
     name: 'Vercel',
-    url: 'https://dashboard-academico-uees.vercel.app',
+    url: 'https://task-ecru-eight-84.vercel.app',
     tag: 'Recomendado',
   },
   {

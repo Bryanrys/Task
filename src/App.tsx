@@ -158,7 +158,7 @@ export default function App() {
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   const SHARE_URL_STORAGE_KEY = 'academic_custom_share_url';
-  const DEFAULT_SHARE_URL = 'https://dashboard-academico-uees.vercel.app';
+  const DEFAULT_SHARE_URL = 'https://task-ecru-eight-84.vercel.app';
 
   const [shareableUrl, setShareableUrl] = useState<string>(() => {
     try {
@@ -181,7 +181,7 @@ export default function App() {
         return origin;
       }
     }
-    return 'https://dashboard-academico-uees.vercel.app';
+    return 'https://task-ecru-eight-84.vercel.app';
   });
 
   const handleUpdateShareUrl = (newUrl: string) => {

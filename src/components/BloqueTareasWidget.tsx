@@ -36,52 +36,75 @@ export const BloqueTareasWidget: React.FC<BloqueTareasWidgetProps> = ({
   };
 
   return (
-    <div
-      className={`rounded-3xl p-4 transition-all mb-4 liquid-gloss ${
-        isDark ? 'liquid-card-dark' : 'liquid-card-light'
-      }`}
-    >
-      {/* Header */}
-      <div
-        className={`flex items-center justify-between border-b pb-2.5 mb-3 ${
-          isDark ? 'border-white/10' : 'border-black/10'
-        }`}
-      >
-        <span
-          className={`text-xs font-black uppercase tracking-wider flex items-center gap-1.5 font-mono ${
-            isDark ? 'text-yellow-400' : 'text-amber-600'
-          }`}
-        >
-          <span>📌 ACTIVIDADES A CUMPLIR</span>
-          <span className={isDark ? 'text-stone-400 font-bold' : 'text-stone-500 font-bold'}>
-            ({pendientesCount})
-          </span>
-        </span>
-
-        <button
-          onClick={() => setIsModalOpen(true)}
-          className={`text-[11px] font-bold px-3 py-1 rounded-xl transition-all cursor-pointer font-mono active:scale-95 ${
+    <>
+      {tareas.length === 0 ? (
+        <div
+          className={`rounded-2xl px-3.5 py-2 transition-all mb-3 liquid-gloss flex items-center justify-between border ${
             isDark
-              ? 'bg-amber-500/15 hover:bg-yellow-400 hover:text-black text-yellow-300 border border-yellow-400/30'
-              : 'bg-amber-50 hover:bg-amber-500 hover:text-white text-amber-700 border border-amber-200 shadow-2xs'
+              ? 'bg-white/[0.03] border-white/10 text-stone-300'
+              : 'bg-stone-50 border-stone-200 text-stone-700'
           }`}
         >
-          + Nueva
-        </button>
-      </div>
+          <div className="flex items-center gap-2">
+            <span className="text-xs">📌</span>
+            <span
+              className={`text-[11px] font-black uppercase tracking-wider font-mono ${
+                isDark ? 'text-yellow-400' : 'text-amber-600'
+              }`}
+            >
+              ACTIVIDADES A CUMPLIR (0)
+            </span>
+          </div>
 
-      {/* List */}
-      <div className="space-y-2 max-h-[160px] overflow-y-auto pr-1">
-        {tareas.length === 0 ? (
-          <p
-            className={`text-xs text-center py-2 italic font-mono ${
-              isDark ? 'text-stone-500' : 'text-stone-400'
+          <button
+            onClick={() => setIsModalOpen(true)}
+            className={`text-[10px] font-bold px-2.5 py-1 rounded-xl transition-all cursor-pointer font-mono active:scale-95 ${
+              isDark
+                ? 'bg-amber-500/15 hover:bg-yellow-400 hover:text-black text-yellow-300 border border-yellow-400/30'
+                : 'bg-amber-50 hover:bg-amber-500 hover:text-white text-amber-700 border border-amber-200 shadow-2xs'
             }`}
           >
-            No hay tareas pendientes en este bloque.
-          </p>
-        ) : (
-          tareas.map((item) => (
+            + Nueva
+          </button>
+        </div>
+      ) : (
+        <div
+          className={`rounded-3xl p-4 transition-all mb-3 liquid-gloss ${
+            isDark ? 'liquid-card-dark' : 'liquid-card-light'
+          }`}
+        >
+          {/* Header */}
+          <div
+            className={`flex items-center justify-between border-b pb-2.5 mb-3 ${
+              isDark ? 'border-white/10' : 'border-black/10'
+            }`}
+          >
+            <span
+              className={`text-xs font-black uppercase tracking-wider flex items-center gap-1.5 font-mono ${
+                isDark ? 'text-yellow-400' : 'text-amber-600'
+              }`}
+            >
+              <span>📌 ACTIVIDADES A CUMPLIR</span>
+              <span className={isDark ? 'text-stone-400 font-bold' : 'text-stone-500 font-bold'}>
+                ({pendientesCount})
+              </span>
+            </span>
+
+            <button
+              onClick={() => setIsModalOpen(true)}
+              className={`text-[11px] font-bold px-3 py-1 rounded-xl transition-all cursor-pointer font-mono active:scale-95 ${
+                isDark
+                  ? 'bg-amber-500/15 hover:bg-yellow-400 hover:text-black text-yellow-300 border border-yellow-400/30'
+                  : 'bg-amber-50 hover:bg-amber-500 hover:text-white text-amber-700 border border-amber-200 shadow-2xs'
+              }`}
+            >
+              + Nueva
+            </button>
+          </div>
+
+          {/* List */}
+          <div className="space-y-2 max-h-[160px] overflow-y-auto pr-1">
+            {tareas.map((item) => (
             <div
               key={item.id}
               className={`flex items-center justify-between p-2 rounded-xl border backdrop-blur-md transition-all ${
@@ -138,9 +161,10 @@ export const BloqueTareasWidget: React.FC<BloqueTareasWidgetProps> = ({
                 ✕
               </button>
             </div>
-          ))
-        )}
+          ))}
+        </div>
       </div>
+    )}
 
       {/* Modal Nueva Tarea Bloque */}
       {isModalOpen && (
@@ -190,6 +214,6 @@ export const BloqueTareasWidget: React.FC<BloqueTareasWidgetProps> = ({
           </div>
         </div>
       )}
-    </div>
+    </>
   );
 };

@@ -64,7 +64,7 @@ import { UniversityLinksModal } from './components/UniversityLinksModal';
 import { EditSubjectModal } from './components/EditSubjectModal';
 import { ShareAppModal } from './components/ShareAppModal';
 import { ToolsAndLinksView } from './components/ToolsAndLinksView';
-import { DatabaseSyncCard } from './components/DatabaseSyncCard';
+import { UnifiedDashboardHeader } from './components/UnifiedDashboardHeader';
 import { getDeadlineStatus } from './utils/deadline';
 
 import { cloudSave, cloudLoad } from './services/supabase';
@@ -1364,113 +1364,19 @@ export default function App() {
                 transition={{ duration: 0.22, ease: 'easeOut' }}
               >
 
-        {/* Info & Reciente Card with Liquid Glass */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.96 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.35, delay: 0.15 }}
-          className={`rounded-3xl p-5 mb-4 transition-all liquid-gloss ${
-            isDark
-              ? 'liquid-glass-dark text-stone-100'
-              : 'liquid-glass-light text-stone-800'
-          }`}
-        >
-          {/* Header Row: Start Date & Days Elapsed */}
-          <div className="flex items-center justify-between text-[11px] font-bold tracking-wider mb-2.5 font-mono">
-            {/* Clickable Start Date */}
-            <button
-              onClick={() => setShowStartDateModal(true)}
-              title="Haz clic para cambiar el día de inicio"
-              className={`group flex items-center gap-1.5 transition-colors cursor-pointer ${
-                isDark ? 'text-stone-400 hover:text-yellow-400' : 'text-stone-600 hover:text-amber-600'
-              }`}
-            >
-              <Calendar className="w-3.5 h-3.5 text-yellow-500 group-hover:scale-110 transition-transform" />
-              <span className="uppercase">INICIO: {currentDashboard.startDate}</span>
-              <span className="text-[9px] text-yellow-500 underline decoration-dashed">
-                (editar)
-              </span>
-            </button>
-
-            {/* Calculated Elapsed Days Badge */}
-            <div
-              onClick={() => setShowStartDateModal(true)}
-              className={`cursor-pointer group flex items-center gap-1 text-[11px] font-extrabold transition-colors ${
-                isDark ? 'text-stone-300 hover:text-emerald-400' : 'text-stone-700 hover:text-emerald-600'
-              }`}
-              title="Días transcurridos calculados desde la fecha de inicio"
-            >
-              <span>{daysTranscurridos} DÍAS TRANSCURRIDOS</span>
-            </div>
-          </div>
-
-          {/* Reciente Badge */}
-          <div className="flex justify-center mb-3">
-            <div
-              className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold font-mono border ${
-                isDark
-                  ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400'
-                  : 'bg-emerald-50 border-emerald-300 text-emerald-700'
-              }`}
-            >
-              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-              <span>{cloudStatus} ( {currentDashboard.lastUpdated} )</span>
-            </div>
-          </div>
-
-          {/* Quick Actions (Link & Reset week tasks) */}
-          <div
-            className={`flex items-center justify-between pt-1 border-t ${
-              isDark ? 'border-[#292524]/60' : 'border-stone-100'
-            }`}
-          >
-            <button
-              onClick={handleCopyLink}
-              title="Copiar identificador de acceso"
-              className={`p-2 rounded-xl transition-all cursor-pointer ${
-                isDark
-                  ? 'hover:bg-stone-800 text-stone-400 hover:text-yellow-400'
-                  : 'hover:bg-stone-100 text-stone-500 hover:text-amber-600'
-              }`}
-            >
-              <LinkIcon className="w-4 h-4" />
-            </button>
-
-            {currentDashboard.quickNote ? (
-              <span
-                className={`text-[11px] truncate max-w-[200px] text-center italic ${
-                  isDark ? 'text-stone-400' : 'text-stone-600'
-                }`}
-              >
-                {currentDashboard.quickNote}
-              </span>
-            ) : (
-              <span className={`text-[11px] italic font-mono ${isDark ? 'text-stone-500' : 'text-stone-400'}`}>
-                Semana {currentWeek.weekNumber} activa
-              </span>
-            )}
-
-            <button
-              onClick={handleResetCurrentWeekTasks}
-              title="Reiniciar casillas de esta semana"
-              className={`p-2 rounded-xl transition-all cursor-pointer ${
-                isDark
-                  ? 'hover:bg-stone-800 text-stone-400 hover:text-yellow-400'
-                  : 'hover:bg-stone-100 text-stone-500 hover:text-amber-600'
-              }`}
-            >
-              <Edit3 className="w-4 h-4" />
-            </button>
-          </div>
-        </motion.div>
-
-        {/* Database Sync Card (Apartado de Subir y Descargar Base de Datos) */}
-        <DatabaseSyncCard
+        {/* Unified Academic Dashboard Header (Fechas, Sincronización Nube, Clave oo y Respaldo) */}
+        <UnifiedDashboardHeader
           isDark={isDark}
+          startDate={currentDashboard.startDate}
+          daysElapsed={daysTranscurridos}
           cloudStatus={cloudStatus}
           lastUpdated={currentDashboard.lastUpdated}
           accessCode={currentDashboard.accessCode}
+          quickNote={currentDashboard.quickNote}
           isSyncing={isSyncing}
+          onOpenStartDate={() => setShowStartDateModal(true)}
+          onOpenEditNote={() => setShowEditNotePrompt(true)}
+          onResetWeekTasks={handleResetCurrentWeekTasks}
           onUploadCloud={() => setShowUploadConfirm(true)}
           onDownloadCloud={() => setShowDownloadPrompt(true)}
           onExportJSON={handleExportJSON}

@@ -169,8 +169,8 @@ export const ToolsAndLinksView: React.FC<ToolsAndLinksViewProps> = ({
         transition={{ delay: 0.05 }}
         className={`rounded-3xl p-5 border transition-all ${
           isDark
-            ? 'bg-[#181614]/90 border-emerald-500/25 shadow-[0_0_30px_rgba(16,185,129,0.08)]'
-            : 'bg-white border-emerald-200 shadow-md'
+            ? 'liquid-card-dark border-emerald-500/30 shadow-[0_0_30px_rgba(16,185,129,0.08)]'
+            : 'liquid-card-light border-emerald-200 shadow-md'
         }`}
       >
         <div className="flex items-center justify-between mb-3.5">
@@ -242,8 +242,8 @@ export const ToolsAndLinksView: React.FC<ToolsAndLinksViewProps> = ({
         transition={{ delay: 0.1 }}
         className={`rounded-3xl p-5 border transition-all ${
           isDark
-            ? 'bg-[#181614]/90 border-cyan-500/25 shadow-[0_0_30px_rgba(6,182,212,0.08)]'
-            : 'bg-white border-cyan-200 shadow-md'
+            ? 'liquid-card-dark border-cyan-500/30 shadow-[0_0_30px_rgba(6,182,212,0.08)]'
+            : 'liquid-card-light border-cyan-200 shadow-md'
         }`}
       >
         <div className="flex items-center justify-between mb-3.5">
@@ -333,8 +333,8 @@ export const ToolsAndLinksView: React.FC<ToolsAndLinksViewProps> = ({
         transition={{ delay: 0.15 }}
         className={`rounded-3xl p-5 border transition-all ${
           isDark
-            ? 'bg-[#181614]/90 border-violet-500/25 shadow-[0_0_30px_rgba(168,85,247,0.08)]'
-            : 'bg-white border-violet-200 shadow-md'
+            ? 'liquid-card-dark border-violet-500/30 shadow-[0_0_30px_rgba(168,85,247,0.08)]'
+            : 'liquid-card-light border-violet-200 shadow-md'
         }`}
       >
         <div className="flex items-center justify-between mb-3.5">
@@ -401,8 +401,8 @@ export const ToolsAndLinksView: React.FC<ToolsAndLinksViewProps> = ({
         transition={{ delay: 0.2 }}
         className={`rounded-3xl p-5 border transition-all ${
           isDark
-            ? 'bg-[#181614]/90 border-blue-500/25 shadow-[0_0_30px_rgba(59,130,246,0.08)]'
-            : 'bg-white border-blue-200 shadow-md'
+            ? 'liquid-card-dark border-blue-500/30 shadow-[0_0_30px_rgba(59,130,246,0.08)]'
+            : 'liquid-card-light border-blue-200 shadow-md'
         }`}
       >
         <div className="flex items-center justify-between mb-3.5">
@@ -477,8 +477,8 @@ export const ToolsAndLinksView: React.FC<ToolsAndLinksViewProps> = ({
           onClick={onOpenGrades}
           className={`p-4 rounded-3xl border text-left transition-all cursor-pointer active:scale-95 ${
             isDark
-              ? 'bg-[#181614]/90 border-amber-500/25 hover:border-amber-400/50 shadow-xs'
-              : 'bg-white border-amber-200 hover:border-amber-400 shadow-md'
+              ? 'liquid-card-dark border-amber-500/30 hover:border-amber-400/50 shadow-xs'
+              : 'liquid-card-light border-amber-200 hover:border-amber-400 shadow-md'
           }`}
         >
           <div className="flex items-center justify-between mb-2">
@@ -498,8 +498,8 @@ export const ToolsAndLinksView: React.FC<ToolsAndLinksViewProps> = ({
           onClick={onOpenPomodoro}
           className={`p-4 rounded-3xl border text-left transition-all cursor-pointer active:scale-95 ${
             isDark
-              ? 'bg-[#181614]/90 border-rose-500/25 hover:border-rose-400/50 shadow-xs'
-              : 'bg-white border-rose-200 hover:border-rose-400 shadow-md'
+              ? 'liquid-card-dark border-rose-500/30 hover:border-rose-400/50 shadow-xs'
+              : 'liquid-card-light border-rose-200 hover:border-rose-400 shadow-md'
           }`}
         >
           <div className="flex items-center justify-between mb-2">
@@ -519,8 +519,8 @@ export const ToolsAndLinksView: React.FC<ToolsAndLinksViewProps> = ({
           onClick={onOpenStartDate}
           className={`p-4 rounded-3xl border text-left transition-all cursor-pointer active:scale-95 ${
             isDark
-              ? 'bg-[#181614]/90 border-yellow-500/25 hover:border-yellow-400/50 shadow-xs'
-              : 'bg-white border-yellow-200 hover:border-yellow-400 shadow-md'
+              ? 'liquid-card-dark border-yellow-500/30 hover:border-yellow-400/50 shadow-xs'
+              : 'liquid-card-light border-yellow-200 hover:border-yellow-400 shadow-md'
           }`}
         >
           <div className="flex items-center justify-between mb-2">

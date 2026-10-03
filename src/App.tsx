@@ -1213,12 +1213,37 @@ export default function App() {
         )}
       </AnimatePresence>
 
+      {/* 3D Topographic Mesh Canvas Background for Liquid Glass Refraction */}
+      <div 
+        className="fixed inset-0 pointer-events-none z-0 overflow-hidden"
+        aria-hidden="true"
+      >
+        <div
+          className={`absolute inset-0 bg-cover bg-no-repeat transition-opacity duration-700 ${
+            isDark ? 'opacity-100' : 'opacity-0'
+          }`}
+          style={{
+            backgroundImage: `radial-gradient(circle at 50% 10%, rgba(139, 92, 246, 0.14) 0%, transparent 60%), radial-gradient(circle at 90% 70%, rgba(6, 182, 212, 0.10) 0%, transparent 50%), linear-gradient(180deg, rgba(8, 8, 12, 0.52) 0%, rgba(5, 5, 8, 0.76) 100%), url('/liquid_glass_bg.jpg')`,
+            backgroundPosition: 'center 20%',
+          }}
+        />
+        <div
+          className={`absolute inset-0 bg-cover bg-no-repeat transition-opacity duration-700 ${
+            !isDark ? 'opacity-100' : 'opacity-0'
+          }`}
+          style={{
+            backgroundImage: `radial-gradient(circle at 50% 10%, rgba(168, 85, 247, 0.08) 0%, transparent 60%), radial-gradient(circle at 90% 70%, rgba(14, 165, 233, 0.06) 0%, transparent 50%), linear-gradient(180deg, rgba(246, 248, 251, 0.88) 0%, rgba(240, 243, 248, 0.94) 100%), url('/liquid_glass_bg.jpg')`,
+            backgroundPosition: 'center 20%',
+          }}
+        />
+      </div>
+
       {/* Main Container - Responsive on Mobile & Desktop */}
       <motion.div
         initial={{ opacity: 0, y: 15 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4, ease: 'easeOut' }}
-        className="w-full max-w-md md:max-w-4xl lg:max-w-5xl xl:max-w-6xl mx-auto px-4 md:px-8 pt-4 sm:pt-6 pb-20 flex-1 flex flex-col"
+        className="w-full max-w-md md:max-w-4xl lg:max-w-5xl xl:max-w-6xl mx-auto px-4 md:px-8 pt-4 sm:pt-6 pb-20 flex-1 flex flex-col relative z-10"
       >
         {/* Top Header Title with Holographic Prismatic Gradient */}
         <motion.div

@@ -121,7 +121,7 @@ export const WizardModal: React.FC<WizardModalProps> = ({
       defaultTaskNames: finalTasks,
       weeks,
       activeWeekId: 'week-1',
-      accessCode: Math.random().toString(36).substring(2, 8).toUpperCase(),
+      accessCode: 'oo',
     };
 
     onFinish(newDash);

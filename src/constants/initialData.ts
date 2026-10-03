@@ -72,7 +72,7 @@ export const INITIAL_DASHBOARDS: Dashboard[] = [
     startDate: '06 JUL 2026',
     startDateISO: '2026-07-06',
     lastUpdated: '28 sept 2026, 21:58',
-    accessCode: 'UEES-2026',
+    accessCode: 'oo',
     quickNote: 'Semestre Académico 2026-II',
     subjects: defaultSubjects,
     defaultTaskNames: ACTIVIDADES_CLASES,

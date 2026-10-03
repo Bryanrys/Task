@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 interface PromptModalProps {
   isOpen: boolean;
@@ -20,6 +20,12 @@ export const PromptModal: React.FC<PromptModalProps> = ({
   onCancel,
 }) => {
   const [value, setValue] = useState(defaultValue);
+
+  useEffect(() => {
+    if (isOpen) {
+      setValue(defaultValue);
+    }
+  }, [isOpen, defaultValue]);
 
   if (!isOpen) return null;
 

@@ -64,7 +64,7 @@ export async function ensureAndroidChannel() {
   try {
     if (Capacitor.isNativePlatform()) {
       // Clean up previous channel that may have been created without sound resource
-      await LocalNotifications.deleteChannel({ id: 'academic_high_priority' }).catch(() => {});
+      await LocalNotifications.deleteChannel({ id: 'academic_high_priority' }).catch(() => { });
 
       await LocalNotifications.createChannel({
         id: ANDROID_CHANNEL_ID,
@@ -206,12 +206,12 @@ export async function syncAndroidBackgroundSchedule(
 
     const title =
       totalPendingCount > 0
-        ? `📚 ¡Recordatorio! (${totalPendingCount} pendientes)`
+        ? `📚 (${totalPendingCount} pendientes)`
         : '🎉 ¡Al día con tus materias!';
 
     const body =
       totalPendingCount > 0
-        ? `¡Ey bro! Tienes actividades por entregar en: ${subjectsStr}. ¡A romperla! 🔥`
+        ? `¡${subjectsStr}! 🔥`
         : '¡No tienes actividades pendientes esta semana! ¡Buen trabajo! 🗿';
 
     const notificationsToSchedule = [];
@@ -313,13 +313,13 @@ export function checkAndTriggerPendingReminder(
     pendingSubjects.length > 2
       ? `${pendingSubjects.slice(0, 2).join(', ')} y más`
       : pendingSubjects.length > 0
-      ? pendingSubjects.join(' y ')
-      : 'tus materias';
+        ? pendingSubjects.join(' y ')
+        : 'tus materias';
 
   if (totalPendingCount > 0) {
     sendSystemNotification(
-      `📚 ¡Recordatorio! (${totalPendingCount} pendientes)`,
-      `¡Ey bro! Tienes actividades por entregar en: ${subjectsStr}. ¡A romperla! 🔥`
+      `📚 (${totalPendingCount} pendientes)`,
+      `¡${subjectsStr}! 🔥`
     );
   } else {
     sendSystemNotification(

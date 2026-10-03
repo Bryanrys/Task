@@ -64,6 +64,7 @@ import { UniversityLinksModal } from './components/UniversityLinksModal';
 import { EditSubjectModal } from './components/EditSubjectModal';
 import { ShareAppModal } from './components/ShareAppModal';
 import { ToolsAndLinksView } from './components/ToolsAndLinksView';
+import { DatabaseSyncCard } from './components/DatabaseSyncCard';
 import { getDeadlineStatus } from './utils/deadline';
 
 import { cloudSave, cloudLoad } from './services/supabase';
@@ -126,7 +127,12 @@ export default function App() {
       const stored = localStorage.getItem(STORAGE_KEY);
       if (stored) {
         const parsed = JSON.parse(stored);
-        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          return parsed.map((d: Dashboard) => ({
+            ...d,
+            accessCode: !d.accessCode || d.accessCode === 'UEES-2026' ? 'oo' : d.accessCode,
+          }));
+        }
       }
     } catch {}
     return INITIAL_DASHBOARDS;
@@ -806,7 +812,15 @@ export default function App() {
     setIsSyncing(true);
 
     try {
-      if (pendingDownloadCode === '00' || pendingDownloadCode === 'UEES' || pendingDownloadCode === 'UEES-2026') {
+      const codeUpper = pendingDownloadCode.trim().toUpperCase();
+      const currentCodeUpper = (currentDashboard?.accessCode || '').trim().toUpperCase();
+      if (
+        codeUpper === 'OO' ||
+        codeUpper === '00' ||
+        codeUpper === 'UEES' ||
+        codeUpper === 'UEES-2026' ||
+        codeUpper === currentCodeUpper
+      ) {
         let cloudData = await cloudLoad('coleccion_dashboards');
         if (!cloudData || !cloudData.data) {
           cloudData = await cloudLoad('dashboard_uees');
@@ -851,7 +865,7 @@ export default function App() {
             const singleDash: Dashboard = {
               id: raw.id || 'dash-uees',
               name: raw.name || 'UEES',
-              accessCode: raw.accessCode || '00',
+              accessCode: raw.accessCode || 'oo',
               startDate: raw.startDate || '6 de jul 2026',
               startDateISO: raw.startDateISO || '2026-07-06',
               lastUpdated: raw.lastUpdated || new Date().toLocaleString(),
@@ -925,7 +939,7 @@ export default function App() {
 
   // Copy share link
   const handleCopyLink = () => {
-    const code = currentDashboard?.accessCode || 'UEES-2026';
+    const code = currentDashboard?.accessCode || 'oo';
     navigator.clipboard?.writeText(code);
     setToastMessage(`Código [${code}] copiado al portapapeles.`);
   };
@@ -1449,6 +1463,20 @@ export default function App() {
             </button>
           </div>
         </motion.div>
+
+        {/* Database Sync Card (Apartado de Subir y Descargar Base de Datos) */}
+        <DatabaseSyncCard
+          isDark={isDark}
+          cloudStatus={cloudStatus}
+          lastUpdated={currentDashboard.lastUpdated}
+          accessCode={currentDashboard.accessCode}
+          isSyncing={isSyncing}
+          onUploadCloud={() => setShowUploadConfirm(true)}
+          onDownloadCloud={() => setShowDownloadPrompt(true)}
+          onExportJSON={handleExportJSON}
+          onImportJSONClick={() => jsonInputRef.current?.click()}
+          onCopyCode={handleCopyLink}
+        />
 
         {/* Bloque Tareas Widget (📌 ACTIVIDADES A CUMPLIR from user's HTML) */}
         <BloqueTareasWidget
@@ -2166,9 +2194,9 @@ export default function App() {
       <PromptModal
         isOpen={showDownloadPrompt}
         title="task-dashboard dice"
-        message="Ingresa el identificador de acceso (o '00' para modo admin):"
-        placeholder="Ej. 00 o UEES-2026"
-        defaultValue={currentDashboard.accessCode}
+        message="Ingresa la clave de acceso:"
+        placeholder="Ingresa tu clave (ej. oo)"
+        defaultValue=""
         onConfirm={handlePromptDownload}
         onCancel={() => setShowDownloadPrompt(false)}
       />

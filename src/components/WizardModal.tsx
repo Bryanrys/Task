@@ -89,30 +89,32 @@ export const WizardModal: React.FC<WizardModalProps> = ({
 
     const now = new Date();
     const formattedTime = now.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
+    const dashId = `dash-${Date.now()}`;
+    const week1Id = `week-1-${Date.now()}`;
 
-    const weeks: WeekItem[] = Array.from({ length: 12 }, (_, i) => {
-      const num = i + 1;
-      const subjectTasks: Record<string, { id: string; name: string; completed: boolean }[]> = {};
-
-      subjects.forEach((subj) => {
-        subjectTasks[subj.id] = finalTasks.map((tName, tIdx) => ({
-          id: `task-${num}-${subj.id}-${tIdx}`,
-          name: tName,
-          completed: false,
-        }));
-      });
-
-      return {
-        id: `week-${num}`,
-        weekNumber: num,
-        dateRange: `Semana ${num}`,
-        status: num === 1 ? 'EN PROCESO' : 'PENDIENTE',
-        subjectTasks,
-      };
+    // Al crear un nuevo dashboard, siempre inicia limpio con únicamente Semana 1
+    const week1SubjectTasks: Record<string, { id: string; name: string; completed: boolean }[]> = {};
+    subjects.forEach((subj) => {
+      week1SubjectTasks[subj.id] = finalTasks.map((tName, tIdx) => ({
+        id: `task-1-${subj.id}-${tIdx}`,
+        name: tName,
+        completed: false,
+      }));
     });
 
+    const weeks: WeekItem[] = [
+      {
+        id: week1Id,
+        weekNumber: 1,
+        dateRange: 'Semana 1',
+        status: 'EN PROCESO',
+        subjectTasks: week1SubjectTasks,
+        bloqueTareas: [],
+      },
+    ];
+
     const newDash: Dashboard = {
-      id: `dash-${Date.now()}`,
+      id: dashId,
       name: finalName,
       startDate: formattedStartDate,
       startDateISO: startDateISO,
@@ -120,7 +122,7 @@ export const WizardModal: React.FC<WizardModalProps> = ({
       subjects,
       defaultTaskNames: finalTasks,
       weeks,
-      activeWeekId: 'week-1',
+      activeWeekId: week1Id,
       accessCode: 'oo',
     };
 

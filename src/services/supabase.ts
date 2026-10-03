@@ -58,46 +58,73 @@ function buildLegacyFormat(dashboards: Dashboard[]) {
  * Converts legacy HTML data format into modern Dashboard[] structure
  */
 export function convertLegacyToDashboards(legacyData: any): Dashboard[] {
-  const base = JSON.parse(JSON.stringify(INITIAL_DASHBOARDS)) as Dashboard[];
-  const ueesDash = base[0];
-
   const ueesRaw = legacyData?.['[ UEES ]'] || legacyData?.['UEES'] || legacyData;
-  if (!ueesRaw || !ueesRaw.semanas) return base;
+  if (!ueesRaw || !ueesRaw.semanas) {
+    return JSON.parse(JSON.stringify(INITIAL_DASHBOARDS)) as Dashboard[];
+  }
 
-  const semanas = ueesRaw.semanas;
+  const materiasNames: string[] = Array.isArray(ueesRaw.materias) && ueesRaw.materias.length > 0
+    ? ueesRaw.materias
+    : ['Materia 1', 'Materia 2', 'Materia 3'];
 
-  ueesDash.weeks.forEach((w) => {
-    const semKey = `Semana ${w.weekNumber}`;
-    const oldSem = semanas[semKey];
-    if (oldSem) {
-      if (oldSem.completada) {
-        w.status = 'COMPLETADO';
-      }
-      const entregas = oldSem.entregas || {};
-      ueesDash.subjects.forEach((s, sIdx) => {
-        const tasks = w.subjectTasks[s.id] || [];
-        tasks.forEach((t) => {
-          const keyByName = `${s.name}_${t.name}`;
-          const keyByIdx = `${sIdx}_${t.name}`;
-          if (entregas[keyByName] !== undefined) {
-            t.completed = !!entregas[keyByName];
-          } else if (entregas[keyByIdx] !== undefined) {
-            t.completed = !!entregas[keyByIdx];
-          }
-        });
+  const subjects = materiasNames.map((name: string, idx: number) => ({
+    id: `subj-${idx}`,
+    name,
+  }));
+
+  const semanasKeys = Object.keys(ueesRaw.semanas || {});
+  const numWeeks = Math.max(1, ...semanasKeys.map((k) => parseInt(k.replace(/\D/g, ''), 10) || 1));
+
+  const weeks = Array.from({ length: numWeeks }, (_, i) => {
+    const num = i + 1;
+    const semKey = `Semana ${num}`;
+    const oldSem = ueesRaw.semanas[semKey];
+    const isParcial = num % 6 === 0;
+    const taskNames = isParcial ? ['Examen Parcial entregado'] : ['Foro entregado', 'Tarea entregada'];
+    const subjectTasks: Record<string, { id: string; name: string; completed: boolean }[]> = {};
+
+    subjects.forEach((s, sIdx) => {
+      const entregas = oldSem?.entregas || {};
+      subjectTasks[s.id] = taskNames.map((tName, tIdx) => {
+        const keyByName = `${s.name}_${tName}`;
+        const keyByIdx = `${sIdx}_${tName}`;
+        const isCompleted = entregas[keyByName] !== undefined ? !!entregas[keyByName] : (entregas[keyByIdx] !== undefined ? !!entregas[keyByIdx] : false);
+        return {
+          id: `task-${num}-${s.id}-${tIdx}`,
+          name: tName,
+          completed: isCompleted,
+        };
       });
-    }
+    });
+
+    return {
+      id: `week-${num}`,
+      weekNumber: num,
+      dateRange: `Semana ${num}`,
+      status: (oldSem?.completada ? 'COMPLETADO' : (num === 1 ? 'EN PROCESO' : 'PENDIENTE')) as 'COMPLETADO' | 'EN PROCESO' | 'PENDIENTE',
+      subjectTasks,
+      bloqueTareas: [],
+    };
   });
 
+  let activeNum = 1;
   if (ueesRaw.semanaActiva) {
-    const num = parseInt(ueesRaw.semanaActiva.replace(/\D/g, ''), 10);
-    if (num) {
-      const target = ueesDash.weeks.find((w) => w.weekNumber === num);
-      if (target) {
-        ueesDash.activeWeekId = target.id;
-      }
-    }
+    activeNum = parseInt(ueesRaw.semanaActiva.replace(/\D/g, ''), 10) || 1;
   }
+
+  const ueesDash: Dashboard = {
+    id: 'dash-uees',
+    name: ueesRaw.nombre || 'UEES',
+    startDate: ueesRaw.fechaInicio || '06 JUL 2026',
+    startDateISO: '2026-07-06',
+    lastUpdated: new Date().toLocaleString(),
+    accessCode: 'oo',
+    quickNote: ueesRaw.quickNote || 'Semestre Académico 2026-II',
+    subjects,
+    defaultTaskNames: ['Foro entregado', 'Tarea entregada'],
+    weeks,
+    activeWeekId: `week-${activeNum}`,
+  };
 
   return [ueesDash];
 }

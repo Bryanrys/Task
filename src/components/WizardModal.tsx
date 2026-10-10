@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Calendar } from 'lucide-react';
 import { Dashboard, SubjectItem, WeekItem } from '../types';
+import { computeWeekRangeFromDate } from '../utils/dateRange';
 
 interface WizardModalProps {
   isOpen: boolean;
@@ -106,7 +107,7 @@ export const WizardModal: React.FC<WizardModalProps> = ({
       {
         id: week1Id,
         weekNumber: 1,
-        dateRange: 'Semana 1',
+        dateRange: computeWeekRangeFromDate(1, startDateISO),
         status: 'EN PROCESO',
         subjectTasks: week1SubjectTasks,
         bloqueTareas: [],

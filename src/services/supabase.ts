@@ -1,6 +1,7 @@
 import { createClient } from '@supabase/supabase-js';
 import { Dashboard } from '../types';
 import { INITIAL_DASHBOARDS } from '../constants/initialData';
+import { computeWeekRangeFromDate } from '../utils/dateRange';
 
 const SUPABASE_URL = 'https://wnrrypxwrfmwaiffhlzo.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_JdomtReek_Bqy44p6HKj_Q_jvuJLFtJ';
@@ -100,7 +101,7 @@ export function convertLegacyToDashboards(legacyData: any): Dashboard[] {
     return {
       id: `week-${num}`,
       weekNumber: num,
-      dateRange: `Semana ${num}`,
+      dateRange: computeWeekRangeFromDate(num, ueesRaw.fechaInicio || '2026-07-06'),
       status: (oldSem?.completada ? 'COMPLETADO' : (num === 1 ? 'EN PROCESO' : 'PENDIENTE')) as 'COMPLETADO' | 'EN PROCESO' | 'PENDIENTE',
       subjectTasks,
       bloqueTareas: [],

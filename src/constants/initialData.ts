@@ -28,7 +28,7 @@ export const createDefaultWeeks = (subjectIds: string[]): WeekItem[] => {
     {
       id: 'week-1',
       weekNumber: 1,
-      dateRange: 'Semana 1',
+      dateRange: '6 al 11 de jul 2026',
       status: 'EN PROCESO',
       subjectTasks,
       bloqueTareas: [],

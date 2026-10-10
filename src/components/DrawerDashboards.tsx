@@ -3,6 +3,7 @@ import { X, Plus, CheckCircle, Clock, Download } from 'lucide-react';
 import { Capacitor } from '@capacitor/core';
 import { Dashboard } from '../types';
 import { esSemanaDeParciales } from '../constants/initialData';
+import { formatOrResolveWeekDateRange } from '../utils/dateRange';
 
 interface DrawerDashboardsProps {
   isOpen: boolean;
@@ -214,7 +215,7 @@ export const DrawerDashboards: React.FC<DrawerDashboardsProps> = ({
                             isDark ? 'text-slate-400' : 'text-stone-500'
                           }`}
                         >
-                          {week.dateRange}
+                          {formatOrResolveWeekDateRange(week.weekNumber, activeDashboard.startDateISO, week.dateRange)}
                         </p>
                       </div>
 

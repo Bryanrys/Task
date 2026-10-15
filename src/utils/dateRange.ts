@@ -36,12 +36,15 @@ const MESES = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'o
  * Considera la fecha de inicio del ciclo configurada en el dashboard.
  */
 export function computeWeekRangeFromDate(weekNumber: number, startDateISO?: string): string {
-  const isDefaultUees = !startDateISO || startDateISO === '2026-07-06';
+  // Si la fecha es por defecto o se configuró erróneamente con enero 2026 para Ciclo 2, priorizar el calendario oficial UEES
+  const isDefaultUees = !startDateISO || startDateISO === '2026-07-06' || startDateISO === '2026-01-19';
   if (isDefaultUees && UEES_PRESET_RANGES[weekNumber]) {
     return UEES_PRESET_RANGES[weekNumber];
   }
 
-  const baseDate = startDateISO ? new Date(`${startDateISO}T00:00:00`) : new Date('2026-07-06T00:00:00');
+  const baseDate = startDateISO && startDateISO !== '2026-01-19'
+    ? new Date(`${startDateISO}T00:00:00`)
+    : new Date('2026-07-06T00:00:00');
   if (isNaN(baseDate.getTime())) {
     return UEES_PRESET_RANGES[weekNumber] || `Semana ${weekNumber}`;
   }
@@ -78,8 +81,9 @@ export function computeWeekRangeFromDate(weekNumber: number, startDateISO?: stri
 }
 
 /**
- * Si la semana ya tiene un rango válido guardado (ej: "28 sep al 3 oct 2026"), lo conserva.
- * Si no tiene o contiene el texto genérico por defecto "Semana X", lo resuelve automáticamente con las fechas reales.
+ * Si la semana ya tiene un rango válido guardado, lo conserva.
+ * Corrige automáticamente rangos corruptos (ej: si semana >= 10 tiene fechas de abril/marzo/ene de Ciclo 1)
+ * o si contiene texto genérico "Semana X", resolviéndolos con las fechas reales de octubre/noviembre/diciembre.
  */
 export function formatOrResolveWeekDateRange(
   weekNumber: number,
@@ -89,9 +93,18 @@ export function formatOrResolveWeekDateRange(
   if (existingRange && typeof existingRange === 'string') {
     const trimmed = existingRange.trim();
     const isGeneric = /^semana\s*\d*$/i.test(trimmed) || trimmed === '';
-    if (!isGeneric) {
+    // Detecta rangos corruptos de primer semestre (abril, marzo, feb, ene) en semanas avanzadas (>=10) del Ciclo 2
+    const isCorruptFirstSemesterInLateWeek =
+      weekNumber >= 10 && /\b(abr|mar|feb|ene)\b/i.test(trimmed);
+
+    if (!isGeneric && !isCorruptFirstSemesterInLateWeek) {
       return trimmed;
     }
+  }
+
+  // Siempre priorizar el rango oficial de UEES si está disponible para esta semana
+  if (UEES_PRESET_RANGES[weekNumber]) {
+    return UEES_PRESET_RANGES[weekNumber];
   }
 
   return computeWeekRangeFromDate(weekNumber, startDateISO);

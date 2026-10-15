@@ -52,7 +52,7 @@ export const BloqueTareasWidget: React.FC<BloqueTareasWidgetProps> = ({
                 isDark ? 'text-yellow-400' : 'text-amber-600'
               }`}
             >
-              ACTIVIDADES A CUMPLIR (0)
+              NOTAS / TAREAS EXTRA (0)
             </span>
           </div>
 
@@ -84,7 +84,7 @@ export const BloqueTareasWidget: React.FC<BloqueTareasWidgetProps> = ({
                 isDark ? 'text-yellow-400' : 'text-amber-600'
               }`}
             >
-              <span>📌 ACTIVIDADES A CUMPLIR</span>
+              <span>📌 NOTAS / TAREAS EXTRA</span>
               <span className={isDark ? 'text-stone-400 font-bold' : 'text-stone-500 font-bold'}>
                 ({pendientesCount})
               </span>

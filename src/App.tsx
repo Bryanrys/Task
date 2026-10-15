@@ -129,16 +129,41 @@ export default function App() {
       if (stored) {
         const parsed = JSON.parse(stored);
         if (Array.isArray(parsed) && parsed.length > 0) {
-          return parsed.map((d: Dashboard) => ({
-            ...d,
-            accessCode: !d.accessCode || d.accessCode === 'UEES-2026' ? 'oo' : d.accessCode,
-            weeks: Array.isArray(d.weeks)
-              ? d.weeks.map((w: WeekItem) => ({
-                  ...w,
-                  dateRange: formatOrResolveWeekDateRange(w.weekNumber, d.startDateISO, w.dateRange),
-                }))
-              : d.weeks,
-          }));
+          return parsed.map((d: Dashboard) => {
+            const isUeesCiclo2 =
+              d.name?.includes('UEES') ||
+              d.id === 'dash-uees' ||
+              d.weeks?.some(
+                (w) =>
+                  w.dateRange?.includes('jul') ||
+                  w.dateRange?.includes('ago') ||
+                  w.dateRange?.includes('sep') ||
+                  w.dateRange?.includes('oct')
+              );
+            const needsStartDateFix =
+              isUeesCiclo2 &&
+              (d.startDateISO === '2026-01-19' || d.startDate?.includes('19 ENE'));
+
+            const resolvedStartDateISO = needsStartDateFix ? '2026-07-06' : d.startDateISO || '2026-07-06';
+            const resolvedStartDate = needsStartDateFix ? '06 JUL 2026' : d.startDate || '06 JUL 2026';
+
+            return {
+              ...d,
+              startDateISO: resolvedStartDateISO,
+              startDate: resolvedStartDate,
+              accessCode: !d.accessCode || d.accessCode === 'UEES-2026' ? 'oo' : d.accessCode,
+              weeks: Array.isArray(d.weeks)
+                ? d.weeks.map((w: WeekItem) => ({
+                    ...w,
+                    dateRange: formatOrResolveWeekDateRange(
+                      w.weekNumber,
+                      resolvedStartDateISO,
+                      w.dateRange
+                    ),
+                  }))
+                : d.weeks,
+            };
+          });
         }
       }
     } catch {}
@@ -676,7 +701,7 @@ export default function App() {
       }));
     });
 
-    const calculatedDateRange = computeWeekRangeFromDate(nextNum, currentDashboard.startDateISO);
+    const calculatedDateRange = formatOrResolveWeekDateRange(nextNum, currentDashboard.startDateISO);
 
     const newWeek: WeekItem = {
       id: `week-${nextNum}-${Date.now()}`,
@@ -861,32 +886,82 @@ export default function App() {
           window.dispatchEvent(new Event('storage'));
 
           const raw = cloudData.data;
+
+          const sanitizeDashboard = (dashItem: Dashboard): Dashboard => {
+            const isUeesCiclo2 =
+              dashItem.name?.includes('UEES') ||
+              dashItem.id === 'dash-uees' ||
+              dashItem.weeks?.some(
+                (w) =>
+                  w.dateRange?.includes('jul') ||
+                  w.dateRange?.includes('ago') ||
+                  w.dateRange?.includes('sep') ||
+                  w.dateRange?.includes('oct')
+              );
+            const needsStartDateFix =
+              isUeesCiclo2 &&
+              (dashItem.startDateISO === '2026-01-19' || dashItem.startDate?.includes('19 ENE'));
+
+            const resolvedStartDateISO = needsStartDateFix ? '2026-07-06' : dashItem.startDateISO || '2026-07-06';
+            const resolvedStartDate = needsStartDateFix ? '06 JUL 2026' : dashItem.startDate || '06 JUL 2026';
+
+            return {
+              ...dashItem,
+              startDateISO: resolvedStartDateISO,
+              startDate: resolvedStartDate,
+              accessCode: !dashItem.accessCode || dashItem.accessCode === 'UEES-2026' ? 'oo' : dashItem.accessCode,
+              weeks: Array.isArray(dashItem.weeks)
+                ? dashItem.weeks.map((w: WeekItem) => {
+                    // Sanitize task notes typo if present
+                    const cleanSubjectTasks: Record<string, TaskItem[]> = {};
+                    Object.entries(w.subjectTasks || {}).forEach(([sId, tList]) => {
+                      cleanSubjectTasks[sId] = tList.map((t) => ({
+                        ...t,
+                        note: t.note?.replace(/VER COOSAS DE EL PROYECTO/gi, 'VER COSAS DEL PROYECTO').replace(/VER COOSAS DEL PROYECTO/gi, 'VER COSAS DEL PROYECTO'),
+                      }));
+                    });
+
+                    return {
+                      ...w,
+                      dateRange: formatOrResolveWeekDateRange(
+                        w.weekNumber,
+                        resolvedStartDateISO,
+                        w.dateRange
+                      ),
+                      subjectTasks: cleanSubjectTasks,
+                    };
+                  })
+                : dashItem.weeks,
+            };
+          };
+
           // Case 1: Array of dashboards
           if (Array.isArray(raw) && raw.length > 0) {
-            setDashboards(raw);
-            setActiveDashId(raw[0].id);
+            const sanitizedList = raw.map(sanitizeDashboard);
+            setDashboards(sanitizedList);
+            setActiveDashId(sanitizedList[0].id);
             setIsSyncing(false);
-            setToastMessage('¡Información completa (Tareas, Enlaces, Promedios, Horario) descargada con éxito!');
+            setToastMessage('¡Información completa descargada y fechas sincronizadas a Octubre con éxito!');
             return;
           }
           // Case 2: Single dashboard object with weeks
           if (raw && typeof raw === 'object' && Array.isArray(raw.weeks)) {
-            const singleDash: Dashboard = {
+            const singleDash = sanitizeDashboard({
               id: raw.id || 'dash-uees',
               name: raw.name || 'UEES',
               accessCode: raw.accessCode || 'oo',
-              startDate: raw.startDate || '6 de jul 2026',
+              startDate: raw.startDate || '06 JUL 2026',
               startDateISO: raw.startDateISO || '2026-07-06',
               lastUpdated: raw.lastUpdated || new Date().toLocaleString(),
               subjects: raw.subjects || INITIAL_DASHBOARDS[0].subjects,
               defaultTaskNames: raw.defaultTaskNames || INITIAL_DASHBOARDS[0].defaultTaskNames,
               weeks: raw.weeks,
-              activeWeekId: raw.activeWeekId || raw.weeks[raw.weeks.length - 1]?.id || 'week-12',
-            };
+              activeWeekId: raw.activeWeekId || raw.weeks[raw.weeks.length - 1]?.id || 'week-14',
+            });
             setDashboards([singleDash]);
             setActiveDashId(singleDash.id);
             setIsSyncing(false);
-            setToastMessage('¡Información completa (Tareas, Enlaces, Promedios, Horario) descargada con éxito!');
+            setToastMessage('¡Información completa descargada y fechas sincronizadas a Octubre con éxito!');
             return;
           }
         }
@@ -1227,7 +1302,7 @@ export default function App() {
         initial={{ opacity: 0, y: 15 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4, ease: 'easeOut' }}
-        className="w-full max-w-md md:max-w-4xl lg:max-w-5xl xl:max-w-6xl mx-auto px-4 md:px-8 pt-4 sm:pt-6 pb-20 flex-1 flex flex-col"
+        className="w-full max-w-md md:max-w-4xl lg:max-w-5xl xl:max-w-6xl mx-auto px-4 md:px-8 pt-4 sm:pt-6 pb-36 flex-1 flex flex-col"
       >
         {/* Top Header Title with Holographic Prismatic Gradient */}
         <motion.div
@@ -1886,12 +1961,12 @@ export default function App() {
       </motion.div>
 
       {/* Bottom Floating Bar with Aesthetic Capsule Liquid Glass */}
-      <div className="fixed bottom-4 left-1/2 -translate-x-1/2 z-40 w-full max-w-sm md:max-w-md px-4">
+      <div className="fixed bottom-4 left-1/2 -translate-x-1/2 z-40 w-full max-w-sm md:max-w-md px-4 pointer-events-none">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3, delay: 0.4 }}
-          className={`flex items-center justify-around px-4 py-2 rounded-full transition-all liquid-gloss ${
+          className={`flex items-center justify-around px-4 py-2 rounded-full transition-all liquid-gloss pointer-events-auto ${
             isDark
               ? 'liquid-glass-dark text-stone-100 shadow-[0_20px_45px_-10px_rgba(0,0,0,0.85)] border-white/20'
               : 'liquid-glass-light text-stone-800 shadow-lg'

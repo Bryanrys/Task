@@ -114,7 +114,7 @@ export const DrawerDashboards: React.FC<DrawerDashboardsProps> = ({
                     }`}
                   >
                     <Plus className="w-3.5 h-3.5 text-yellow-500" />
-                    <span>+ Nuevo Dashboard</span>
+                    <span>Nuevo Dashboard</span>
                   </button>
 
                   <button

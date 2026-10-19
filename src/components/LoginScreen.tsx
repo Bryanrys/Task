@@ -39,23 +39,23 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLoginSuccess }) => {
   };
 
   return (
-    <div className="fixed inset-0 z-[9999] bg-[#0b0f19] flex items-center justify-center p-4 overflow-y-auto min-h-screen select-none">
+    <div className="fixed inset-0 z-[9999] bg-[#000000] flex items-center justify-center p-4 overflow-y-auto min-h-screen select-none">
       {/* Luces difuminadas prismáticas de fondo (Cyber-Cosmic UEES) */}
-      <div className="absolute -top-32 -left-32 w-96 h-96 bg-pink-500/15 rounded-full blur-3xl pointer-events-none animate-pulse" />
-      <div className="absolute -bottom-32 -right-32 w-96 h-96 bg-cyan-500/15 rounded-full blur-3xl pointer-events-none animate-pulse" />
+      <div className="absolute -top-32 -left-32 w-96 h-96 bg-pink-500/10 rounded-full blur-3xl pointer-events-none animate-pulse" />
+      <div className="absolute -bottom-32 -right-32 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none animate-pulse" />
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-purple-600/10 rounded-full blur-[100px] pointer-events-none" />
 
-      {/* Tarjeta de Vidrio Esmerilado (Glass Card) */}
+      {/* Tarjeta de Vidrio Esmerilado AMOLED (Glass Card) */}
       <motion.div
         initial={{ opacity: 0, scale: 0.92, y: 15 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         transition={{ duration: 0.4, ease: 'easeOut' }}
         className="w-full max-w-md p-7 sm:p-8 rounded-3xl space-y-6 border border-white/10 shadow-2xl relative z-10 my-auto text-white"
         style={{
-          background: 'linear-gradient(145deg, rgba(19, 27, 46, 0.90) 0%, rgba(11, 15, 25, 0.95) 100%)',
+          background: 'linear-gradient(145deg, rgba(6, 8, 14, 0.96) 0%, rgba(2, 2, 4, 0.99) 100%)',
           backdropFilter: 'blur(20px)',
           WebkitBackdropFilter: 'blur(20px)',
-          boxShadow: '0 25px 60px -15px rgba(0, 0, 0, 0.8), inset 0 1px 1px 0 rgba(255, 255, 255, 0.2)',
+          boxShadow: '0 25px 60px -15px rgba(0, 0, 0, 0.95), inset 0 1px 1px 0 rgba(255, 255, 255, 0.15)',
         }}
       >
         {/* Cabecera con Icono de Graduación Gradiente */}

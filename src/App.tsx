@@ -951,20 +951,35 @@ export default function App() {
   };
 
   // Download (Pull from cloud Supabase + Local backup)
-  const handlePromptDownload = (code: string) => {
-    if (!code.trim()) return;
-    setPendingDownloadCode(code.trim().toUpperCase());
-    setShowDownloadPrompt(false);
-    setShowDownloadConfirm(true);
+  // Si el usuario ya está autenticado con sus credenciales, descarga directamente sin volver a pedir clave
+  const handleTriggerCloudDownload = () => {
+    if (isAuthenticated) {
+      setPendingDownloadCode('oo');
+      handleExecuteDownload('oo');
+    } else {
+      setShowDownloadPrompt(true);
+    }
   };
 
-  const handleConfirmDownload = async () => {
+  const handlePromptDownload = (code: string) => {
+    if (!code.trim()) return;
+    const finalCode = code.trim().toUpperCase();
+    setPendingDownloadCode(finalCode);
+    setShowDownloadPrompt(false);
+    handleExecuteDownload(finalCode);
+  };
+
+  const handleConfirmDownload = () => {
+    handleExecuteDownload();
+  };
+
+  const handleExecuteDownload = async (codeOverride?: string) => {
     setShowDownloadConfirm(false);
     setIsSyncing(true);
 
     try {
-      const codeUpper = pendingDownloadCode.trim().toUpperCase();
-      const currentCodeUpper = (currentDashboard?.accessCode || '').trim().toUpperCase();
+      const codeUpper = (codeOverride || pendingDownloadCode || 'oo').trim().toUpperCase();
+      const currentCodeUpper = (currentDashboard?.accessCode || 'oo').trim().toUpperCase();
       if (
         codeUpper === 'OO' ||
         codeUpper === '00' ||
@@ -1405,7 +1420,7 @@ export default function App() {
   const semesterProgressPct = Math.min(100, Math.round((daysTranscurridos / (16 * 7)) * 100));
 
   return (
-    <div className="min-h-screen flex flex-col md:flex-row relative bg-[#0b0f19] text-gray-100 font-sans select-none overflow-x-hidden">
+    <div className="min-h-screen flex flex-col md:flex-row relative bg-[#000000] text-gray-100 font-sans select-none overflow-x-hidden">
       {/* Toast Alert */}
       <Toast message={toastMessage} onClose={() => setToastMessage(null)} />
 
@@ -1423,7 +1438,7 @@ export default function App() {
               initial={{ scale: 0.95, y: 15 }}
               animate={{ scale: 1, y: 0 }}
               exit={{ scale: 0.95, y: 15 }}
-              className="w-full max-w-md rounded-2xl bg-[#131b2e] border border-white/10 p-5 shadow-2xl space-y-4"
+              className="w-full max-w-md rounded-2xl bg-[#05070e] border border-white/10 p-5 shadow-2xl space-y-4"
               onClick={(e) => e.stopPropagation()}
             >
               <div className="flex items-center justify-between pb-3 border-b border-white/10">
@@ -1547,7 +1562,7 @@ export default function App() {
                 animate={{ x: 0 }}
                 exit={{ x: -280 }}
                 transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-                className="w-72 h-full bg-[#0b0f19] border-r border-white/10 flex flex-col"
+                className="w-72 h-full bg-[#000000] border-r border-white/10 flex flex-col"
                 onClick={(e) => e.stopPropagation()}
               >
                 <div className="flex justify-end p-3">
@@ -1671,10 +1686,10 @@ export default function App() {
           {/* Conditional View Rendering */}
           {currentView === 'dashboard' && (
             <div>
-              {/* 4 Métricas Principales (Grid 4 columnas Estilo Imagen 2) */}
+              {/* 4 Métricas Principales (Grid 4 columnas Estilo Imagen 2 AMOLED) */}
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
                 {/* 1. Actividades Pendientes */}
-                <div className="p-4 rounded-2xl bg-[#131b2e] border border-white/5 flex flex-col justify-between relative overflow-hidden">
+                <div className="p-4 rounded-2xl bg-[#05070e] border border-white/5 flex flex-col justify-between relative overflow-hidden">
                   <div className="flex items-center justify-between mb-2">
                     <span className="text-xs font-medium text-gray-400">Actividades Pendientes</span>
                     <span
@@ -1700,7 +1715,7 @@ export default function App() {
                 </div>
 
                 {/* 2. Inicio de Ciclo */}
-                <div className="p-4 rounded-2xl bg-[#131b2e] border border-white/5 flex flex-col justify-between">
+                <div className="p-4 rounded-2xl bg-[#05070e] border border-white/5 flex flex-col justify-between">
                   <div className="flex items-center justify-between mb-2">
                     <span className="text-xs font-medium text-gray-400">Inicio de Ciclo</span>
                     <button
@@ -1724,7 +1739,7 @@ export default function App() {
                 </div>
 
                 {/* 3. Material de Estudio */}
-                <div className="p-4 rounded-2xl bg-[#131b2e] border border-white/5 flex flex-col justify-between">
+                <div className="p-4 rounded-2xl bg-[#05070e] border border-white/5 flex flex-col justify-between">
                   <div className="flex items-center justify-between mb-2">
                     <span className="text-xs font-medium text-gray-400">Material de Estudio</span>
                     <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-purple-500/20 text-purple-300 border border-purple-500/30">
@@ -1747,7 +1762,7 @@ export default function App() {
                 </div>
 
                 {/* 4. Racha de Estudio */}
-                <div className="p-4 rounded-2xl bg-[#131b2e] border border-white/5 flex flex-col justify-between">
+                <div className="p-4 rounded-2xl bg-[#05070e] border border-white/5 flex flex-col justify-between">
                   <div className="flex items-center justify-between mb-2">
                     <span className="text-xs font-medium text-gray-400">Racha de Estudio</span>
                     <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 flex items-center gap-1">
@@ -1765,8 +1780,8 @@ export default function App() {
                 </div>
               </div>
 
-              {/* Quick Actions Bar (Imagen 2) */}
-              <div className="p-3 rounded-2xl bg-[#131b2e]/80 border border-white/5 flex flex-wrap items-center justify-between gap-3 mb-6">
+              {/* Quick Actions Bar (Imagen 2 AMOLED) */}
+              <div className="p-3 rounded-2xl bg-[#05070e] border border-white/5 flex flex-wrap items-center justify-between gap-3 mb-6 shadow-md">
                 <div className="flex flex-wrap items-center gap-2">
                   <button
                     onClick={() => {
@@ -1808,8 +1823,9 @@ export default function App() {
                   </button>
 
                   <button
-                    onClick={() => setShowDownloadPrompt(true)}
+                    onClick={handleTriggerCloudDownload}
                     className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 hover:bg-cyan-500/30 transition-all cursor-pointer shadow-xs"
+                    title="Descargar de la nube directamente"
                   >
                     <Download className="w-3.5 h-3.5" />
                     <span>Descargar Nube</span>
@@ -1819,7 +1835,7 @@ export default function App() {
 
               {/* Banner de Nota Rápida si existe */}
               {currentDashboard.quickNote && (
-                <div className="p-3 mb-6 rounded-2xl bg-[#131b2e] border border-pink-500/30 flex items-center justify-between text-xs text-pink-200 shadow-md">
+                <div className="p-3 mb-6 rounded-2xl bg-[#05070e] border border-pink-500/30 flex items-center justify-between text-xs text-pink-200 shadow-md">
                   <div className="flex items-center gap-2.5 min-w-0">
                     <span className="text-base select-none shrink-0">📌</span>
                     <span className="font-semibold truncate">{currentDashboard.quickNote}</span>
@@ -1850,7 +1866,7 @@ export default function App() {
                 </div>
               )}
 
-              {/* Grid de Materias (3 columnas idéntico a Imagen 2) */}
+              {/* Grid de Materias (3 columnas idéntico a Imagen 2 AMOLED) */}
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 mb-8 items-start">
                 {currentDashboard.subjects.map((subject, sIdx) => {
                   const tasks = currentWeek.subjectTasks[subject.id] || [];
@@ -1886,7 +1902,7 @@ export default function App() {
                     <div
                       key={subject.id}
                       id={`subject-${subject.id}`}
-                      className={`rounded-2xl bg-[#131b2e] border border-white/5 border-t-2 ${borderTopColor} p-4.5 flex flex-col justify-between transition-all hover:bg-[#162038] shadow-md`}
+                      className={`rounded-2xl bg-[#05070e] border border-white/5 border-t-2 ${borderTopColor} p-4.5 flex flex-col justify-between transition-all hover:bg-[#080b16] shadow-md`}
                     >
                       {/* Header de Materia */}
                       <div className="flex items-center justify-between mb-4">
@@ -1921,7 +1937,7 @@ export default function App() {
                           return (
                             <div
                               key={task.id}
-                              className="flex items-center justify-between p-3 rounded-xl bg-[#1a233a]/60 hover:bg-[#1a233a] border border-white/5 transition-all group"
+                              className="flex items-center justify-between p-3 rounded-xl bg-[#0a0d17] hover:bg-[#0f1424] border border-white/5 transition-all group"
                             >
                               <div
                                 onClick={() => handleToggleTask(subject.id, task.id)}
@@ -2023,7 +2039,7 @@ export default function App() {
 
           {/* Schedule View */}
           {currentView === 'schedule' && (
-            <div className="p-4 rounded-2xl bg-[#131b2e] border border-white/5">
+            <div className="p-4 rounded-2xl bg-[#05070e] border border-white/5">
               <ToolsAndLinksView
                 isDark={isDark}
                 cloudStatus={cloudStatus}
@@ -2040,7 +2056,7 @@ export default function App() {
                 onOpenPomodoro={() => setShowPomodoroModal(true)}
                 onOpenStartDate={() => setShowStartDateModal(true)}
                 onUploadCloud={() => setShowUploadConfirm(true)}
-                onDownloadCloud={() => setShowDownloadPrompt(true)}
+                onDownloadCloud={handleTriggerCloudDownload}
                 onCopyLink={handleCopyLink}
                 onOpenShareModal={() => setShowShareModal(true)}
               />
@@ -2049,7 +2065,7 @@ export default function App() {
 
           {/* Cloud Database View */}
           {currentView === 'cloud' && (
-            <div className="max-w-3xl mx-auto p-6 rounded-2xl bg-[#131b2e] border border-white/5 space-y-6">
+            <div className="max-w-3xl mx-auto p-6 rounded-2xl bg-[#05070e] border border-white/5 space-y-6">
               <div className="flex items-center justify-between pb-4 border-b border-white/5">
                 <div>
                   <h2 className="text-lg font-black text-white flex items-center gap-2">
@@ -2080,15 +2096,16 @@ export default function App() {
                 </button>
 
                 <button
-                  onClick={() => setShowDownloadPrompt(true)}
+                  onClick={handleTriggerCloudDownload}
                   className="p-5 rounded-2xl bg-gradient-to-br from-cyan-500/20 to-blue-600/20 border border-cyan-500/30 hover:border-cyan-500 text-left transition-all cursor-pointer group"
+                  title="Descargar de la nube directamente"
                 >
                   <div className="w-10 h-10 rounded-xl bg-cyan-500/20 flex items-center justify-center text-cyan-300 mb-3 group-hover:scale-110 transition-transform">
                     <Download className="w-5 h-5" />
                   </div>
                   <h3 className="text-sm font-bold text-white mb-1">Descargar de la Nube</h3>
                   <p className="text-xs text-gray-400">
-                    Descarga tus materias y tareas ingresando tu clave de acceso.
+                    Sincroniza directamente tus materias y tareas con la base de datos central.
                   </p>
                 </button>
               </div>
@@ -2125,7 +2142,7 @@ export default function App() {
               initial={{ scale: 0.95, y: 15 }}
               animate={{ scale: 1, y: 0 }}
               exit={{ scale: 0.95, y: 15 }}
-              className="w-full max-w-md rounded-2xl bg-[#131b2e] border border-white/10 p-5 shadow-2xl"
+              className="w-full max-w-md rounded-2xl bg-[#05070e] border border-white/10 p-5 shadow-2xl"
             >
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-base font-bold text-white flex items-center gap-2">
@@ -2230,7 +2247,7 @@ export default function App() {
         isOpen={showWizard}
         onClose={() => setShowWizard(false)}
         onFinish={handleFinishWizard}
-        onOpenAccessCode={() => setShowDownloadPrompt(true)}
+        onOpenAccessCode={handleTriggerCloudDownload}
       />
 
       {/* Side Drawer for Dashboards & Weeks with Delete options */}

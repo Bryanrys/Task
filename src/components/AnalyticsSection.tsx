@@ -75,7 +75,7 @@ export const AnalyticsSection: React.FC<AnalyticsSectionProps> = ({
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
       {/* CURVA DE RENDIMIENTO ACADÉMICO */}
-      <div className="glass-card-uees p-6 rounded-2xl lg:col-span-2 space-y-4 shadow-xl border border-white/10">
+      <div className="bg-[#05070e] p-6 rounded-2xl lg:col-span-2 space-y-4 shadow-xl border border-white/5">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
           <div>
             <h4 className="text-sm font-extrabold text-white tracking-wide">
@@ -174,7 +174,7 @@ export const AnalyticsSection: React.FC<AnalyticsSectionProps> = ({
       </div>
 
       {/* COMPLETITUD GLOBAL DOUGHNUT */}
-      <div className="glass-card-uees p-6 rounded-2xl space-y-4 flex flex-col justify-between shadow-xl border border-white/10">
+      <div className="bg-[#05070e] p-6 rounded-2xl space-y-4 flex flex-col justify-between shadow-xl border border-white/5">
         <div>
           <h4 className="text-sm font-extrabold text-white tracking-wide">
             Completitud Global

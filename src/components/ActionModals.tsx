@@ -30,9 +30,9 @@ export const PromptModal: React.FC<PromptModalProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-xs animate-fadeIn">
-      <div className="relative w-full max-w-[340px] bg-[#16161b] border border-[#2b2b35] rounded-3xl p-6 shadow-2xl">
-        <p className="text-xs font-semibold text-slate-400 mb-1">{title}</p>
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-sm animate-fadeIn">
+      <div className="relative w-full max-w-[340px] bg-[#05070e] border border-white/10 rounded-3xl p-6 shadow-2xl">
+        <p className="text-xs font-semibold text-gray-400 mb-1">{title}</p>
         <p className="text-sm font-bold text-white mb-4">{message}</p>
 
         <input
@@ -40,20 +40,20 @@ export const PromptModal: React.FC<PromptModalProps> = ({
           value={value}
           onChange={(e) => setValue(e.target.value)}
           placeholder={placeholder}
-          className="w-full bg-[#202028] border border-[#353542] focus:border-yellow-400 rounded-xl px-3.5 py-2.5 text-sm text-white placeholder-slate-500 outline-none mb-6"
+          className="w-full bg-[#0a0d17] border border-white/15 focus:border-cyan-400 rounded-xl px-3.5 py-2.5 text-sm text-white placeholder-gray-500 outline-none mb-6 transition-all"
           autoFocus
         />
 
         <div className="flex items-center justify-end gap-3 text-xs font-bold">
           <button
             onClick={onCancel}
-            className="px-4 py-2 text-slate-400 hover:text-white rounded-lg transition-colors"
+            className="px-4 py-2 text-gray-400 hover:text-white rounded-lg transition-colors"
           >
             Cancelar
           </button>
           <button
             onClick={() => onConfirm(value)}
-            className="px-5 py-2 bg-yellow-400 hover:bg-yellow-300 text-black rounded-xl transition-all"
+            className="px-5 py-2 bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white font-bold rounded-xl transition-all shadow-md cursor-pointer"
           >
             Aceptar
           </button>
@@ -87,25 +87,25 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-xs animate-fadeIn">
-      <div className="relative w-full max-w-[320px] bg-[#141418] border border-[#2b2b36] rounded-3xl p-6 text-center shadow-2xl">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-sm animate-fadeIn">
+      <div className="relative w-full max-w-[320px] bg-[#05070e] border border-white/10 rounded-3xl p-6 text-center shadow-2xl">
         <h3 className="text-lg font-black text-white mb-1 tracking-wide">{title}</h3>
-        {subtitle && <p className="text-xs font-semibold text-slate-400 mb-6">{subtitle}</p>}
+        {subtitle && <p className="text-xs font-semibold text-gray-400 mb-6">{subtitle}</p>}
 
         <div className="space-y-2 mt-4">
           <button
             onClick={onConfirm}
-            className={`w-full py-2.5 px-4 font-black text-xs rounded-xl transition-all shadow-md ${
+            className={`w-full py-2.5 px-4 font-black text-xs rounded-xl transition-all shadow-md cursor-pointer ${
               isDanger
                 ? 'bg-rose-500 hover:bg-rose-600 text-white'
-                : 'bg-[#f5cb42] hover:bg-[#fad859] text-black shadow-yellow-500/10'
+                : 'bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white shadow-pink-500/20'
             }`}
           >
             {confirmText}
           </button>
           <button
             onClick={onCancel}
-            className="w-full py-2 text-xs font-semibold text-slate-400 hover:text-white transition-colors"
+            className="w-full py-2 text-xs font-semibold text-gray-400 hover:text-white transition-colors cursor-pointer"
           >
             {cancelText}
           </button>

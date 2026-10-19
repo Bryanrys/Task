@@ -7,12 +7,11 @@
      which provides liquid frosted glass cards luminous diffraction to blur!
      ======================================================== */
   .bg-black-canvas {
-    background-color: #0b0f19;
+    background-color: #000000;
     background-image: 
-      radial-gradient(ellipse 70% 45% at 85% -5%, rgba(236, 72, 153, 0.16), transparent 70%),
-      radial-gradient(ellipse 55% 40% at -5% 45%, rgba(6, 182, 212, 0.15), transparent 70%),
-      radial-gradient(ellipse 65% 50% at 95% 95%, rgba(139, 92, 246, 0.13), transparent 75%),
-      radial-gradient(ellipse 50% 30% at 50% 105%, rgba(16, 185, 129, 0.08), transparent 70%);
+      radial-gradient(ellipse 60% 35% at 85% -5%, rgba(236, 72, 153, 0.10), transparent 60%),
+      radial-gradient(ellipse 50% 35% at -5% 45%, rgba(6, 182, 212, 0.08), transparent 60%),
+      radial-gradient(ellipse 55% 40% at 95% 95%, rgba(139, 92, 246, 0.08), transparent 65%);
     background-attachment: fixed;
   }
 
@@ -62,18 +61,16 @@
   .liquid-card-dark {
     background: linear-gradient(
       140deg, 
-      rgba(255, 255, 255, 0.08) 0%, 
-      rgba(255, 255, 255, 0.03) 45%, 
-      rgba(10, 10, 16, 0.35) 100%
+      rgba(10, 12, 20, 0.92) 0%, 
+      rgba(2, 3, 6, 0.98) 100%
     );
     backdrop-filter: blur(24px) saturate(190%);
     -webkit-backdrop-filter: blur(24px) saturate(190%);
-    border: 1px solid rgba(255, 255, 255, 0.13);
-    border-top: 1px solid rgba(255, 255, 255, 0.32);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-top: 1px solid rgba(255, 255, 255, 0.20);
     box-shadow: 
-      inset 0 1px 1.5px 0 rgba(255, 255, 255, 0.22),
-      inset 0 -1px 1px 0 rgba(0, 0, 0, 0.40),
-      0 16px 36px -10px rgba(0, 0, 0, 0.75);
+      inset 0 1px 1.5px 0 rgba(255, 255, 255, 0.12),
+      0 16px 36px -10px rgba(0, 0, 0, 0.90);
   }
 
   .liquid-card-light {
@@ -207,16 +204,16 @@
   .liquid-modal-dark {
     background: linear-gradient(
       150deg, 
-      rgba(24, 24, 32, 0.88) 0%, 
-      rgba(10, 10, 15, 0.96) 100%
+      rgba(8, 10, 16, 0.96) 0%, 
+      rgba(0, 0, 0, 0.99) 100%
     );
     backdrop-filter: blur(34px) saturate(200%);
     -webkit-backdrop-filter: blur(34px) saturate(200%);
-    border: 1px solid rgba(255, 255, 255, 0.16);
-    border-top: 1px solid rgba(255, 255, 255, 0.34);
+    border: 1px solid rgba(255, 255, 255, 0.10);
+    border-top: 1px solid rgba(255, 255, 255, 0.20);
     box-shadow: 
-      inset 0 1.5px 1px 0 rgba(255, 255, 255, 0.30),
-      0 30px 70px -15px rgba(0, 0, 0, 0.95);
+      inset 0 1.5px 1px 0 rgba(255, 255, 255, 0.15),
+      0 30px 70px -15px rgba(0, 0, 0, 0.98);
   }
 
   .liquid-modal-light {

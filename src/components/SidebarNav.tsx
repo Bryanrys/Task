@@ -70,7 +70,7 @@ export const SidebarNav: React.FC<SidebarNavProps> = ({
 
   return (
     <aside
-      className={`bg-[#0e1422] border-r border-white/5 flex flex-col justify-between shrink-0 select-none ${
+      className={`bg-[#000000] border-r border-white/5 flex flex-col justify-between shrink-0 select-none ${
         isMobileDrawer
           ? 'w-72 h-full shadow-2xl p-0'
           : 'hidden md:flex md:w-64 min-h-screen'
@@ -218,7 +218,7 @@ export const SidebarNav: React.FC<SidebarNavProps> = ({
       </div>
 
       {/* User Footer Profile & Logout */}
-      <div className="p-4 border-t border-white/5 space-y-2.5 bg-[#0a0f1c]">
+      <div className="p-4 border-t border-white/5 space-y-2.5 bg-[#000000]">
         <div className="glass-card-uees p-3 rounded-2xl flex items-center justify-between border border-white/10">
           <div className="flex items-center space-x-3 min-w-0">
             <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-pink-500 to-purple-500 flex items-center justify-center font-bold text-xs text-white shrink-0 shadow-md">

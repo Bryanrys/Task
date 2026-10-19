@@ -139,7 +139,7 @@ export const WizardModal: React.FC<WizardModalProps> = ({
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.95 }}
         transition={{ duration: 0.25, ease: 'easeOut' }}
-        className="relative w-full max-w-[370px] bg-[#141417] border border-[#2b2b34] rounded-3xl p-6 shadow-2xl"
+        className="relative w-full max-w-[370px] bg-[#05070e] border border-white/10 rounded-3xl p-6 shadow-2xl"
       >
         <AnimatePresence mode="wait">
           {/* Step 1 */}
@@ -157,7 +157,7 @@ export const WizardModal: React.FC<WizardModalProps> = ({
               </h3>
 
               <div className="mb-3.5">
-                <label className="block text-[11px] font-bold text-slate-400 mb-1.5 uppercase tracking-wider">
+                <label className="block text-[11px] font-bold text-gray-400 mb-1.5 uppercase tracking-wider">
                   NOMBRE O ENTORNO
                 </label>
                 <input
@@ -165,7 +165,7 @@ export const WizardModal: React.FC<WizardModalProps> = ({
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   placeholder="Ej. Escuela, Universidad, Trabajo..."
-                  className="w-full bg-[#1c1c22] border border-[#2e2e38] focus:border-yellow-400/80 rounded-xl px-3.5 py-2.5 text-sm text-white placeholder-slate-500 outline-none transition-all"
+                  className="w-full bg-[#0a0d17] border border-white/10 focus:border-pink-500/80 rounded-xl px-3.5 py-2.5 text-sm text-white placeholder-gray-500 outline-none transition-all"
                   autoFocus
                 />
               </div>
@@ -173,11 +173,11 @@ export const WizardModal: React.FC<WizardModalProps> = ({
               {/* Fecha de Inicio */}
               <div className="mb-3.5">
                 <div className="flex items-center justify-between mb-1.5">
-                  <label className="text-[11px] font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1">
-                    <Calendar className="w-3.5 h-3.5 text-yellow-400" />
+                  <label className="text-[11px] font-bold text-gray-400 uppercase tracking-wider flex items-center gap-1">
+                    <Calendar className="w-3.5 h-3.5 text-pink-400" />
                     <span>DÍA QUE INICIASTE</span>
                   </label>
-                  <span className="text-[10px] text-emerald-400 font-bold">
+                  <span className="text-[10px] text-cyan-400 font-bold">
                     {previewDays} días transcurridos
                   </span>
                 </div>
@@ -185,13 +185,13 @@ export const WizardModal: React.FC<WizardModalProps> = ({
                   type="date"
                   value={startDateISO}
                   onChange={(e) => setStartDateISO(e.target.value)}
-                  className="w-full bg-[#1c1c22] border border-[#2e2e38] focus:border-yellow-400/80 rounded-xl px-3.5 py-2 text-sm text-white outline-none cursor-pointer"
+                  className="w-full bg-[#0a0d17] border border-white/10 focus:border-pink-500/80 rounded-xl px-3.5 py-2 text-sm text-white outline-none cursor-pointer"
                   required
                 />
               </div>
 
               <div className="mb-5">
-                <label className="block text-[11px] font-bold text-slate-400 mb-1.5 uppercase tracking-wider">
+                <label className="block text-[11px] font-bold text-gray-400 mb-1.5 uppercase tracking-wider">
                   ¿CUÁNTAS MATERIAS O ÁREAS LLEVAS?
                 </label>
                 <input
@@ -201,13 +201,13 @@ export const WizardModal: React.FC<WizardModalProps> = ({
                   value={subjectCount || ''}
                   onChange={(e) => setSubjectCount(Number(e.target.value))}
                   placeholder="Ej. 4"
-                  className="w-full bg-[#1c1c22] border border-[#2e2e38] focus:border-yellow-400/80 rounded-xl px-3.5 py-2.5 text-sm text-white placeholder-slate-500 outline-none transition-all"
+                  className="w-full bg-[#0a0d17] border border-white/10 focus:border-pink-500/80 rounded-xl px-3.5 py-2.5 text-sm text-white placeholder-gray-500 outline-none transition-all"
                 />
               </div>
 
               <button
                 type="submit"
-                className="w-full py-3 px-5 bg-[#f5cb42] hover:bg-[#fad859] active:scale-[0.98] text-black font-extrabold text-sm rounded-xl transition-all shadow-md shadow-yellow-500/20 mb-3 flex items-center justify-center gap-1.5 cursor-pointer"
+                className="w-full py-3 px-5 bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 active:scale-[0.98] text-white font-extrabold text-sm rounded-xl transition-all shadow-md shadow-pink-500/20 mb-3 flex items-center justify-center gap-1.5 cursor-pointer"
               >
                 Siguiente Paso 👏
               </button>
@@ -218,7 +218,7 @@ export const WizardModal: React.FC<WizardModalProps> = ({
                   onClose();
                   onOpenAccessCode();
                 }}
-                className="w-full text-center text-xs font-semibold text-slate-400 hover:text-yellow-400 transition-colors py-1 flex items-center justify-center gap-1 cursor-pointer"
+                className="w-full text-center text-xs font-semibold text-gray-400 hover:text-cyan-400 transition-colors py-1 flex items-center justify-center gap-1 cursor-pointer"
               >
                 🔗 ¡Ya tengo dashboard, entrar directo!
               </button>
@@ -239,7 +239,7 @@ export const WizardModal: React.FC<WizardModalProps> = ({
                 Materias (2/3)
               </h3>
 
-              <label className="block text-[11px] font-bold text-slate-400 mb-2.5 uppercase tracking-wider">
+              <label className="block text-[11px] font-bold text-gray-400 mb-2.5 uppercase tracking-wider">
                 NOMBRES DE LAS MATERIAS / ÁREAS:
               </label>
 
@@ -255,7 +255,7 @@ export const WizardModal: React.FC<WizardModalProps> = ({
                       setSubjectNames(copy);
                     }}
                     placeholder={`Nombre de materia o área ${idx + 1}`}
-                    className="w-full bg-[#1c1c22] border border-[#2e2e38] focus:border-yellow-400/80 rounded-xl px-3.5 py-2.5 text-sm text-white placeholder-slate-500 outline-none transition-all"
+                    className="w-full bg-[#0a0d17] border border-white/10 focus:border-pink-500/80 rounded-xl px-3.5 py-2.5 text-sm text-white placeholder-gray-500 outline-none transition-all"
                   />
                 ))}
               </div>
@@ -264,13 +264,13 @@ export const WizardModal: React.FC<WizardModalProps> = ({
                 <button
                   type="button"
                   onClick={() => setStep(1)}
-                  className="w-1/3 py-3 px-3 bg-[#1e1e24] hover:bg-[#282832] text-slate-300 font-bold text-sm rounded-xl transition-all"
+                  className="w-1/3 py-3 px-3 bg-white/5 hover:bg-white/10 text-gray-300 font-bold text-sm rounded-xl transition-all cursor-pointer"
                 >
                   Atrás
                 </button>
                 <button
                   type="submit"
-                  className="w-2/3 py-3 px-5 bg-[#f5cb42] hover:bg-[#fad859] active:scale-[0.98] text-black font-extrabold text-sm rounded-xl transition-all shadow-md shadow-yellow-500/20 flex items-center justify-center gap-1.5 cursor-pointer"
+                  className="w-2/3 py-3 px-5 bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 active:scale-[0.98] text-white font-extrabold text-sm rounded-xl transition-all shadow-md shadow-pink-500/20 flex items-center justify-center gap-1.5 cursor-pointer"
                 >
                   Siguiente Paso 👏
                 </button>
@@ -293,7 +293,7 @@ export const WizardModal: React.FC<WizardModalProps> = ({
               </h3>
 
               <div className="mb-3">
-                <label className="block text-[11px] font-bold text-slate-400 mb-1.5 uppercase tracking-wider">
+                <label className="block text-[11px] font-bold text-gray-400 mb-1.5 uppercase tracking-wider">
                   ACTIVIDADES POR MATERIA (SEPARADAS POR COMA):
                 </label>
                 <textarea
@@ -301,11 +301,11 @@ export const WizardModal: React.FC<WizardModalProps> = ({
                   value={activitiesInput}
                   onChange={(e) => setActivitiesInput(e.target.value)}
                   placeholder="Ej. Tarea entregada, Foro entregado, Proyec..."
-                  className="w-full bg-[#1c1c22] border border-[#2e2e38] focus:border-yellow-400/80 rounded-xl px-3.5 py-2.5 text-sm text-white placeholder-slate-500 outline-none resize-none transition-all"
+                  className="w-full bg-[#0a0d17] border border-white/10 focus:border-pink-500/80 rounded-xl px-3.5 py-2.5 text-sm text-white placeholder-gray-500 outline-none resize-none transition-all"
                 />
               </div>
 
-              <p className="text-[11px] text-slate-400 mb-5 text-center leading-relaxed">
+              <p className="text-[11px] text-gray-400 mb-5 text-center leading-relaxed">
                 Cada materia tendrá estas casillas para marcar semanalmente.
               </p>
 
@@ -313,13 +313,13 @@ export const WizardModal: React.FC<WizardModalProps> = ({
                 <button
                   type="button"
                   onClick={() => setStep(2)}
-                  className="w-1/3 py-3 px-3 bg-[#1e1e24] hover:bg-[#282832] text-slate-300 font-bold text-sm rounded-xl transition-all"
+                  className="w-1/3 py-3 px-3 bg-white/5 hover:bg-white/10 text-gray-300 font-bold text-sm rounded-xl transition-all cursor-pointer"
                 >
                   Atrás
                 </button>
                 <button
                   type="submit"
-                  className="w-2/3 py-3 px-5 bg-[#f5cb42] hover:bg-[#fad859] active:scale-[0.98] text-black font-extrabold text-base rounded-xl transition-all shadow-md shadow-yellow-500/20 flex items-center justify-center gap-2 cursor-pointer"
+                  className="w-2/3 py-3 px-5 bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 active:scale-[0.98] text-white font-extrabold text-base rounded-xl transition-all shadow-md shadow-pink-500/20 flex items-center justify-center gap-2 cursor-pointer"
                 >
                   <span>Crear Dashboard</span>
                   <span>✅</span>

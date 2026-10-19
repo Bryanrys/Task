@@ -1,5 +1,5 @@
 import React from 'react';
-import { X, Plus, CheckCircle, Clock, Download } from 'lucide-react';
+import { X, Plus, CheckCircle, Clock, Download, Sparkles, LogOut, User } from 'lucide-react';
 import { Capacitor } from '@capacitor/core';
 import { Dashboard } from '../types';
 import { esSemanaDeParciales } from '../constants/initialData';
@@ -11,12 +11,15 @@ interface DrawerDashboardsProps {
   dashboards: Dashboard[];
   activeDashboard: Dashboard;
   isDark?: boolean;
+  loggedUser?: string;
   onSelectDashboard: (dashId: string) => void;
   onSelectWeek: (weekId: string) => void;
   onNewDashboard: () => void;
   onAddWeek: () => void;
   onDeleteDashboard: (dashId: string) => void;
   onDeleteWeek: (weekId: string) => void;
+  onTriggerCelebration?: () => void;
+  onLogout?: () => void;
 }
 
 export const DrawerDashboards: React.FC<DrawerDashboardsProps> = ({
@@ -25,12 +28,15 @@ export const DrawerDashboards: React.FC<DrawerDashboardsProps> = ({
   dashboards,
   activeDashboard,
   isDark = true,
+  loggedUser,
   onSelectDashboard,
   onSelectWeek,
   onNewDashboard,
   onAddWeek,
   onDeleteDashboard,
   onDeleteWeek,
+  onTriggerCelebration,
+  onLogout,
 }) => {
   if (!isOpen) return null;
 
@@ -77,6 +83,40 @@ export const DrawerDashboards: React.FC<DrawerDashboardsProps> = ({
 
           {/* Body Content */}
           <div className="flex-1 overflow-y-auto p-5 space-y-6">
+            {/* User Profile Card (Estilo Sidebar HTML UEES) */}
+            <div
+              className={`p-3.5 rounded-2xl border flex items-center justify-between transition-all ${
+                isDark
+                  ? 'bg-[#121b2d]/80 border-white/10 shadow-lg'
+                  : 'bg-white border-stone-200 shadow-sm'
+              }`}
+            >
+              <div className="flex items-center space-x-3">
+                <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-pink-500 via-purple-500 to-cyan-400 flex items-center justify-center font-black text-xs text-white shadow-md shadow-pink-500/25">
+                  {loggedUser ? loggedUser.charAt(0).toUpperCase() : 'U'}
+                </div>
+                <div>
+                  <p className="text-xs font-black tracking-wide uppercase">
+                    {loggedUser || 'Estudiante UEES'}
+                  </p>
+                  <p className="text-[10px] text-emerald-400 font-semibold flex items-center gap-1.5">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse inline-block" />
+                    En línea • Pro
+                  </p>
+                </div>
+              </div>
+
+              {onTriggerCelebration && (
+                <button
+                  onClick={onTriggerCelebration}
+                  className="p-2 rounded-xl bg-pink-500/10 hover:bg-pink-500/20 text-pink-400 border border-pink-500/25 transition-all cursor-pointer"
+                  title="Celebrar logro académico"
+                >
+                  <Sparkles className="w-4 h-4" />
+                </button>
+              )}
+            </div>
+
             {/* Dashboard Selector */}
             <div>
               <label
@@ -311,6 +351,17 @@ export const DrawerDashboards: React.FC<DrawerDashboardsProps> = ({
                 <Download className="w-3.5 h-3.5" />
                 <span>Descargar Proyecto (.ZIP)</span>
               </a>
+            )}
+
+            {/* Cerrar Sesión Button */}
+            {onLogout && (
+              <button
+                onClick={onLogout}
+                className="w-full py-2.5 px-3 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/20 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-95"
+              >
+                <LogOut className="w-3.5 h-3.5" />
+                <span>Cerrar Sesión</span>
+              </button>
             )}
           </div>
         </div>

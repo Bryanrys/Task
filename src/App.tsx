@@ -34,6 +34,19 @@ import {
   Share2,
   CheckCircle2,
   ArrowRight,
+  Flame,
+  LogOut,
+  User,
+  Menu,
+  Clock,
+  MessageSquare,
+  Code2,
+  Atom,
+  Binary,
+  CalendarDays,
+  ExternalLink,
+  Globe,
+  X,
 } from 'lucide-react';
 
 import { Dashboard, WeekItem, SubjectItem, TaskItem } from './types';
@@ -45,6 +58,9 @@ import {
   esSemanaDeParciales,
 } from './constants/initialData';
 
+import { LoginScreen } from './components/LoginScreen';
+import { SidebarNav } from './components/SidebarNav';
+import { AnalyticsSection } from './components/AnalyticsSection';
 import { WelcomeModal } from './components/WelcomeModal';
 import { WizardModal } from './components/WizardModal';
 import { DrawerDashboards } from './components/DrawerDashboards';
@@ -117,6 +133,42 @@ export default function App() {
     const saved = localStorage.getItem(THEME_KEY);
     return saved !== null ? saved === 'dark' : true;
   });
+
+  // Authentication & Session state (Login Screen Pro UEES)
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => {
+    try {
+      return localStorage.getItem('uees_academic_auth_v1') === 'authenticated';
+    } catch {
+      return false;
+    }
+  });
+
+  const [loggedUser, setLoggedUser] = useState<string>(() => {
+    try {
+      return localStorage.getItem('uees_logged_user') || 'Admin';
+    } catch {
+      return 'Admin';
+    }
+  });
+
+  const handleLoginSuccess = (user: string) => {
+    setLoggedUser(user);
+    setIsAuthenticated(true);
+    setToastMessage(`¡Bienvenido al Dashboard Académico, ${user}! ✨`);
+  };
+
+  const handleLogout = () => {
+    try {
+      localStorage.removeItem('uees_academic_auth_v1');
+    } catch {}
+    setIsAuthenticated(false);
+    setShowDrawer(false);
+    setToastMessage('Sesión cerrada correctamente');
+  };
+
+  const handleTriggerCelebration = () => {
+    setToastMessage('✨ ¡Excelente trabajo manteniéndote al día con tus estudios! 🎉');
+  };
 
   // Segmented Loader (User's original HTML screen)
   const [showSegmentedLoader, setShowSegmentedLoader] = useState<boolean>(true);
@@ -194,6 +246,71 @@ export default function App() {
   const [showShareModal, setShowShareModal] = useState<boolean>(false);
   const [editingSubject, setEditingSubject] = useState<SubjectItem | null>(null);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
+
+  // View switcher (Dashboard Principal, Horario & Clases, Base de Datos Nube - Estilo Image 2)
+  const [currentView, setCurrentView] = useState<'dashboard' | 'schedule' | 'cloud'>('dashboard');
+  const [showMobileSidebar, setShowMobileSidebar] = useState<boolean>(false);
+
+  // New Task for Subject Modal
+  const [targetSubjectForNewTask, setTargetSubjectForNewTask] = useState<SubjectItem | null>(null);
+  const [newTaskTitle, setNewTaskTitle] = useState<string>('');
+  const [newTaskDesc, setNewTaskDesc] = useState<string>('');
+
+  const handleOpenNewTaskModal = (subject: SubjectItem) => {
+    setTargetSubjectForNewTask(subject);
+    setNewTaskTitle('');
+    setNewTaskDesc('');
+  };
+
+  const handleSaveNewTask = () => {
+    if (!targetSubjectForNewTask || !newTaskTitle.trim()) {
+      setToastMessage('Por favor ingresa un título para la actividad');
+      return;
+    }
+    const taskName = newTaskTitle.trim();
+    const desc = newTaskDesc.trim();
+
+    setDashboards((prev) =>
+      prev.map((d) => {
+        if (d.id !== currentDashboard.id) return d;
+        return {
+          ...d,
+          weeks: d.weeks.map((w) => {
+            if (!currentWeek || w.id !== currentWeek.id) return w;
+            const currentList = w.subjectTasks[targetSubjectForNewTask.id] || [];
+            const newTaskItem: TaskItem = {
+              id: `task-${Date.now()}`,
+              name: taskName,
+              completed: false,
+              note: desc || undefined,
+            };
+            return {
+              ...w,
+              subjectTasks: {
+                ...w.subjectTasks,
+                [targetSubjectForNewTask.id]: [...currentList, newTaskItem],
+              },
+            };
+          }),
+        };
+      })
+    );
+
+    setTargetSubjectForNewTask(null);
+    setToastMessage(`Tarea agregada exitosamente a ${targetSubjectForNewTask.name}`);
+  };
+
+  const scrollToSubject = (subjectId: string) => {
+    setCurrentView('dashboard');
+    setTimeout(() => {
+      const el = document.getElementById(`subject-${subjectId}`);
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        el.classList.add('ring-2', 'ring-pink-500');
+        setTimeout(() => el.classList.remove('ring-2', 'ring-pink-500'), 2000);
+      }
+    }, 120);
+  };
 
   const SHARE_URL_STORAGE_KEY = 'academic_custom_share_url';
   const DEFAULT_SHARE_URL = 'https://task-ecru-eight-84.vercel.app';
@@ -1163,12 +1280,37 @@ export default function App() {
     setToastMessage('Materia eliminada del dashboard.');
   };
 
+  if (!isAuthenticated) {
+    return (
+      <>
+        <LoginScreen onLoginSuccess={handleLoginSuccess} />
+        {toastMessage && (
+          <Toast message={toastMessage} onClose={() => setToastMessage(null)} />
+        )}
+      </>
+    );
+  }
+
   if (!currentDashboard || !currentWeek) {
     return <div className="p-8 text-center text-white">Cargando dashboard...</div>;
   }
 
-  // 6 Curated Cyber-Luxe Prismatic Themes with Vibrant Chromatic Accents
+  // 7 Curated Cyber-Luxe Prismatic Themes with Vibrant Chromatic Accents (Incluye UEES Cyber-Cosmic)
   const THEMES = [
+    {
+      name: 'uees-cyber-cosmic',
+      cardDark: 'card-theme-cosmic',
+      cardLight: 'border-pink-200 shadow-pink-500/10 hover:border-pink-300',
+      titleDark: 'bg-gradient-to-r from-pink-400 via-purple-300 to-cyan-300 bg-clip-text text-transparent drop-shadow-[0_2px_8px_rgba(236,72,153,0.35)]',
+      titleLight: 'text-pink-800 font-extrabold',
+      checkDark: 'bg-gradient-to-r from-pink-500 to-purple-600 border-pink-400 text-white shadow-[0_0_12px_rgba(236,72,153,0.5)]',
+      checkLight: 'bg-pink-600 border-pink-600 text-white shadow-xs',
+      badgeDark: 'bg-pink-500/15 border-pink-500/30 text-pink-300',
+      badgeLight: 'bg-pink-50 border-pink-200 text-pink-700',
+      accentDark: 'text-pink-400',
+      accentLight: 'text-pink-600',
+      icon: '🎓',
+    },
     {
       name: 'cyber-violet',
       cardDark: 'card-theme-violet',
@@ -1255,12 +1397,15 @@ export default function App() {
     },
   ];
 
+  const displayDateRange = formatOrResolveWeekDateRange(
+    currentWeek.weekNumber,
+    currentDashboard?.startDateISO,
+    currentWeek.dateRange
+  );
+  const semesterProgressPct = Math.min(100, Math.round((daysTranscurridos / (16 * 7)) * 100));
+
   return (
-    <div
-      className={`min-h-screen transition-colors duration-300 ${
-        isDark ? 'bg-black-canvas text-stone-100' : 'bg-light-canvas text-stone-900'
-      } flex flex-col font-sans select-none pb-28 relative overflow-x-hidden`}
-    >
+    <div className="min-h-screen flex flex-col md:flex-row relative bg-[#0b0f19] text-gray-100 font-sans select-none overflow-x-hidden">
       {/* Toast Alert */}
       <Toast message={toastMessage} onClose={() => setToastMessage(null)} />
 
@@ -1297,797 +1442,654 @@ export default function App() {
         )}
       </AnimatePresence>
 
-      {/* Main Container - Responsive on Mobile & Desktop */}
-      <motion.div
-        initial={{ opacity: 0, y: 15 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4, ease: 'easeOut' }}
-        className="w-full max-w-md md:max-w-4xl lg:max-w-5xl xl:max-w-6xl mx-auto px-4 md:px-8 pt-4 sm:pt-6 pb-36 flex-1 flex flex-col"
-      >
-        {/* Top Header Title with Holographic Prismatic Gradient */}
-        <motion.div
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.35, delay: 0.05 }}
-          className="text-center mb-3.5"
-        >
-          <h1
-            onClick={() => setShowSegmentedLoader(true)}
-            title="Toca para abrir la pantalla de bienvenida"
-            className="text-xl sm:text-2xl font-black tracking-widest uppercase cursor-pointer hover:scale-[1.02] transition-transform inline-block bg-gradient-to-r from-violet-300 via-pink-300 to-cyan-300 bg-clip-text text-transparent drop-shadow-[0_2px_12px_rgba(168,85,247,0.35)]"
-          >
-            ✦ DASHBOARD ACADÉMICO ✦
-          </h1>
-          <div className="flex justify-center mt-1">
-            <button
-              onClick={() => setShowDrawer(true)}
-              className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold transition-all cursor-pointer active:scale-95 border backdrop-blur-md ${
-                isDark
-                  ? 'bg-white/[0.06] border-white/15 text-yellow-300 hover:border-yellow-400/50 shadow-xs'
-                  : 'bg-white/80 border-stone-200 text-amber-700 hover:border-amber-400 shadow-2xs'
-              }`}
-            >
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-              <span>{currentDashboard.name}</span>
-              <ChevronRight className="w-3 h-3 opacity-70" />
-            </button>
-          </div>
-        </motion.div>
-
-        {/* Hidden JSON file input for backup restoration */}
-        <input
-          type="file"
-          ref={jsonInputRef}
-          onChange={handleImportJSON}
-          accept=".json"
-          className="hidden"
+      {/* Main Workspace Layout with Sidebar (Left) and Scrollable Dashboard (Right) - Image 2 Match */}
+      <div className="flex-1 flex flex-col md:flex-row min-w-0 w-full overflow-hidden">
+        {/* Desktop Sidebar (Left side, permanent sticky) */}
+        <SidebarNav
+          currentView={currentView}
+          onSwitchView={(view: 'dashboard' | 'schedule' | 'cloud') => {
+            setCurrentView(view);
+            if (view === 'schedule') {
+              setShowScheduleModal(false);
+            }
+          }}
+          subjects={currentDashboard.subjects}
+          totalWeeksCount={currentDashboard.weeks.length}
+          loggedUser={loggedUser}
+          onScrollToSubject={scrollToSubject}
+          onOpenWeeks={() => setShowDrawer(true)}
+          onOpenPomodoro={() => setShowPomodoroModal(true)}
+          onOpenCalculator={() => setShowGradesModal(true)}
+          onTriggerCelebration={handleTriggerCelebration}
+          onLogout={handleLogout}
         />
 
-        {/* Sliding Navigation Bar (Tabs & Gestos de Deslizamiento) */}
-        <motion.div
-          initial={{ opacity: 0, y: -6 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.3, delay: 0.08 }}
-          className="mb-4"
-        >
-          {/* Segmented Capsule Control */}
-          <div
-            className={`p-1.5 rounded-2xl border backdrop-blur-md flex items-center relative transition-all ${
-              isDark ? 'bg-black/50 border-white/10' : 'bg-stone-100/90 border-stone-200'
-            }`}
-          >
-            {/* Tab 0 Button: Tareas Pendientes */}
-            <button
-              onClick={() => handleSwitchTab(0)}
-              className={`relative z-10 flex-1 py-2 px-3 rounded-xl font-black text-xs transition-all flex items-center justify-center gap-2 cursor-pointer ${
-                activeTab === 0
-                  ? isDark
-                    ? 'text-white'
-                    : 'text-stone-900'
-                  : isDark
-                  ? 'text-stone-400 hover:text-stone-200'
-                  : 'text-stone-600 hover:text-stone-900'
-              }`}
-            >
-              <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-              <span>Actividades Pendientes</span>
-              {weekStats.pendingTasks > 0 && (
-                <span
-                  className={`px-1.5 py-0.5 rounded-full text-[10px] font-mono font-bold ${
-                    activeTab === 0
-                      ? 'bg-rose-500 text-white'
-                      : isDark
-                      ? 'bg-rose-500/30 text-rose-300'
-                      : 'bg-rose-100 text-rose-700'
-                  }`}
-                >
-                  {weekStats.pendingTasks}
-                </span>
-              )}
-            </button>
-
-            {/* Tab 1 Button: Horario, Enlaces & JSON */}
-            <button
-              onClick={() => handleSwitchTab(1)}
-              className={`relative z-10 flex-1 py-2 px-3 rounded-xl font-black text-xs transition-all flex items-center justify-center gap-2 cursor-pointer ${
-                activeTab === 1
-                  ? isDark
-                    ? 'text-white'
-                    : 'text-stone-900'
-                  : isDark
-                  ? 'text-stone-400 hover:text-stone-200'
-                  : 'text-stone-600 hover:text-stone-900'
-              }`}
-            >
-              <BookOpen className="w-4 h-4 text-cyan-400" />
-              <span>Horario, Enlaces & JSON</span>
-            </button>
-
-            {/* Animated Sliding Background Indicator */}
+        {/* Mobile Sidebar Overlay Drawer */}
+        <AnimatePresence>
+          {showMobileSidebar && (
             <motion.div
-              className={`absolute inset-y-1.5 rounded-xl pointer-events-none ${
-                isDark
-                  ? 'bg-gradient-to-r from-violet-600/40 via-cyan-600/30 to-emerald-600/40 border border-white/20 shadow-[0_0_15px_rgba(6,182,212,0.25)]'
-                  : 'bg-white shadow-sm border border-stone-200'
-              }`}
-              animate={{
-                left: activeTab === 0 ? '6px' : 'calc(50% + 2px)',
-                width: 'calc(50% - 8px)',
-              }}
-              transition={{ type: 'spring', stiffness: 400, damping: 32 }}
-            />
-          </div>
-
-          {/* Swipe Hint Indicator */}
-          <div className="flex items-center justify-between px-3 pt-1.5 text-[10px] font-mono">
-            <span className={activeTab === 0 ? 'text-emerald-400 font-bold' : 'text-stone-500'}>
-              {activeTab === 0 ? '● Tareas activas' : '○ Tareas'}
-            </span>
-            <span className={`text-[10px] flex items-center gap-1 ${isDark ? 'text-stone-400' : 'text-stone-500'}`}>
-              <span>⇄ Desliza con el dedo para cambiar</span>
-            </span>
-            <span className={activeTab === 1 ? 'text-cyan-400 font-bold' : 'text-stone-500'}>
-              {activeTab === 1 ? '● Recursos & JSON' : '○ Recursos'}
-            </span>
-          </div>
-        </motion.div>
-
-        {/* Touch Swipe Views Container */}
-        <div
-          onTouchStart={handleTouchStart}
-          onTouchEnd={handleTouchEnd}
-          className="w-full flex-1 touch-pan-y"
-        >
-          <AnimatePresence mode="wait" initial={false}>
-            {activeTab === 0 ? (
-              <motion.div
-                key="vista-tareas"
-                initial={{ opacity: 0, x: slideDirection === 'right' ? -40 : 40 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: slideDirection === 'right' ? 40 : -40 }}
-                transition={{ duration: 0.22, ease: 'easeOut' }}
-              >
-
-        {/* Unified Academic Dashboard Header (Fechas, Sincronización Nube, Clave oo y Respaldo) */}
-        <UnifiedDashboardHeader
-          isDark={isDark}
-          startDate={currentDashboard.startDate}
-          daysElapsed={daysTranscurridos}
-          cloudStatus={cloudStatus}
-          lastUpdated={currentDashboard.lastUpdated}
-          accessCode={currentDashboard.accessCode}
-          quickNote={currentDashboard.quickNote}
-          isSyncing={isSyncing}
-          onOpenStartDate={() => setShowStartDateModal(true)}
-          onOpenEditNote={() => setShowEditNotePrompt(true)}
-          onResetWeekTasks={handleResetCurrentWeekTasks}
-          onUploadCloud={() => setShowUploadConfirm(true)}
-          onDownloadCloud={() => setShowDownloadPrompt(true)}
-          onExportJSON={handleExportJSON}
-          onImportJSONClick={() => jsonInputRef.current?.click()}
-          onCopyCode={handleCopyLink}
-        />
-
-        {/* Bloque Tareas Widget (📌 ACTIVIDADES A CUMPLIR from user's HTML) */}
-        <BloqueTareasWidget
-          tareas={currentWeek.bloqueTareas || []}
-          isDark={isDark}
-          onToggle={handleToggleBloqueTarea}
-          onDelete={handleDeleteBloqueTarea}
-          onAdd={handleAddBloqueTarea}
-        />
-
-        {/* Week Pill / Selector with Parcial Badge if week 6, 12, etc. */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.35, delay: 0.2 }}
-          className="flex flex-col items-center justify-center mb-4"
-        >
-          <button
-            onClick={() => setShowDrawer(true)}
-            className={`inline-flex items-center gap-2 px-5 py-2 rounded-full border text-xs font-black transition-all cursor-pointer active:scale-95 ${
-              isParcialWeek
-                ? isDark
-                  ? 'border-pink-500/80 bg-pink-500/20 text-pink-300 shadow-[0_0_18px_rgba(244,63,94,0.35)] backdrop-blur-md'
-                  : 'border-pink-300 bg-pink-50/90 text-pink-700 shadow-xs backdrop-blur-md'
-                : currentWeek.status === 'EN PROCESO'
-                ? isDark
-                  ? 'border-violet-400/50 bg-violet-500/15 text-violet-200 shadow-[0_0_18px_rgba(168,85,247,0.25)] backdrop-blur-md'
-                  : 'border-violet-300 bg-violet-50/90 text-violet-800 shadow-xs backdrop-blur-md'
-                : isDark
-                ? 'liquid-pill-dark text-stone-200 shadow-[0_4px_15px_rgba(0,0,0,0.5)]'
-                : 'liquid-pill-light text-stone-800'
-            }`}
-          >
-            <span className="tracking-wide">Semana {currentWeek.weekNumber}</span>
-            {isParcialWeek && (
-              <span
-                className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
-                  isDark ? 'text-pink-300 bg-pink-500/30' : 'text-pink-700 bg-pink-100'
-                }`}
-              >
-                🎯 PARCIALES
-              </span>
-            )}
-            {(() => {
-              const displayDateRange = formatOrResolveWeekDateRange(
-                currentWeek.weekNumber,
-                currentDashboard?.startDateISO,
-                currentWeek.dateRange
-              );
-              return displayDateRange ? (
-                <span
-                  className={`text-[11px] font-medium flex items-center gap-1 font-mono ${
-                    isDark ? 'text-stone-400' : 'text-stone-500'
-                  }`}
-                >
-                  <Calendar className="w-3 h-3" />
-                  {displayDateRange}
-                </span>
-              ) : null;
-            })()}
-          </button>
-        </motion.div>
-
-        {/* Toggle to view hidden completed subjects */}
-        {weekStats.completedSubjects > 0 && !allWeekDone && (
-          <div className="flex justify-end mb-2 px-1">
-            <button
-              onClick={() => setShowCompletedSubjects(!showCompletedSubjects)}
-              className={`text-[11px] font-bold flex items-center gap-1.5 transition-colors cursor-pointer ${
-                isDark ? 'text-stone-400 hover:text-yellow-400' : 'text-stone-600 hover:text-amber-700'
-              }`}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm md:hidden flex"
+              onClick={() => setShowMobileSidebar(false)}
             >
-              {showCompletedSubjects ? (
-                <>
-                  <EyeOff className="w-3.5 h-3.5" />
-                  <span>Ocultar materias listas ({weekStats.completedSubjects})</span>
-                </>
-              ) : (
-                <>
-                  <Eye className="w-3.5 h-3.5 text-yellow-500" />
-                  <span>Ver materias listas ({weekStats.completedSubjects})</span>
-                </>
-              )}
-            </button>
-          </div>
-        )}
+              <motion.div
+                initial={{ x: -280 }}
+                animate={{ x: 0 }}
+                exit={{ x: -280 }}
+                transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+                className="w-72 h-full bg-[#0b0f19] border-r border-white/10 flex flex-col"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <div className="flex justify-end p-3">
+                  <button
+                    onClick={() => setShowMobileSidebar(false)}
+                    className="p-1.5 rounded-lg text-gray-400 hover:text-white cursor-pointer"
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
+                </div>
+                <div className="flex-1 overflow-y-auto">
+                  <SidebarNav
+                    currentView={currentView}
+                    onSwitchView={(view: 'dashboard' | 'schedule' | 'cloud') => {
+                      setCurrentView(view);
+                      setShowMobileSidebar(false);
+                    }}
+                    subjects={currentDashboard.subjects}
+                    totalWeeksCount={currentDashboard.weeks.length}
+                    loggedUser={loggedUser}
+                    onScrollToSubject={(id: string) => {
+                      scrollToSubject(id);
+                      setShowMobileSidebar(false);
+                    }}
+                    onOpenWeeks={() => {
+                      setShowDrawer(true);
+                      setShowMobileSidebar(false);
+                    }}
+                    onOpenPomodoro={() => {
+                      setShowPomodoroModal(true);
+                      setShowMobileSidebar(false);
+                    }}
+                    onOpenCalculator={() => {
+                      setShowGradesModal(true);
+                      setShowMobileSidebar(false);
+                    }}
+                    onTriggerCelebration={handleTriggerCelebration}
+                    onLogout={handleLogout}
+                    isMobileDrawer={true}
+                    onCloseMobileDrawer={() => setShowMobileSidebar(false)}
+                  />
+                </div>
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
-        {/* Victory Screen from user HTML when all tasks of week are finished */}
-        {allWeekDone && (
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className={`mb-6 p-6 rounded-2xl border text-center shadow-xl ${
-              isDark
-                ? 'bg-[#141210] border-emerald-500/40 shadow-emerald-500/10'
-                : 'bg-white border-emerald-300 shadow-emerald-500/10'
-            }`}
-          >
-            <div className="text-4xl mb-2">🗿</div>
-            <h2 className="text-lg font-black text-emerald-500 uppercase mb-1">
-              ¡Terminastes la jornada bro!
-            </h2>
-            <p className={`text-xs mb-4 leading-relaxed ${isDark ? 'text-stone-400' : 'text-stone-600'}`}>
-              Terminastes las actividades y jornadas que tenías bro!! ✨ .
-            </p>
-            <div className="flex gap-2 justify-center">
+        {/* Main Content Area (Right side, scrollable) */}
+        <main className="flex-1 flex flex-col min-w-0 overflow-y-auto min-h-screen px-4 md:px-8 py-5">
+          {/* Top Header Bar matching Image 2 */}
+          <header className="flex flex-wrap items-center justify-between gap-3 mb-6 pb-4 border-b border-white/5">
+            {/* Left: Mobile Menu + Dashboard Title + Week Badge */}
+            <div className="flex items-center gap-3">
               <button
-                onClick={handleAddWeek}
-                className="px-4 py-2 bg-yellow-400 hover:bg-yellow-300 text-black font-extrabold text-xs rounded-xl transition-all cursor-pointer"
+                onClick={() => setShowMobileSidebar(true)}
+                className="md:hidden p-2 rounded-xl bg-white/5 border border-white/10 text-gray-300 hover:text-white cursor-pointer"
+                title="Abrir menú de navegación"
               >
-                + Nueva Semana
+                <Menu className="w-5 h-5" />
               </button>
+
+              <div className="flex items-center gap-2">
+                <span className="w-2.5 h-2.5 rounded-full bg-pink-500 animate-pulse shadow-[0_0_8px_rgba(236,72,153,0.8)]" />
+                <h1
+                  onClick={() => setShowSegmentedLoader(true)}
+                  className="text-sm sm:text-base md:text-lg font-black tracking-wider uppercase text-white hover:text-pink-300 transition-colors cursor-pointer"
+                  title="Toca para ver pantalla de bienvenida"
+                >
+                  + DASHBOARD ACADÉMICO +
+                </h1>
+              </div>
+
+              {/* Week Pill */}
+              {(() => {
+                const displayDateRange = formatOrResolveWeekDateRange(
+                  currentWeek.weekNumber,
+                  currentDashboard?.startDateISO,
+                  currentWeek.dateRange
+                );
+                return (
+                  <button
+                    onClick={() => setShowDrawer(true)}
+                    className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-[#1a233a] border border-white/10 text-pink-300 hover:border-pink-500/40 transition-all cursor-pointer"
+                  >
+                    <span>Semana {currentWeek.weekNumber}</span>
+                    {displayDateRange && (
+                      <span className="opacity-75 font-mono">({displayDateRange})</span>
+                    )}
+                  </button>
+                );
+              })()}
+            </div>
+
+            {/* Right: Pending Activities Badge + Weeks Selector Button */}
+            <div className="flex items-center gap-2.5">
               <button
-                onClick={handleResetCurrentWeekTasks}
-                className={`px-4 py-2 font-bold text-xs rounded-xl transition-all cursor-pointer ${
-                  isDark
-                    ? 'bg-[#22201d] hover:bg-[#2c2925] text-stone-300'
-                    : 'bg-stone-100 hover:bg-stone-200 text-stone-800'
-                }`}
+                onClick={() => setShowNotificationModal(true)}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-pink-500/15 border border-pink-500/30 text-pink-300 hover:bg-pink-500/25 transition-all cursor-pointer"
+                title="Ver recordatorios de materias pendientes"
               >
-                Reiniciar Tareas
+                <Bell className="w-3.5 h-3.5 text-pink-400" />
+                <span>{weekStats.pendingTasks} Pendientes</span>
+              </button>
+
+              <button
+                onClick={() => setShowDrawer(true)}
+                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold bg-gradient-to-r from-pink-500 to-purple-600 text-white shadow-[0_0_12px_rgba(236,72,153,0.35)] hover:opacity-95 transition-all cursor-pointer active:scale-95"
+                title="Seleccionar semana o dashboard"
+              >
+                <CalendarDays className="w-3.5 h-3.5" />
+                <span>Semanas</span>
               </button>
             </div>
-          </motion.div>
-        )}
+          </header>
 
-        {/* Subject Cards List: AUTOMATICALLY DISAPPEARS WHEN ALL CHECKS ARE FILLED (Responsive Grid on Desktop) */}
-        <div className="space-y-3 mb-6 md:space-y-0 md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-4 items-start">
-          <AnimatePresence mode="popLayout">
-            {visibleSubjects.map((subject, index) => {
-              const tasks = currentWeek.subjectTasks[subject.id] || [];
-              const isSubjectAllDone = tasks.length > 0 && tasks.every((t) => t.completed);
-              const theme = THEMES[index % THEMES.length];
+          {/* Hidden JSON file input for backup restoration */}
+          <input
+            type="file"
+            ref={jsonInputRef}
+            onChange={handleImportJSON}
+            accept=".json"
+            className="hidden"
+          />
 
-              return (
-                <motion.div
-                  key={subject.id}
-                  layout
-                  initial={{ opacity: 0, y: 15 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{
-                    opacity: 0,
-                    scale: 0.92,
-                    y: 15,
-                    transition: { duration: 0.3 },
-                  }}
-                  transition={{
-                    duration: 0.35,
-                    delay: index * 0.04,
-                    ease: 'easeOut',
-                  }}
-                  className={`rounded-3xl p-4.5 transition-all liquid-gloss ${
-                    isDark ? 'liquid-card-dark' : 'liquid-card-light'
-                  } ${
-                    isParcialWeek
-                      ? isDark
-                        ? 'border-purple-500/60 shadow-[0_0_24px_rgba(168,85,247,0.25)]'
-                        : 'border-purple-300 shadow-purple-300/20'
-                      : isSubjectAllDone
-                      ? isDark
-                        ? 'border-emerald-500/60 shadow-[0_0_24px_rgba(16,185,129,0.25)]'
-                        : 'border-emerald-300 shadow-emerald-500/10'
-                      : isDark
-                      ? theme.cardDark
-                      : theme.cardLight
-                  }`}
-                >
-                  {/* Subject Header with Aesthetic Chromatic Gradient */}
-                  <div className="flex items-center justify-between mb-3.5">
-                    <div className="flex items-center gap-2 min-w-0">
-                      <span className="text-base select-none shrink-0">{theme.icon}</span>
-                      <h3
-                        className={`font-black text-sm tracking-wide uppercase truncate ${
-                          isParcialWeek
-                            ? isDark
-                              ? 'text-purple-300'
-                              : 'text-purple-700'
-                            : isSubjectAllDone
-                            ? isDark
-                              ? 'text-emerald-300'
-                              : 'text-emerald-700'
-                            : isDark
-                            ? theme.titleDark
-                            : theme.titleLight
-                        }`}
-                      >
-                        {subject.name}
-                      </h3>
+          {/* Conditional View Rendering */}
+          {currentView === 'dashboard' && (
+            <div>
+              {/* 4 Métricas Principales (Grid 4 columnas Estilo Imagen 2) */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+                {/* 1. Actividades Pendientes */}
+                <div className="p-4 rounded-2xl bg-[#131b2e] border border-white/5 flex flex-col justify-between relative overflow-hidden">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-xs font-medium text-gray-400">Actividades Pendientes</span>
+                    <span
+                      className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
+                        weekStats.pendingTasks > 0
+                          ? 'bg-pink-500/20 text-pink-300 border border-pink-500/30'
+                          : 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
+                      }`}
+                    >
+                      {weekStats.pendingTasks > 0 ? 'Urgente' : 'Al Día'}
+                    </span>
+                  </div>
+                  <div className="text-3xl font-black text-white my-1">{weekStats.pendingTasks}</div>
+                  <div className="flex items-center justify-between text-xs text-gray-400 mt-2">
+                    <span>Tareas activas</span>
+                    <button
+                      onClick={() => setShowDrawer(true)}
+                      className="text-pink-400 hover:text-pink-300 font-semibold flex items-center gap-1 cursor-pointer"
+                    >
+                      Ver todas →
+                    </button>
+                  </div>
+                </div>
 
-                      {/* Edit Subject Pencil Button */}
+                {/* 2. Inicio de Ciclo */}
+                <div className="p-4 rounded-2xl bg-[#131b2e] border border-white/5 flex flex-col justify-between">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-xs font-medium text-gray-400">Inicio de Ciclo</span>
+                    <button
+                      onClick={() => setShowStartDateModal(true)}
+                      className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-cyan-500/15 text-cyan-300 border border-cyan-500/30 hover:bg-cyan-500/25 transition-colors cursor-pointer"
+                      title="Cambiar fecha de inicio"
+                    >
+                      {currentDashboard.startDate || '06 Jul 2026'}
+                    </button>
+                  </div>
+                  <div className="text-3xl font-black text-white my-1 flex items-baseline gap-1.5">
+                    <span>{daysTranscurridos}</span>
+                    <span className="text-sm font-semibold text-cyan-400">Días</span>
+                  </div>
+                  <div className="flex items-center justify-between text-xs text-gray-400 mt-2">
+                    <span>Progreso del ciclo</span>
+                    <span className="text-cyan-400 font-semibold font-mono">
+                      {Math.min(100, Math.round((daysTranscurridos / (16 * 7)) * 100))}% Completado
+                    </span>
+                  </div>
+                </div>
+
+                {/* 3. Material de Estudio */}
+                <div className="p-4 rounded-2xl bg-[#131b2e] border border-white/5 flex flex-col justify-between">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-xs font-medium text-gray-400">Material de Estudio</span>
+                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-purple-500/20 text-purple-300 border border-purple-500/30">
+                      Listas
+                    </span>
+                  </div>
+                  <div className="text-3xl font-black text-white my-1">
+                    {weekStats.completedSubjects} / {currentDashboard.subjects.length}
+                  </div>
+                  <div className="flex items-center justify-between text-xs text-gray-400 mt-2">
+                    <span>Actualizado hoy</span>
+                    <button
+                      onClick={() => setShowUploadConfirm(true)}
+                      className="text-purple-400 hover:text-purple-300 font-semibold flex items-center gap-1 cursor-pointer"
+                      title="Sincronizar a la nube"
+                    >
+                      <Cloud className="w-3 h-3" /> Sinc
+                    </button>
+                  </div>
+                </div>
+
+                {/* 4. Racha de Estudio */}
+                <div className="p-4 rounded-2xl bg-[#131b2e] border border-white/5 flex flex-col justify-between">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-xs font-medium text-gray-400">Racha de Estudio</span>
+                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 flex items-center gap-1">
+                      <Check className="w-2.5 h-2.5" /> Activo
+                    </span>
+                  </div>
+                  <div className="text-3xl font-black text-white my-1 flex items-baseline gap-1.5">
+                    <span>{streakWeeks > 0 ? streakWeeks * 7 : 13}</span>
+                    <span className="text-sm font-semibold text-emerald-400">Días</span>
+                  </div>
+                  <div className="flex items-center justify-between text-xs text-gray-400 mt-2">
+                    <span>Récord personal</span>
+                    <span className="text-emerald-400 font-semibold font-mono">21 días</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Quick Actions Bar (Imagen 2) */}
+              <div className="p-3 rounded-2xl bg-[#131b2e]/80 border border-white/5 flex flex-wrap items-center justify-between gap-3 mb-6">
+                <div className="flex flex-wrap items-center gap-2">
+                  <button
+                    onClick={() => {
+                      const firstSub = currentDashboard.subjects[0];
+                      if (firstSub) handleOpenNewTaskModal(firstSub);
+                    }}
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-white/5 border border-white/10 text-gray-300 hover:text-white hover:bg-white/10 transition-all cursor-pointer"
+                  >
+                    <Plus className="w-3.5 h-3.5 text-pink-400" />
+                    <span>+ Agregar nota rápida...</span>
+                  </button>
+
+                  <button
+                    onClick={handleExportJSON}
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-white/5 border border-white/10 text-cyan-300 hover:text-cyan-200 hover:bg-white/10 transition-all cursor-pointer"
+                    title="Descargar respaldo local en JSON"
+                  >
+                    <FileDown className="w-3.5 h-3.5 text-cyan-400" />
+                    <span>JSON Respaldo</span>
+                  </button>
+
+                  <button
+                    onClick={() => jsonInputRef.current?.click()}
+                    className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl text-xs font-bold text-gray-400 hover:text-gray-200 hover:bg-white/5 transition-all cursor-pointer"
+                    title="Cargar archivo JSON"
+                  >
+                    <FileUp className="w-3.5 h-3.5" />
+                    <span>Importar</span>
+                  </button>
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => setShowUploadConfirm(true)}
+                    className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold bg-pink-500/20 text-pink-300 border border-pink-500/30 hover:bg-pink-500/30 transition-all cursor-pointer shadow-xs"
+                  >
+                    <Upload className="w-3.5 h-3.5" />
+                    <span>Subir Nube</span>
+                  </button>
+
+                  <button
+                    onClick={() => setShowDownloadPrompt(true)}
+                    className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 hover:bg-cyan-500/30 transition-all cursor-pointer shadow-xs"
+                  >
+                    <Download className="w-3.5 h-3.5" />
+                    <span>Descargar Nube</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* Grid de Materias (3 columnas idéntico a Imagen 2) */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 mb-8 items-start">
+                {currentDashboard.subjects.map((subject, sIdx) => {
+                  const tasks = currentWeek.subjectTasks[subject.id] || [];
+                  const isSubjectAllDone = tasks.length > 0 && tasks.every((t) => t.completed);
+
+                  const borderTopColor =
+                    sIdx % 3 === 0
+                      ? 'border-t-pink-500'
+                      : sIdx % 3 === 1
+                      ? 'border-t-purple-500'
+                      : 'border-t-cyan-400';
+
+                  const subjectIcon =
+                    sIdx % 3 === 0 ? '</>' : sIdx % 3 === 1 ? '√x' : '⚙';
+
+                  const statusLabel = isSubjectAllDone
+                    ? 'Lista ✓'
+                    : sIdx % 3 === 0
+                    ? 'Activa'
+                    : sIdx % 3 === 1
+                    ? 'Pendiente'
+                    : 'En Curso';
+
+                  const badgeColor = isSubjectAllDone
+                    ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30'
+                    : sIdx % 3 === 0
+                    ? 'bg-pink-500/20 text-pink-300 border-pink-500/30'
+                    : sIdx % 3 === 1
+                    ? 'bg-purple-500/20 text-purple-300 border-purple-500/30'
+                    : 'bg-cyan-500/20 text-cyan-300 border-cyan-500/30';
+
+                  return (
+                    <div
+                      key={subject.id}
+                      id={`subject-${subject.id}`}
+                      className={`rounded-2xl bg-[#131b2e] border border-white/5 border-t-2 ${borderTopColor} p-4.5 flex flex-col justify-between transition-all hover:bg-[#162038] shadow-md`}
+                    >
+                      {/* Header de Materia */}
+                      <div className="flex items-center justify-between mb-4">
+                        <div className="flex items-center gap-2 min-w-0">
+                          <span className="font-mono text-xs font-black text-pink-400 select-none">
+                            {subjectIcon}
+                          </span>
+                          <h3 className="font-black text-sm tracking-wide uppercase text-white truncate">
+                            {subject.name}
+                          </h3>
+                          <button
+                            onClick={() => setEditingSubject(subject)}
+                            title={`Editar "${subject.name}"`}
+                            className="p-1 rounded text-gray-500 hover:text-white transition-colors cursor-pointer"
+                          >
+                            <Edit2 className="w-3 h-3" />
+                          </button>
+                        </div>
+
+                        <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${badgeColor}`}>
+                          {statusLabel}
+                        </span>
+                      </div>
+
+                      {/* Lista de Tareas de la Materia */}
+                      <div className="space-y-2.5 mb-4">
+                        {tasks.map((task) => {
+                          const deadlineInfo = getDeadlineStatus(task.deadlineISO);
+                          const isForo = task.name.toLowerCase().includes('foro');
+                          const isLab = task.name.toLowerCase().includes('lab');
+
+                          return (
+                            <div
+                              key={task.id}
+                              className="flex items-center justify-between p-3 rounded-xl bg-[#1a233a]/60 hover:bg-[#1a233a] border border-white/5 transition-all group"
+                            >
+                              <div
+                                onClick={() => handleToggleTask(subject.id, task.id)}
+                                className="flex items-center gap-3 flex-1 cursor-pointer min-w-0"
+                              >
+                                <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center shrink-0">
+                                  {isForo ? (
+                                    <MessageSquare className="w-4 h-4 text-pink-400" />
+                                  ) : isLab ? (
+                                    <Atom className="w-4 h-4 text-cyan-400" />
+                                  ) : (
+                                    <FileText className="w-4 h-4 text-purple-400" />
+                                  )}
+                                </div>
+
+                                <div className="flex flex-col min-w-0">
+                                  <span
+                                    className={`text-xs font-semibold text-gray-200 truncate ${
+                                      task.completed ? 'line-through opacity-60 text-gray-400' : ''
+                                    }`}
+                                  >
+                                    {task.name}
+                                  </span>
+                                  <span className="text-[10px] text-gray-400 truncate">
+                                    {task.note || (isForo ? 'Módulo semanal' : isLab ? 'Práctica técnica' : 'Evaluación')}
+                                  </span>
+                                  {deadlineInfo && (
+                                    <span className="text-[9px] font-mono text-amber-300 mt-0.5">
+                                      {deadlineInfo.text}
+                                    </span>
+                                  )}
+                                </div>
+                              </div>
+
+                              <div className="flex items-center gap-1.5 shrink-0 ml-2">
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    setActiveNoteTarget({
+                                      subjectId: subject.id,
+                                      taskId: task.id,
+                                      taskName: `${subject.name} - ${task.name}`,
+                                      note: task.note || '',
+                                      deadlineISO: task.deadlineISO || '',
+                                    });
+                                  }}
+                                  className="p-1 rounded text-gray-500 hover:text-yellow-300 opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer"
+                                  title="Editar nota o fecha límite"
+                                >
+                                  <Edit3 className="w-3.5 h-3.5" />
+                                </button>
+
+                                <button
+                                  onClick={() => handleToggleTask(subject.id, task.id)}
+                                  className={`w-6 h-6 rounded-full flex items-center justify-center transition-all cursor-pointer ${
+                                    task.completed
+                                      ? 'bg-emerald-500 text-white shadow-[0_0_8px_rgba(16,185,129,0.5)]'
+                                      : 'border-2 border-white/20 text-transparent hover:border-yellow-400'
+                                  }`}
+                                  title={task.completed ? 'Marcar como pendiente' : 'Marcar como entregado'}
+                                >
+                                  {task.completed && <Check className="w-3.5 h-3.5 stroke-[3]" />}
+                                </button>
+                              </div>
+                            </div>
+                          );
+                        })}
+
+                        {tasks.length === 0 && (
+                          <div className="text-center py-4 text-xs text-gray-500 italic">
+                            Sin tareas en esta semana.
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Botón inferior + Agregar Tarea [Nombre Materia] */}
                       <button
-                        onClick={() => setEditingSubject(subject)}
-                        title={`Editar o renombrar "${subject.name}"`}
-                        className={`p-1 rounded-md transition-colors cursor-pointer text-xs shrink-0 ${
-                          isDark
-                            ? 'text-stone-500 hover:text-yellow-400 hover:bg-stone-800/60'
-                            : 'text-stone-400 hover:text-amber-600 hover:bg-stone-100'
-                        }`}
+                        onClick={() => handleOpenNewTaskModal(subject)}
+                        className="w-full py-2 px-3 rounded-xl bg-white/[0.03] hover:bg-white/[0.08] border border-dashed border-white/10 hover:border-pink-500/40 text-xs font-semibold text-gray-300 hover:text-pink-300 transition-all flex items-center justify-center gap-1.5 cursor-pointer"
                       >
-                        <Edit2 className="w-3 h-3" />
+                        <Plus className="w-3.5 h-3.5" />
+                        <span>+ Agregar Tarea {subject.name}</span>
                       </button>
                     </div>
+                  );
+                })}
+              </div>
 
-                    {isSubjectAllDone && (
-                      <span
-                        className={`text-[10px] font-black px-2.5 py-0.5 rounded-full border font-mono shrink-0 ${
-                          isDark
-                            ? 'text-emerald-300 bg-emerald-500/20 border-emerald-500/40 shadow-[0_0_10px_rgba(16,185,129,0.3)]'
-                            : 'text-emerald-700 bg-emerald-100 border-emerald-300'
-                        }`}
-                      >
-                        LISTA ✓
-                      </span>
-                    )}
-                  </div>
-
-                  {/* Tasks List */}
-                  <div className="space-y-2.5">
-                    {tasks.map((task) => {
-                      const deadlineInfo = getDeadlineStatus(task.deadlineISO);
-                      return (
-                        <div
-                          key={task.id}
-                        className={`flex items-center justify-between p-2.5 rounded-2xl transition-all ${
-                          task.completed
-                            ? isDark
-                              ? 'bg-black/30 text-stone-500 border border-transparent'
-                              : 'bg-black/5 text-stone-400 border border-transparent'
-                            : isDark
-                            ? 'bg-white/[0.04] border border-white/[0.09] text-stone-200 hover:bg-white/[0.07] shadow-[inset_0_1px_1px_rgba(255,255,255,0.14)]'
-                            : 'bg-white/80 border border-black/5 text-stone-800 hover:bg-white shadow-2xs'
-                        }`}
-                      >
-                        {/* Clickable task checkbox + name */}
-                        <div
-                          onClick={() => handleToggleTask(subject.id, task.id)}
-                          className="flex items-center gap-3 flex-1 cursor-pointer min-w-0"
-                        >
-                          <motion.div
-                            whileTap={{ scale: 0.85 }}
-                            className={`w-5 h-5 rounded-lg border flex items-center justify-center transition-all shrink-0 ${
-                              task.completed
-                                ? isParcialWeek
-                                  ? 'bg-pink-500 border-pink-400 text-white shadow-[0_0_10px_rgba(244,63,94,0.5)]'
-                                  : isDark
-                                  ? `${theme.checkDark}`
-                                  : `${theme.checkLight}`
-                                : isDark
-                                ? 'border-white/25 bg-white/[0.04] hover:border-white/45'
-                                : 'border-stone-300 bg-white hover:border-stone-400'
-                            }`}
-                          >
-                            {task.completed && (
-                              <motion.div
-                                initial={{ scale: 0, rotate: -45 }}
-                                animate={{ scale: 1, rotate: 0 }}
-                                transition={{ type: 'spring', stiffness: 500, damping: 20 }}
-                              >
-                                <Check className="w-3.5 h-3.5 stroke-[3]" />
-                              </motion.div>
-                            )}
-                          </motion.div>
-
-                          <div className="flex flex-col">
-                            <div className="flex items-center gap-1.5 flex-wrap">
-                              <span
-                                className={`text-xs font-semibold ${
-                                  task.completed ? 'line-through opacity-70' : ''
-                                }`}
-                              >
-                                {task.name}
-                              </span>
-
-                              {/* Deadline Countdown Pill */}
-                              {deadlineInfo && (
-                                <span
-                                  className={`inline-flex items-center gap-1 text-[9px] font-bold px-1.5 py-0.5 rounded-md font-mono ${
-                                    task.completed
-                                      ? isDark
-                                        ? 'bg-stone-800 text-stone-500 line-through'
-                                        : 'bg-stone-200 text-stone-500 line-through'
-                                      : deadlineInfo.isPast
-                                      ? 'bg-rose-500/20 text-rose-400 border border-rose-500/40 animate-pulse'
-                                      : deadlineInfo.isUrgent
-                                      ? 'bg-amber-500/20 text-amber-300 border border-amber-500/40'
-                                      : isDark
-                                      ? 'bg-stone-800/80 text-stone-300 border border-stone-700/60'
-                                      : 'bg-stone-100 text-stone-700 border border-stone-300'
-                                  }`}
-                                >
-                                  {deadlineInfo.text}
-                                </span>
-                              )}
-                            </div>
-
-                            {task.note && (
-                              <span
-                                className={`text-[10px] font-medium italic truncate max-w-[200px] ${
-                                  isDark ? 'text-yellow-400/90' : 'text-amber-700'
-                                }`}
-                              >
-                                📝 {task.note}
-                              </span>
-                            )}
-                          </div>
-                        </div>
-
-                        {/* Note & Deadline Button */}
-                        <div className="flex items-center gap-1.5">
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              setActiveNoteTarget({
-                                subjectId: subject.id,
-                                taskId: task.id,
-                                taskName: `${subject.name} - ${task.name}`,
-                                note: task.note || '',
-                                deadlineISO: task.deadlineISO || '',
-                              });
-                            }}
-                            title={
-                              task.deadlineISO
-                                ? `Límite: ${task.deadlineISO.replace('T', ' ')}. Toca para editar`
-                                : task.note
-                                ? `Nota: ${task.note}. Toca para editar`
-                                : 'Agregar nota o fecha límite'
-                            }
-                            className={`p-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
-                              task.note || task.deadlineISO
-                                ? isDark
-                                  ? 'bg-yellow-400/20 text-yellow-300 border border-yellow-400/40'
-                                  : 'bg-amber-100 text-amber-800 border border-amber-300'
-                                : isDark
-                                ? 'text-stone-500 hover:text-stone-300 hover:bg-stone-800/50'
-                                : 'text-stone-400 hover:text-stone-700 hover:bg-stone-100'
-                            }`}
-                          >
-                            <FileText className="w-3.5 h-3.5" />
-                          </button>
-
-                          <div className={`text-xs px-1 ${isDark ? 'text-stone-500' : 'text-stone-400'}`}>
-                            {task.completed ? '✓' : '—'}
-                          </div>
-                        </div>
-                      </div>
-                    );
-                  })}
-
-                    {tasks.length === 0 && (
-                      <p className={`text-xs italic py-1 ${isDark ? 'text-stone-500' : 'text-stone-400'}`}>
-                        Sin tareas asignadas.
-                      </p>
-                    )}
-                  </div>
-                </motion.div>
-              );
-            })}
-          </AnimatePresence>
-
-          {visibleSubjects.length === 0 && !allWeekDone && (
-            <p className={`text-center text-xs py-4 italic ${isDark ? 'text-stone-500' : 'text-stone-400'}`}>
-              No hay materias pendientes para mostrar.
-            </p>
+              {/* Analytics Section (Curva de Rendimiento + Donut Completitud) */}
+              <AnalyticsSection
+                weeks={currentDashboard.weeks}
+                activeWeekNumber={currentWeek.weekNumber}
+                completedTasksCount={weekStats.completedTasks}
+                pendingTasksCount={weekStats.pendingTasks}
+                isDark={isDark}
+              />
+            </div>
           )}
-        </div>
 
-        {/* Statistics & Performance Section */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4, delay: 0.3 }}
-          className={`rounded-3xl p-5 mb-4 transition-all liquid-gloss ${
-            isDark
-              ? 'liquid-card-dark text-stone-100'
-              : 'liquid-card-light text-stone-900'
-          }`}
-        >
-          <div className="flex items-center gap-2 text-xs font-black uppercase tracking-wider mb-4 font-mono">
-            <span>📊</span>
-            <span className={isDark ? 'text-white' : 'text-stone-900'}>
-              ESTADÍSTICAS Y RENDIMIENTO
-            </span>
-          </div>
-
-          {/* 3 Metric Cards with Aesthetic Gradient Accents */}
-          <div className="grid grid-cols-3 gap-2.5 mb-5 text-center font-mono">
-            {/* Completitud */}
-            <div
-              className={`p-3 rounded-2xl border flex flex-col justify-between transition-all ${
-                isDark ? 'bg-white/[0.04] border-white/10 hover:border-violet-500/30 backdrop-blur-md shadow-xs' : 'bg-white/70 border-black/5 shadow-2xs backdrop-blur-md'
-              }`}
-            >
-              <span className={`text-[9px] font-bold tracking-wider uppercase ${isDark ? 'text-violet-300/80' : 'text-stone-500'}`}>
-                COMPLETITUD
-              </span>
-              <span className={`text-lg font-black my-1 ${isDark ? 'text-transparent bg-clip-text bg-gradient-to-r from-violet-300 via-fuchsia-300 to-pink-300 drop-shadow-[0_2px_8px_rgba(168,85,247,0.35)]' : 'text-violet-700'}`}>
-                {weekStats.completionRate}%
-              </span>
-              <div className={`w-full rounded-full h-1.5 overflow-hidden ${isDark ? 'bg-white/10' : 'bg-stone-200'}`}>
-                <div
-                  className={`h-full transition-all duration-300 ${isDark ? 'bg-gradient-to-r from-violet-500 to-fuchsia-500 shadow-[0_0_8px_rgba(217,70,239,0.5)]' : 'bg-gradient-to-r from-violet-600 to-fuchsia-600'}`}
-                  style={{ width: `${weekStats.completionRate}%` }}
-                />
-              </div>
+          {/* Schedule View */}
+          {currentView === 'schedule' && (
+            <div className="p-4 rounded-2xl bg-[#131b2e] border border-white/5">
+              <ToolsAndLinksView
+                isDark={isDark}
+                cloudStatus={cloudStatus}
+                accessCode={currentDashboard.accessCode}
+                startDate={currentDashboard.startDate}
+                daysElapsed={daysTranscurridos}
+                pendingTasksCount={weekStats.pendingTasks}
+                onBackToTasks={() => setCurrentView('dashboard')}
+                onExportJSON={handleExportJSON}
+                onImportJSONClick={() => jsonInputRef.current?.click()}
+                onOpenSchedule={() => setShowScheduleModal(true)}
+                onOpenLinks={() => setShowLinksModal(true)}
+                onOpenGrades={() => setShowGradesModal(true)}
+                onOpenPomodoro={() => setShowPomodoroModal(true)}
+                onOpenStartDate={() => setShowStartDateModal(true)}
+                onUploadCloud={() => setShowUploadConfirm(true)}
+                onDownloadCloud={() => setShowDownloadPrompt(true)}
+                onCopyLink={handleCopyLink}
+                onOpenShareModal={() => setShowShareModal(true)}
+              />
             </div>
+          )}
 
-            {/* Materias Listas */}
-            <div
-              className={`p-3 rounded-2xl border flex flex-col justify-between transition-all ${
-                isDark ? 'bg-white/[0.04] border-white/10 hover:border-cyan-500/30 backdrop-blur-md shadow-xs' : 'bg-white/70 border-black/5 shadow-2xs backdrop-blur-md'
-              }`}
-            >
-              <span className={`text-[9px] font-bold tracking-wider uppercase ${isDark ? 'text-cyan-300/80' : 'text-stone-500'}`}>
-                MATERIAS LISTAS
-              </span>
-              <span className={`text-lg font-black my-1 ${isDark ? 'text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-teal-300 to-emerald-300 drop-shadow-[0_2px_8px_rgba(6,182,212,0.35)]' : 'text-emerald-700'}`}>
-                {weekStats.completedSubjects} / {currentDashboard.subjects.length}
-              </span>
-              <div className={`w-full rounded-full h-1.5 overflow-hidden ${isDark ? 'bg-white/10' : 'bg-stone-200'}`}>
-                <div
-                  className={`h-full transition-all duration-300 ${isDark ? 'bg-gradient-to-r from-cyan-500 to-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]' : 'bg-gradient-to-r from-cyan-600 to-emerald-600'}`}
-                  style={{
-                    width: `${
-                      currentDashboard.subjects.length > 0
-                        ? (weekStats.completedSubjects / currentDashboard.subjects.length) * 100
-                        : 0
-                    }%`,
-                  }}
-                />
-              </div>
-            </div>
-
-            {/* Racha Semanas */}
-            <div
-              className={`p-3 rounded-2xl border flex flex-col justify-between transition-all ${
-                isDark ? 'bg-white/[0.04] border-white/10 hover:border-amber-500/30 backdrop-blur-md shadow-xs' : 'bg-white/70 border-black/5 shadow-2xs backdrop-blur-md'
-              }`}
-            >
-              <span className={`text-[9px] font-bold tracking-wider uppercase ${isDark ? 'text-amber-300/80' : 'text-stone-500'}`}>
-                RACHA SEMANAS
-              </span>
-              <div className="flex items-center justify-center gap-1.5 my-1">
-                <span className={`text-lg font-black ${isDark ? 'text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-yellow-200 to-orange-400 drop-shadow-[0_2px_8px_rgba(245,158,11,0.35)]' : 'text-amber-700'}`}>
-                  {streakWeeks}
+          {/* Cloud Database View */}
+          {currentView === 'cloud' && (
+            <div className="max-w-3xl mx-auto p-6 rounded-2xl bg-[#131b2e] border border-white/5 space-y-6">
+              <div className="flex items-center justify-between pb-4 border-b border-white/5">
+                <div>
+                  <h2 className="text-lg font-black text-white flex items-center gap-2">
+                    <Cloud className="w-5 h-5 text-cyan-400" />
+                    <span>Base de Datos Nube (Supabase)</span>
+                  </h2>
+                  <p className="text-xs text-gray-400 mt-1">
+                    Sincroniza tus materias, tareas y progresos en la nube.
+                  </p>
+                </div>
+                <span className="text-xs font-mono font-bold px-2.5 py-1 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                  {cloudStatus}
                 </span>
-                <span className="text-base animate-bounce">🔥</span>
               </div>
-              <span className={`text-[9px] font-bold ${isDark ? 'text-amber-400/80' : 'text-stone-400'}`}>Activo</span>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <button
+                  onClick={() => setShowUploadConfirm(true)}
+                  className="p-5 rounded-2xl bg-gradient-to-br from-pink-500/20 to-purple-600/20 border border-pink-500/30 hover:border-pink-500 text-left transition-all cursor-pointer group"
+                >
+                  <div className="w-10 h-10 rounded-xl bg-pink-500/20 flex items-center justify-center text-pink-300 mb-3 group-hover:scale-110 transition-transform">
+                    <Upload className="w-5 h-5" />
+                  </div>
+                  <h3 className="text-sm font-bold text-white mb-1">Subir a la Nube</h3>
+                  <p className="text-xs text-gray-400">
+                    Guarda el estado actual del dashboard en la base de datos central.
+                  </p>
+                </button>
+
+                <button
+                  onClick={() => setShowDownloadPrompt(true)}
+                  className="p-5 rounded-2xl bg-gradient-to-br from-cyan-500/20 to-blue-600/20 border border-cyan-500/30 hover:border-cyan-500 text-left transition-all cursor-pointer group"
+                >
+                  <div className="w-10 h-10 rounded-xl bg-cyan-500/20 flex items-center justify-center text-cyan-300 mb-3 group-hover:scale-110 transition-transform">
+                    <Download className="w-5 h-5" />
+                  </div>
+                  <h3 className="text-sm font-bold text-white mb-1">Descargar de la Nube</h3>
+                  <p className="text-xs text-gray-400">
+                    Descarga tus materias y tareas ingresando tu clave de acceso.
+                  </p>
+                </button>
+              </div>
+
+              <div className="p-4 rounded-xl bg-white/[0.02] border border-white/5 flex items-center justify-between">
+                <div>
+                  <span className="text-xs text-gray-400 block">Enlace público / compartir</span>
+                  <span className="text-xs font-mono text-cyan-300">
+                    {window.location.origin}
+                  </span>
+                </div>
+                <button
+                  onClick={handleCopyLink}
+                  className="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-white/5 border border-white/10 text-white hover:bg-white/10 transition-colors cursor-pointer"
+                >
+                  Copiar Enlace
+                </button>
+              </div>
             </div>
-          </div>
-
-          {/* Performance Chart Curve with animated draw */}
-          <PerformanceChart
-            weeks={currentDashboard.weeks}
-            activeWeekNumber={currentWeek.weekNumber}
-            isDark={isDark}
-          />
-        </motion.div>
-              </motion.div>
-            ) : (
-              <motion.div
-                key="vista-herramientas"
-                initial={{ opacity: 0, x: slideDirection === 'right' ? 40 : -40 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: slideDirection === 'right' ? -40 : 40 }}
-                transition={{ duration: 0.22, ease: 'easeOut' }}
-              >
-                <ToolsAndLinksView
-                  isDark={isDark}
-                  cloudStatus={cloudStatus}
-                  accessCode={currentDashboard.accessCode}
-                  startDate={currentDashboard.startDate}
-                  daysElapsed={daysTranscurridos}
-                  pendingTasksCount={weekStats.pendingTasks}
-                  onBackToTasks={() => handleSwitchTab(0)}
-                  onExportJSON={handleExportJSON}
-                  onImportJSONClick={() => jsonInputRef.current?.click()}
-                  onOpenSchedule={() => setShowScheduleModal(true)}
-                  onOpenLinks={() => setShowLinksModal(true)}
-                  onOpenGrades={() => setShowGradesModal(true)}
-                  onOpenPomodoro={() => setShowPomodoroModal(true)}
-                  onOpenStartDate={() => setShowStartDateModal(true)}
-                  onUploadCloud={() => setShowUploadConfirm(true)}
-                  onDownloadCloud={() => setShowDownloadPrompt(true)}
-                  onCopyLink={handleCopyLink}
-                  onOpenShareModal={() => setShowShareModal(true)}
-                />
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
-      </motion.div>
-
-      {/* Bottom Floating Bar with Aesthetic Capsule Liquid Glass */}
-      <div className="fixed bottom-4 left-1/2 -translate-x-1/2 z-40 w-full max-w-sm md:max-w-md px-4 pointer-events-none">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.3, delay: 0.4 }}
-          className={`flex items-center justify-around px-4 py-2 rounded-full transition-all liquid-gloss pointer-events-auto ${
-            isDark
-              ? 'liquid-glass-dark text-stone-100 shadow-[0_20px_45px_-10px_rgba(0,0,0,0.85)] border-white/20'
-              : 'liquid-glass-light text-stone-800 shadow-lg'
-          }`}
-        >
-          {/* Light/Dark Toggle */}
-          <button
-            onClick={() => setIsDark(!isDark)}
-            title="Cambiar tema claro / oscuro"
-            className={`p-2 rounded-full transition-all cursor-pointer active:scale-90 ${
-              isDark ? 'hover:bg-white/10 text-yellow-400' : 'hover:bg-stone-100 text-indigo-600'
-            }`}
-          >
-            {isDark ? (
-              <Sun className="w-5 h-5 hover:rotate-45 transition-transform" />
-            ) : (
-              <Moon className="w-5 h-5 hover:-rotate-12 transition-transform" />
-            )}
-          </button>
-
-          {/* Drawer Weeks/Dashboards */}
-          <button
-            onClick={() => setShowDrawer(true)}
-            title="Ver semanas y dashboards"
-            className={`px-3 py-1.5 rounded-full transition-all text-xs font-black flex items-center gap-1 cursor-pointer font-mono active:scale-95 ${
-              isDark
-                ? 'bg-violet-500/15 border border-violet-400/30 text-violet-300 hover:border-violet-400/60 shadow-[0_0_10px_rgba(168,85,247,0.2)]'
-                : 'bg-violet-50 border border-violet-200 text-violet-700'
-            }`}
-          >
-            <span>Sem. {currentWeek.weekNumber}</span>
-          </button>
-
-          {/* Quick Tab Switcher Button */}
-          <button
-            onClick={() => handleSwitchTab(activeTab === 0 ? 1 : 0)}
-            title={activeTab === 0 ? 'Deslizar a Horario, Enlaces y JSON' : 'Volver a Tareas Pendientes'}
-            className={`px-3 py-1.5 rounded-full transition-all text-xs font-black flex items-center gap-1.5 cursor-pointer font-mono active:scale-95 ${
-              activeTab === 0
-                ? isDark
-                  ? 'bg-cyan-500/15 border border-cyan-400/30 text-cyan-300 hover:border-cyan-400/60 shadow-[0_0_10px_rgba(6,182,212,0.2)]'
-                  : 'bg-cyan-50 border border-cyan-200 text-cyan-700'
-                : isDark
-                ? 'bg-amber-500/15 border border-amber-400/30 text-amber-300 hover:border-amber-400/60 shadow-[0_0_10px_rgba(245,158,11,0.2)]'
-                : 'bg-amber-50 border border-amber-200 text-amber-700'
-            }`}
-          >
-            {activeTab === 0 ? (
-              <>
-                <BookOpen className="w-3.5 h-3.5 text-cyan-400" />
-                <span className="hidden sm:inline">Recursos</span>
-                <span>→</span>
-              </>
-            ) : (
-              <>
-                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
-                <span>←</span>
-                <span className="hidden sm:inline">Tareas</span>
-              </>
-            )}
-          </button>
-
-          {/* Notification Reminders Modal */}
-          <button
-            onClick={() => setShowNotificationModal(true)}
-            title="Recordatorios automáticos de materias pendientes"
-            className={`p-2 rounded-full transition-all cursor-pointer relative active:scale-90 ${
-              isDark ? 'hover:bg-white/10 text-amber-300' : 'hover:bg-stone-100 text-amber-600'
-            }`}
-          >
-            <BellRing className="w-5 h-5 animate-pulse" />
-            {weekStats.pendingTasks > 0 && (
-              <span className="w-2.5 h-2.5 rounded-full bg-rose-500 absolute top-1.5 right-1.5 ring-2 ring-black animate-ping" />
-            )}
-          </button>
-
-          {/* Welcome / Config wizard button */}
-          <button
-            onClick={() => setShowWelcome(true)}
-            title="Abrir bienvenida ¡CRACK!"
-            className={`p-2 rounded-full transition-all cursor-pointer active:scale-90 ${
-              isDark ? 'hover:bg-white/10 text-yellow-400 hover:text-yellow-300' : 'hover:bg-stone-100 text-amber-600'
-            }`}
-          >
-            <Sparkles className="w-5 h-5 hover:scale-110 transition-transform" />
-          </button>
-
-          {/* Share Web Link Button (For sharing or opening in browser from APK) */}
-          <button
-            onClick={() => setShowShareModal(true)}
-            title="Copiar o compartir enlace de la web"
-            className={`p-2 rounded-full transition-all cursor-pointer active:scale-90 ${
-              isDark ? 'hover:bg-white/10 text-cyan-300 hover:text-cyan-200' : 'hover:bg-stone-100 text-cyan-600'
-            }`}
-          >
-            <Share2 className="w-5 h-5 hover:scale-110 transition-transform" />
-          </button>
-
-          {/* New Dashboard Wizard */}
-          <button
-            onClick={() => setShowWizard(true)}
-            title="Crear nuevo dashboard"
-            className={`p-2 rounded-full transition-all cursor-pointer active:scale-90 ${
-              isDark ? 'hover:bg-white/10 text-fuchsia-300 hover:text-fuchsia-200' : 'hover:bg-stone-100 text-fuchsia-600'
-            }`}
-          >
-            <Plus className="w-5 h-5" />
-          </button>
-
-          {/* Reset All */}
-          <button
-            onClick={() => setShowResetConfirm(true)}
-            title="Restablecer todo"
-            className={`p-2 rounded-xl transition-colors cursor-pointer ${
-              isDark ? 'text-stone-400 hover:text-rose-400 hover:bg-stone-800/40' : 'text-stone-500 hover:text-rose-600 hover:bg-stone-100'
-            }`}
-          >
-            <RotateCcw className="w-5 h-5" />
-          </button>
-        </motion.div>
+          )}
+        </main>
       </div>
+
+      {/* Modal para Agregar Tarea a Materia */}
+      <AnimatePresence>
+        {targetSubjectForNewTask && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-4"
+          >
+            <motion.div
+              initial={{ scale: 0.95, y: 15 }}
+              animate={{ scale: 1, y: 0 }}
+              exit={{ scale: 0.95, y: 15 }}
+              className="w-full max-w-md rounded-2xl bg-[#131b2e] border border-white/10 p-5 shadow-2xl"
+            >
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-base font-bold text-white flex items-center gap-2">
+                  <Plus className="w-4 h-4 text-pink-400" />
+                  <span>Nueva Tarea para {targetSubjectForNewTask.name}</span>
+                </h3>
+                <button
+                  onClick={() => setTargetSubjectForNewTask(null)}
+                  className="p-1 rounded-lg text-gray-400 hover:text-white cursor-pointer"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+
+              <div className="space-y-3 mb-5">
+                <div>
+                  <label className="text-xs font-semibold text-gray-300 block mb-1">
+                    Título de la Actividad *
+                  </label>
+                  <input
+                    type="text"
+                    value={newTaskTitle}
+                    onChange={(e) => setNewTaskTitle(e.target.value)}
+                    placeholder="Ej: Foro 15, Laboratorio 4, Tarea..."
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-black/40 border border-white/10 text-white text-xs focus:border-pink-500 focus:outline-none"
+                    autoFocus
+                  />
+                </div>
+
+                <div>
+                  <label className="text-xs font-semibold text-gray-300 block mb-1">
+                    Descripción / Nota (Opcional)
+                  </label>
+                  <input
+                    type="text"
+                    value={newTaskDesc}
+                    onChange={(e) => setNewTaskDesc(e.target.value)}
+                    placeholder="Ej: Módulo de Algoritmos, Entrega en aula..."
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-black/40 border border-white/10 text-white text-xs focus:border-purple-500 focus:outline-none"
+                  />
+                </div>
+              </div>
+
+              <div className="flex justify-end gap-2.5">
+                <button
+                  onClick={() => setTargetSubjectForNewTask(null)}
+                  className="px-4 py-2 rounded-xl text-xs font-semibold text-gray-400 hover:text-white hover:bg-white/5 cursor-pointer"
+                >
+                  Cancelar
+                </button>
+                <button
+                  onClick={handleSaveNewTask}
+                  className="px-4 py-2 rounded-xl text-xs font-bold bg-gradient-to-r from-pink-500 to-purple-600 text-white shadow-md hover:opacity-95 cursor-pointer"
+                >
+                  Guardar Tarea
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Start Date Picker Modal */}
       <StartDateModal
@@ -2141,6 +2143,7 @@ export default function App() {
         dashboards={dashboards}
         activeDashboard={currentDashboard}
         isDark={isDark}
+        loggedUser={loggedUser}
         onSelectDashboard={(id) => setActiveDashId(id)}
         onSelectWeek={handleSelectWeek}
         onNewDashboard={() => {
@@ -2150,6 +2153,8 @@ export default function App() {
         onAddWeek={handleAddWeek}
         onDeleteDashboard={handleDeleteDashboard}
         onDeleteWeek={handleDeleteWeek}
+        onTriggerCelebration={handleTriggerCelebration}
+        onLogout={handleLogout}
       />
 
       {/* Delete Dashboard Confirmation Modal */}

@@ -70,7 +70,6 @@ import { TaskNoteModal } from './components/TaskNoteModal';
 import { NotificationSettingsModal } from './components/NotificationSettingsModal';
 import { ParcialSplashModal } from './components/ParcialSplashModal';
 import { BloqueTareasWidget } from './components/BloqueTareasWidget';
-import { SegmentedLoader } from './components/SegmentedLoader';
 import { Toast } from './components/Toast';
 import { PerformanceChart } from './components/PerformanceChart';
 import { GradeCalculatorModal } from './components/GradeCalculatorModal';
@@ -170,8 +169,9 @@ export default function App() {
     setToastMessage('✨ ¡Excelente trabajo manteniéndote al día con tus estudios! 🎉');
   };
 
-  // Segmented Loader (User's original HTML screen)
-  const [showSegmentedLoader, setShowSegmentedLoader] = useState<boolean>(true);
+  // Modal de Nota Rápida del Dashboard
+  const [showQuickNoteModal, setShowQuickNoteModal] = useState<boolean>(false);
+  const [quickNoteDraft, setQuickNoteDraft] = useState<string>('');
   const [isSyncing, setIsSyncing] = useState<boolean>(false);
 
   // Dashboards state
@@ -1409,11 +1409,79 @@ export default function App() {
       {/* Toast Alert */}
       <Toast message={toastMessage} onClose={() => setToastMessage(null)} />
 
-      {/* Segmented Loader (User's original HTML screen) */}
-      <SegmentedLoader
-        isOpen={showSegmentedLoader}
-        onEnter={() => setShowSegmentedLoader(false)}
-      />
+      {/* Modal de Nota Rápida del Ciclo */}
+      <AnimatePresence>
+        {showQuickNoteModal && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-4 select-none"
+            onClick={() => setShowQuickNoteModal(false)}
+          >
+            <motion.div
+              initial={{ scale: 0.95, y: 15 }}
+              animate={{ scale: 1, y: 0 }}
+              exit={{ scale: 0.95, y: 15 }}
+              className="w-full max-w-md rounded-2xl bg-[#131b2e] border border-white/10 p-5 shadow-2xl space-y-4"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="flex items-center justify-between pb-3 border-b border-white/10">
+                <div className="flex items-center gap-2">
+                  <div className="w-8 h-8 rounded-lg bg-pink-500/20 text-pink-400 flex items-center justify-center">
+                    <Edit3 className="w-4 h-4" />
+                  </div>
+                  <h3 className="text-sm font-black text-white uppercase tracking-wider">
+                    Nota Rápida del Ciclo
+                  </h3>
+                </div>
+                <button
+                  onClick={() => setShowQuickNoteModal(false)}
+                  className="p-1 rounded-lg text-gray-400 hover:text-white cursor-pointer"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+
+              <div>
+                <label className="text-xs text-gray-400 block mb-1.5">
+                  Escribe una nota, apunte importante o recordatorio para tener a la mano:
+                </label>
+                <textarea
+                  value={quickNoteDraft}
+                  onChange={(e) => setQuickNoteDraft(e.target.value)}
+                  placeholder="Ej: Recordar entregar el proyecto final el 24 de oct..."
+                  rows={4}
+                  className="w-full p-3 rounded-xl bg-black/40 border border-white/10 text-white text-xs focus:border-pink-500 focus:outline-none resize-none leading-relaxed"
+                  autoFocus
+                />
+              </div>
+
+              <div className="flex justify-end gap-2 pt-2">
+                <button
+                  onClick={() => setShowQuickNoteModal(false)}
+                  className="px-4 py-2 rounded-xl text-xs font-semibold text-gray-400 hover:text-white cursor-pointer"
+                >
+                  Cancelar
+                </button>
+                <button
+                  onClick={() => {
+                    const text = quickNoteDraft.trim();
+                    setDashboards((prev) =>
+                      prev.map((d) => (d.id === currentDashboard.id ? { ...d, quickNote: text } : d))
+                    );
+                    setShowQuickNoteModal(false);
+                    setToastMessage('Nota rápida actualizada con éxito ✨');
+                  }}
+                  className="px-4 py-2 rounded-xl text-xs font-bold bg-gradient-to-r from-pink-500 to-purple-600 text-white shadow-md hover:opacity-95 cursor-pointer"
+                >
+                  Guardar Nota
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Parcial Splash Modal */}
       <ParcialSplashModal
@@ -1543,11 +1611,7 @@ export default function App() {
 
               <div className="flex items-center gap-2">
                 <span className="w-2.5 h-2.5 rounded-full bg-pink-500 animate-pulse shadow-[0_0_8px_rgba(236,72,153,0.8)]" />
-                <h1
-                  onClick={() => setShowSegmentedLoader(true)}
-                  className="text-sm sm:text-base md:text-lg font-black tracking-wider uppercase text-white hover:text-pink-300 transition-colors cursor-pointer"
-                  title="Toca para ver pantalla de bienvenida"
-                >
+                <h1 className="text-sm sm:text-base md:text-lg font-black tracking-wider uppercase text-white">
                   + DASHBOARD ACADÉMICO +
                 </h1>
               </div>
@@ -1706,8 +1770,8 @@ export default function App() {
                 <div className="flex flex-wrap items-center gap-2">
                   <button
                     onClick={() => {
-                      const firstSub = currentDashboard.subjects[0];
-                      if (firstSub) handleOpenNewTaskModal(firstSub);
+                      setQuickNoteDraft(currentDashboard.quickNote || '');
+                      setShowQuickNoteModal(true);
                     }}
                     className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-white/5 border border-white/10 text-gray-300 hover:text-white hover:bg-white/10 transition-all cursor-pointer"
                   >
@@ -1752,6 +1816,39 @@ export default function App() {
                   </button>
                 </div>
               </div>
+
+              {/* Banner de Nota Rápida si existe */}
+              {currentDashboard.quickNote && (
+                <div className="p-3 mb-6 rounded-2xl bg-[#131b2e] border border-pink-500/30 flex items-center justify-between text-xs text-pink-200 shadow-md">
+                  <div className="flex items-center gap-2.5 min-w-0">
+                    <span className="text-base select-none shrink-0">📌</span>
+                    <span className="font-semibold truncate">{currentDashboard.quickNote}</span>
+                  </div>
+                  <div className="flex items-center gap-2 shrink-0">
+                    <button
+                      onClick={() => {
+                        setQuickNoteDraft(currentDashboard.quickNote || '');
+                        setShowQuickNoteModal(true);
+                      }}
+                      className="px-2.5 py-1 rounded-lg text-xs font-bold bg-pink-500/20 text-pink-300 hover:bg-pink-500/30 transition-colors cursor-pointer"
+                    >
+                      Editar
+                    </button>
+                    <button
+                      onClick={() => {
+                        setDashboards((prev) =>
+                          prev.map((d) => (d.id === currentDashboard.id ? { ...d, quickNote: '' } : d))
+                        );
+                        setToastMessage('Nota rápida eliminada');
+                      }}
+                      className="p-1 rounded text-gray-500 hover:text-white transition-colors cursor-pointer"
+                      title="Eliminar nota"
+                    >
+                      <X className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                </div>
+              )}
 
               {/* Grid de Materias (3 columnas idéntico a Imagen 2) */}
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 mb-8 items-start">

@@ -153,10 +153,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLoginSuccess }) => {
         {/* Pie de credenciales por defecto */}
         <div className="text-center pt-3 border-t border-white/10 space-y-1">
           <p className="text-[11px] text-gray-400 font-mono">
-            Credenciales por defecto: Usuario <span className="text-pink-400 font-bold">admin</span> / Clave <span className="text-cyan-400 font-bold">oo</span>
-          </p>
-          <p className="text-[10px] text-gray-500">
-            Compatible también con clave <span className="text-purple-400 font-semibold">00</span>
+            Credenciales por defecto: Usuario / Clave
           </p>
         </div>
       </motion.div>

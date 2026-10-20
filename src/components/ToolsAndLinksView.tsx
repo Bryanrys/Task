@@ -144,8 +144,8 @@ export const ToolsAndLinksView: React.FC<ToolsAndLinksViewProps> = ({
           onClick={onBackToTasks}
           className={`flex items-center gap-2 px-4 py-2 rounded-2xl border text-xs font-black transition-all cursor-pointer active:scale-95 shadow-xs ${
             isDark
-              ? 'bg-yellow-400/10 border-yellow-400/30 text-yellow-300 hover:bg-yellow-400/20 shadow-[0_0_15px_rgba(250,204,21,0.15)]'
-              : 'bg-amber-50 border-amber-300 text-amber-800 hover:bg-amber-100'
+              ? 'bg-pink-500/15 border-pink-500/30 text-pink-300 hover:bg-pink-500/25 shadow-[0_0_15px_rgba(236,72,153,0.15)]'
+              : 'bg-pink-50 border-pink-200 text-pink-800 hover:bg-pink-100'
           }`}
         >
           <ArrowLeft className="w-4 h-4 animate-pulse" />
@@ -169,7 +169,7 @@ export const ToolsAndLinksView: React.FC<ToolsAndLinksViewProps> = ({
         transition={{ delay: 0.05 }}
         className={`rounded-3xl p-5 border transition-all ${
           isDark
-            ? 'bg-[#181614]/90 border-emerald-500/25 shadow-[0_0_30px_rgba(16,185,129,0.08)]'
+            ? 'bg-[#05070e] border-emerald-500/25 shadow-[0_0_30px_rgba(16,185,129,0.08)]'
             : 'bg-white border-emerald-200 shadow-md'
         }`}
       >
@@ -217,12 +217,12 @@ export const ToolsAndLinksView: React.FC<ToolsAndLinksViewProps> = ({
             onClick={onImportJSONClick}
             className={`p-3.5 rounded-2xl border flex items-center justify-between font-bold text-xs transition-all cursor-pointer active:scale-95 ${
               isDark
-                ? 'bg-amber-500/10 border-amber-500/30 text-amber-300 hover:bg-amber-500/20 shadow-xs'
-                : 'bg-amber-50 border-amber-300 text-amber-800 hover:bg-amber-100 shadow-xs'
+                ? 'bg-cyan-500/10 border-cyan-500/30 text-cyan-300 hover:bg-cyan-500/20 shadow-xs'
+                : 'bg-cyan-50 border-cyan-300 text-cyan-800 hover:bg-cyan-100 shadow-xs'
             }`}
           >
             <div className="flex items-center gap-2.5">
-              <FileUp className="w-4 h-4 text-amber-400" />
+              <FileUp className="w-4 h-4 text-cyan-400" />
               <div className="text-left">
                 <div className="font-extrabold">Cargar Respaldo JSON</div>
                 <div className={`text-[10px] font-normal ${isDark ? 'text-stone-400' : 'text-stone-600'}`}>
@@ -242,7 +242,7 @@ export const ToolsAndLinksView: React.FC<ToolsAndLinksViewProps> = ({
         transition={{ delay: 0.1 }}
         className={`rounded-3xl p-5 border transition-all ${
           isDark
-            ? 'bg-[#181614]/90 border-cyan-500/25 shadow-[0_0_30px_rgba(6,182,212,0.08)]'
+            ? 'bg-[#05070e] border-cyan-500/25 shadow-[0_0_30px_rgba(6,182,212,0.08)]'
             : 'bg-white border-cyan-200 shadow-md'
         }`}
       >
@@ -333,7 +333,7 @@ export const ToolsAndLinksView: React.FC<ToolsAndLinksViewProps> = ({
         transition={{ delay: 0.15 }}
         className={`rounded-3xl p-5 border transition-all ${
           isDark
-            ? 'bg-[#181614]/90 border-violet-500/25 shadow-[0_0_30px_rgba(168,85,247,0.08)]'
+            ? 'bg-[#05070e] border-violet-500/25 shadow-[0_0_30px_rgba(168,85,247,0.08)]'
             : 'bg-white border-violet-200 shadow-md'
         }`}
       >
@@ -401,7 +401,7 @@ export const ToolsAndLinksView: React.FC<ToolsAndLinksViewProps> = ({
         transition={{ delay: 0.2 }}
         className={`rounded-3xl p-5 border transition-all ${
           isDark
-            ? 'bg-[#181614]/90 border-blue-500/25 shadow-[0_0_30px_rgba(59,130,246,0.08)]'
+            ? 'bg-[#05070e] border-blue-500/25 shadow-[0_0_30px_rgba(59,130,246,0.08)]'
             : 'bg-white border-blue-200 shadow-md'
         }`}
       >
@@ -455,8 +455,8 @@ export const ToolsAndLinksView: React.FC<ToolsAndLinksViewProps> = ({
             onClick={onCopyLink}
             className={`p-3 rounded-2xl border flex items-center justify-center gap-2 font-bold text-xs transition-all cursor-pointer active:scale-95 ${
               isDark
-                ? 'bg-white/[0.04] border-white/10 text-yellow-300 hover:bg-white/[0.08]'
-                : 'bg-stone-50 border-stone-200 text-amber-700 hover:bg-stone-100'
+                ? 'bg-white/[0.04] border-white/10 text-cyan-300 hover:bg-white/[0.08]'
+                : 'bg-stone-50 border-stone-200 text-cyan-800 hover:bg-stone-100'
             }`}
           >
             <LinkIcon className="w-4 h-4" />
@@ -477,17 +477,17 @@ export const ToolsAndLinksView: React.FC<ToolsAndLinksViewProps> = ({
           onClick={onOpenGrades}
           className={`p-4 rounded-3xl border text-left transition-all cursor-pointer active:scale-95 ${
             isDark
-              ? 'bg-[#181614]/90 border-amber-500/25 hover:border-amber-400/50 shadow-xs'
-              : 'bg-white border-amber-200 hover:border-amber-400 shadow-md'
+              ? 'bg-[#05070e] border-purple-500/25 hover:border-purple-400/50 shadow-xs'
+              : 'bg-white border-purple-200 hover:border-purple-400 shadow-md'
           }`}
         >
           <div className="flex items-center justify-between mb-2">
-            <div className="p-2 rounded-xl bg-amber-500/20 text-amber-400 border border-amber-500/30">
+            <div className="p-2 rounded-xl bg-purple-500/20 text-purple-400 border border-purple-500/30">
               <Calculator className="w-4 h-4" />
             </div>
-            <span className="text-[10px] font-mono uppercase text-amber-400 font-bold">Cálculo</span>
+            <span className="text-[10px] font-mono uppercase text-purple-400 font-bold">Cálculo</span>
           </div>
-          <div className="font-extrabold text-xs text-amber-400 uppercase">Calculadora Promedios</div>
+          <div className="font-extrabold text-xs text-purple-300 uppercase">Calculadora Promedios</div>
           <p className={`text-[10px] mt-0.5 ${isDark ? 'text-stone-400' : 'text-stone-600'}`}>
             Calcula notas y proyecciones de parciales
           </p>
@@ -498,17 +498,17 @@ export const ToolsAndLinksView: React.FC<ToolsAndLinksViewProps> = ({
           onClick={onOpenPomodoro}
           className={`p-4 rounded-3xl border text-left transition-all cursor-pointer active:scale-95 ${
             isDark
-              ? 'bg-[#181614]/90 border-rose-500/25 hover:border-rose-400/50 shadow-xs'
-              : 'bg-white border-rose-200 hover:border-rose-400 shadow-md'
+              ? 'bg-[#05070e] border-pink-500/25 hover:border-pink-400/50 shadow-xs'
+              : 'bg-white border-pink-200 hover:border-pink-400 shadow-md'
           }`}
         >
           <div className="flex items-center justify-between mb-2">
-            <div className="p-2 rounded-xl bg-rose-500/20 text-rose-400 border border-rose-500/30">
+            <div className="p-2 rounded-xl bg-pink-500/20 text-pink-400 border border-pink-500/30">
               <Timer className="w-4 h-4" />
             </div>
-            <span className="text-[10px] font-mono uppercase text-rose-400 font-bold">Enfoque</span>
+            <span className="text-[10px] font-mono uppercase text-pink-400 font-bold">Enfoque</span>
           </div>
-          <div className="font-extrabold text-xs text-rose-400 uppercase">Pomodoro Timer</div>
+          <div className="font-extrabold text-xs text-pink-300 uppercase">Pomodoro Timer</div>
           <p className={`text-[10px] mt-0.5 ${isDark ? 'text-stone-400' : 'text-stone-600'}`}>
             Sesiones de estudio de 25 min + descansos
           </p>
@@ -519,17 +519,17 @@ export const ToolsAndLinksView: React.FC<ToolsAndLinksViewProps> = ({
           onClick={onOpenStartDate}
           className={`p-4 rounded-3xl border text-left transition-all cursor-pointer active:scale-95 ${
             isDark
-              ? 'bg-[#181614]/90 border-yellow-500/25 hover:border-yellow-400/50 shadow-xs'
-              : 'bg-white border-yellow-200 hover:border-yellow-400 shadow-md'
+              ? 'bg-[#05070e] border-cyan-500/25 hover:border-cyan-400/50 shadow-xs'
+              : 'bg-white border-cyan-200 hover:border-cyan-400 shadow-md'
           }`}
         >
           <div className="flex items-center justify-between mb-2">
-            <div className="p-2 rounded-xl bg-yellow-500/20 text-yellow-400 border border-yellow-500/30">
+            <div className="p-2 rounded-xl bg-cyan-500/20 text-cyan-400 border border-cyan-500/30">
               <Calendar className="w-4 h-4" />
             </div>
-            <span className="text-[10px] font-mono uppercase text-yellow-400 font-bold">Ciclo</span>
+            <span className="text-[10px] font-mono uppercase text-cyan-400 font-bold">Ciclo</span>
           </div>
-          <div className="font-extrabold text-xs text-yellow-400 uppercase">{daysElapsed} Días Transcurridos</div>
+          <div className="font-extrabold text-xs text-cyan-300 uppercase">{daysElapsed} Días Transcurridos</div>
           <p className={`text-[10px] mt-0.5 ${isDark ? 'text-stone-400' : 'text-stone-600'}`}>
             Inicio: {startDate} (toca para editar)
           </p>

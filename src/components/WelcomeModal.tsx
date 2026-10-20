@@ -17,7 +17,7 @@ export const WelcomeModal: React.FC<WelcomeModalProps> = ({ isOpen, onStart }) =
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.85, y: -20 }}
             transition={{ type: 'spring', damping: 20, stiffness: 300 }}
-            className="relative w-full max-w-[340px] liquid-modal-dark liquid-gloss rounded-3xl p-7 text-center shadow-2xl shadow-yellow-500/10 border border-white/20"
+            className="relative w-full max-w-[340px] liquid-modal-dark liquid-gloss rounded-3xl p-7 text-center shadow-2xl shadow-pink-500/10 border border-white/20"
           >
             {/* Sunglasses Emoji + Sparkles with floating animation */}
             <div className="text-4xl mb-3 flex items-center justify-center gap-1.5 relative">
@@ -46,7 +46,7 @@ export const WelcomeModal: React.FC<WelcomeModalProps> = ({ isOpen, onStart }) =
                   duration: 1.8,
                   ease: 'easeInOut',
                 }}
-                className="text-yellow-400 text-2xl inline-block select-none"
+                className="text-pink-400 text-2xl inline-block select-none"
               >
                 ✨
               </motion.span>
@@ -72,19 +72,19 @@ export const WelcomeModal: React.FC<WelcomeModalProps> = ({ isOpen, onStart }) =
               Crea y organiza tus actividades sincronizadas!.
             </motion.p>
 
-            {/* Main yellow button */}
+            {/* Main button */}
             <motion.button
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.96 }}
               onClick={onStart}
-              className="w-full py-3 px-5 bg-[#f5cb42] hover:bg-[#fad859] active:scale-[0.98] text-black font-extrabold text-sm rounded-xl transition-colors shadow-lg shadow-yellow-500/20 cursor-pointer"
+              className="w-full py-3 px-5 bg-gradient-to-r from-pink-500 to-purple-600 hover:opacity-90 active:scale-[0.98] text-white font-extrabold text-sm rounded-xl transition-all shadow-lg shadow-pink-500/25 cursor-pointer"
             >
               Comenzar Configuración
             </motion.button>
 
             {/* Small indicator pill below */}
             <div className="mt-4 flex justify-center">
-              <div className="w-4 h-2 bg-[#d1a826] rounded-sm opacity-80" />
+              <div className="w-4 h-2 bg-pink-500 rounded-sm opacity-80" />
             </div>
           </motion.div>
         </div>

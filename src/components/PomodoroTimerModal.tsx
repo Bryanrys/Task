@@ -75,13 +75,13 @@ export const PomodoroTimerModal: React.FC<PomodoroTimerModalProps> = ({
       <div
         className={`relative w-full max-w-xs rounded-3xl p-6 border shadow-2xl text-center transition-colors ${
           isDark
-            ? 'bg-[#141210] border-[#292524] text-stone-100'
+            ? 'bg-[#0a0d17] border-white/10 text-stone-100'
             : 'bg-white border-stone-200 text-stone-900'
         }`}
       >
         {/* Header */}
         <div className="flex items-center justify-between mb-4">
-          <span className="text-xs font-black uppercase tracking-wider font-mono text-yellow-500 flex items-center gap-1.5">
+          <span className="text-xs font-black uppercase tracking-wider font-mono text-pink-400 flex items-center gap-1.5">
             <span>🍅 POMODORO DE ESTUDIO</span>
           </span>
           <button
@@ -97,14 +97,14 @@ export const PomodoroTimerModal: React.FC<PomodoroTimerModalProps> = ({
         {/* Mode Selector */}
         <div
           className={`flex rounded-xl p-1 mb-6 border transition-colors ${
-            isDark ? 'bg-[#1c1917] border-[#2c2825]' : 'bg-stone-100 border-stone-200'
+            isDark ? 'bg-[#05070e] border-white/10' : 'bg-stone-100 border-stone-200'
           }`}
         >
           <button
             onClick={() => handleSwitchMode('study')}
             className={`flex-1 py-1.5 px-2 rounded-lg text-xs font-extrabold flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
               mode === 'study'
-                ? 'bg-yellow-400 text-black shadow-xs'
+                ? 'bg-gradient-to-r from-pink-500 to-purple-600 text-white shadow-xs'
                 : isDark
                 ? 'text-stone-400 hover:text-stone-200'
                 : 'text-stone-600 hover:text-stone-900'
@@ -133,7 +133,7 @@ export const PomodoroTimerModal: React.FC<PomodoroTimerModalProps> = ({
         <div className="relative my-4 flex flex-col items-center justify-center">
           <div
             className={`text-5xl font-black tracking-tight font-mono mb-2 ${
-              mode === 'study' ? 'text-yellow-400' : 'text-emerald-400'
+              mode === 'study' ? 'text-pink-400' : 'text-emerald-400'
             }`}
           >
             {formattedTime}
@@ -148,10 +148,10 @@ export const PomodoroTimerModal: React.FC<PomodoroTimerModalProps> = ({
           </p>
 
           {/* Progress bar */}
-          <div className="w-full bg-stone-800/40 rounded-full h-1.5 overflow-hidden mb-6">
+          <div className="w-full bg-white/10 rounded-full h-1.5 overflow-hidden mb-6">
             <div
               className={`h-full transition-all duration-500 ${
-                mode === 'study' ? 'bg-yellow-400' : 'bg-emerald-400'
+                mode === 'study' ? 'bg-pink-500' : 'bg-emerald-400'
               }`}
               style={{ width: `${progressPercent}%` }}
             />
@@ -164,7 +164,7 @@ export const PomodoroTimerModal: React.FC<PomodoroTimerModalProps> = ({
             onClick={handleToggle}
             className={`flex-1 py-3 px-4 font-black text-xs rounded-xl flex items-center justify-center gap-2 transition-all cursor-pointer active:scale-95 shadow-md ${
               mode === 'study'
-                ? 'bg-yellow-400 hover:bg-yellow-300 text-black shadow-yellow-500/10'
+                ? 'bg-gradient-to-r from-pink-500 to-purple-600 hover:opacity-90 text-white shadow-pink-500/20'
                 : 'bg-emerald-500 hover:bg-emerald-400 text-white shadow-emerald-500/10'
             }`}
           >

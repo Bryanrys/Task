@@ -55,14 +55,14 @@ export const EditSubjectModal: React.FC<EditSubjectModalProps> = ({
       <div
         className={`relative w-full max-w-sm rounded-3xl p-6 border shadow-2xl transition-colors ${
           isDark
-            ? 'bg-[#141210] border-[#292524] text-stone-100'
+            ? 'bg-[#0a0d17] border-white/10 text-stone-100'
             : 'bg-white border-stone-200 text-stone-900'
         }`}
       >
         {/* Header */}
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
-            <div className="p-2 rounded-xl bg-yellow-400/10 text-yellow-500">
+            <div className="p-2 rounded-xl bg-pink-500/15 text-pink-400 border border-pink-500/30">
               <BookOpen className="w-5 h-5" />
             </div>
             <div>
@@ -95,8 +95,8 @@ export const EditSubjectModal: React.FC<EditSubjectModalProps> = ({
               placeholder="Ej. PROGRA 3, REDES, etc."
               className={`w-full py-2.5 px-3.5 rounded-xl border text-sm font-extrabold uppercase outline-none font-mono transition-all ${
                 isDark
-                  ? 'bg-[#1a1715] border-[#38332e] text-yellow-400 focus:border-yellow-400'
-                  : 'bg-stone-50 border-stone-300 text-stone-900 focus:border-amber-500'
+                  ? 'bg-[#05070e] border-white/10 text-white focus:border-pink-500'
+                  : 'bg-stone-50 border-stone-300 text-stone-900 focus:border-pink-500'
               }`}
               autoFocus
             />
@@ -108,7 +108,7 @@ export const EditSubjectModal: React.FC<EditSubjectModalProps> = ({
               onClick={onClose}
               className={`flex-1 py-2.5 rounded-xl text-xs font-bold transition-colors cursor-pointer ${
                 isDark
-                  ? 'bg-[#1a1715] text-stone-400 hover:text-white'
+                  ? 'bg-white/5 border border-white/10 text-stone-300 hover:text-white'
                   : 'bg-stone-100 text-stone-600 hover:bg-stone-200'
               }`}
             >
@@ -116,9 +116,9 @@ export const EditSubjectModal: React.FC<EditSubjectModalProps> = ({
             </button>
             <button
               type="submit"
-              className="flex-1 py-2.5 bg-yellow-400 hover:bg-yellow-300 text-black font-black text-xs rounded-xl transition-all cursor-pointer shadow-md shadow-yellow-500/10 flex items-center justify-center gap-1.5"
+              className="flex-1 py-2.5 bg-gradient-to-r from-pink-500 to-purple-600 hover:opacity-90 text-white font-black text-xs rounded-xl transition-all cursor-pointer shadow-md shadow-pink-500/20 flex items-center justify-center gap-1.5"
             >
-              <Check className="w-4 h-4" />
+              <Check className="w-4 h-4 stroke-[3]" />
               <span>Guardar</span>
             </button>
           </div>

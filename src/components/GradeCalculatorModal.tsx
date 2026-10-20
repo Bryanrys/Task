@@ -154,14 +154,14 @@ export const GradeCalculatorModal: React.FC<GradeCalculatorModalProps> = ({
       <div
         className={`relative w-full max-w-sm rounded-3xl p-6 border shadow-2xl transition-colors ${
           isDark
-            ? 'bg-[#141210] border-[#292524] text-stone-100'
+            ? 'bg-[#0a0d17] border-white/10 text-stone-100'
             : 'bg-white border-stone-200 text-stone-900'
         }`}
       >
         {/* Header */}
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
-            <div className="p-2 rounded-xl bg-yellow-400/10 text-yellow-500">
+            <div className="p-2 rounded-xl bg-purple-500/20 text-purple-400 border border-purple-500/30">
               <Calculator className="w-5 h-5" />
             </div>
             <div>
@@ -193,9 +193,9 @@ export const GradeCalculatorModal: React.FC<GradeCalculatorModalProps> = ({
                 onClick={() => setSelectedSubjId(subj.id)}
                 className={`py-1.5 px-3 rounded-xl text-xs font-bold whitespace-nowrap transition-all cursor-pointer font-mono ${
                   selectedSubjId === subj.id
-                    ? 'bg-yellow-400 text-black shadow-xs font-extrabold'
+                    ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-xs font-extrabold'
                     : isDark
-                    ? 'bg-[#1c1917] border border-[#2b2724] text-stone-300 hover:border-stone-500'
+                    ? 'bg-[#05070e] border border-white/10 text-stone-300 hover:border-purple-500/40'
                     : 'bg-stone-100 border border-stone-200 text-stone-700 hover:bg-stone-200'
                 }`}
               >
@@ -210,7 +210,7 @@ export const GradeCalculatorModal: React.FC<GradeCalculatorModalProps> = ({
           {/* Parcial 1 */}
           <div
             className={`p-3 rounded-2xl border flex items-center justify-between transition-colors ${
-              isDark ? 'bg-[#1a1715] border-[#292524]' : 'bg-stone-50 border-stone-200'
+              isDark ? 'bg-[#05070e] border-white/10' : 'bg-stone-50 border-stone-200'
             }`}
           >
             <div>
@@ -229,8 +229,8 @@ export const GradeCalculatorModal: React.FC<GradeCalculatorModalProps> = ({
               placeholder="0.0"
               className={`w-20 text-center font-extrabold text-sm rounded-xl py-1.5 border outline-none font-mono ${
                 isDark
-                  ? 'bg-[#12100e] border-[#38332e] text-yellow-400 focus:border-yellow-400'
-                  : 'bg-white border-stone-300 text-stone-900 focus:border-amber-500'
+                  ? 'bg-[#0a0d17] border-white/10 text-purple-300 focus:border-purple-400'
+                  : 'bg-white border-stone-300 text-stone-900 focus:border-purple-500'
               }`}
             />
           </div>
@@ -238,7 +238,7 @@ export const GradeCalculatorModal: React.FC<GradeCalculatorModalProps> = ({
           {/* Parcial 2 */}
           <div
             className={`p-3 rounded-2xl border flex items-center justify-between transition-colors ${
-              isDark ? 'bg-[#1a1715] border-[#292524]' : 'bg-stone-50 border-stone-200'
+              isDark ? 'bg-[#05070e] border-white/10' : 'bg-stone-50 border-stone-200'
             }`}
           >
             <div>
@@ -257,8 +257,8 @@ export const GradeCalculatorModal: React.FC<GradeCalculatorModalProps> = ({
               placeholder="0.0"
               className={`w-20 text-center font-extrabold text-sm rounded-xl py-1.5 border outline-none font-mono ${
                 isDark
-                  ? 'bg-[#12100e] border-[#38332e] text-yellow-400 focus:border-yellow-400'
-                  : 'bg-white border-stone-300 text-stone-900 focus:border-amber-500'
+                  ? 'bg-[#0a0d17] border-white/10 text-purple-300 focus:border-purple-400'
+                  : 'bg-white border-stone-300 text-stone-900 focus:border-purple-500'
               }`}
             />
           </div>
@@ -266,7 +266,7 @@ export const GradeCalculatorModal: React.FC<GradeCalculatorModalProps> = ({
           {/* Parcial 3 */}
           <div
             className={`p-3 rounded-2xl border flex items-center justify-between transition-colors ${
-              isDark ? 'bg-[#1a1715] border-[#292524]' : 'bg-stone-50 border-stone-200'
+              isDark ? 'bg-[#05070e] border-white/10' : 'bg-stone-50 border-stone-200'
             }`}
           >
             <div>
@@ -285,8 +285,8 @@ export const GradeCalculatorModal: React.FC<GradeCalculatorModalProps> = ({
               placeholder="0.0"
               className={`w-20 text-center font-extrabold text-sm rounded-xl py-1.5 border outline-none font-mono ${
                 isDark
-                  ? 'bg-[#12100e] border-[#38332e] text-yellow-400 focus:border-yellow-400'
-                  : 'bg-white border-stone-300 text-stone-900 focus:border-amber-500'
+                  ? 'bg-[#0a0d17] border-white/10 text-purple-300 focus:border-purple-400'
+                  : 'bg-white border-stone-300 text-stone-900 focus:border-purple-500'
               }`}
             />
           </div>
@@ -295,35 +295,35 @@ export const GradeCalculatorModal: React.FC<GradeCalculatorModalProps> = ({
         {/* Calculation Summary Card */}
         <div
           className={`p-4 rounded-2xl border mb-4 font-mono ${
-            isDark ? 'bg-[#0f0e0d] border-[#22201d]' : 'bg-stone-100/80 border-stone-200'
+            isDark ? 'bg-[#05070e] border-white/10' : 'bg-stone-100/80 border-stone-200'
           }`}
         >
           <div className="flex items-center justify-between mb-2">
             <span className="text-[11px] font-bold text-stone-400 uppercase">Puntaje Acumulado:</span>
-            <span className="text-base font-black text-yellow-500">{totalAccumulatedScore} / 10.0</span>
+            <span className="text-base font-black text-purple-400">{totalAccumulatedScore} / 10.0</span>
           </div>
 
           <div className="flex items-center justify-between mb-2">
             <span className="text-[11px] font-bold text-stone-400 uppercase">Promedio Actual:</span>
-            <span className="text-base font-black text-emerald-500">{finalAvg}</span>
+            <span className="text-base font-black text-emerald-400">{finalAvg}</span>
           </div>
 
           {/* What do you need in P3? */}
           {neededInP3 && (
-            <div className="mt-2 pt-2 border-t border-stone-700/40 text-[11px]">
+            <div className="mt-2 pt-2 border-t border-white/10 text-[11px]">
               <span className="text-stone-400 font-bold block mb-0.5">
                 🎯 Para pasar con {passingGrade.toFixed(1)} necesitas en Parcial 3:
               </span>
-              <span className="text-xs font-black text-yellow-400 bg-yellow-400/10 px-2 py-0.5 rounded-md inline-block">
+              <span className="text-xs font-black text-purple-300 bg-purple-500/20 border border-purple-500/30 px-2 py-0.5 rounded-md inline-block">
                 {neededInP3}
               </span>
             </div>
           )}
 
           {hasN1 && hasN2 && hasN3 && (
-            <div className="mt-2 pt-2 border-t border-stone-700/40 flex items-center gap-1.5 text-xs font-bold">
+            <div className="mt-2 pt-2 border-t border-white/10 flex items-center gap-1.5 text-xs font-bold">
               {parseFloat(totalAccumulatedScore) >= passingGrade ? (
-                <span className="text-emerald-500 flex items-center gap-1">
+                <span className="text-emerald-400 flex items-center gap-1">
                   <CheckCircle className="w-4 h-4" />
                   ¡Materia Aprobada con éxito! 🎉
                 </span>
@@ -340,7 +340,7 @@ export const GradeCalculatorModal: React.FC<GradeCalculatorModalProps> = ({
         {/* Footer Close */}
         <button
           onClick={onClose}
-          className="w-full py-2.5 bg-yellow-400 hover:bg-yellow-300 text-black font-black text-xs rounded-xl transition-all cursor-pointer shadow-md shadow-yellow-500/10"
+          className="w-full py-2.5 bg-gradient-to-r from-purple-600 to-pink-600 hover:opacity-90 text-white font-black text-xs rounded-xl transition-all cursor-pointer shadow-md shadow-purple-500/20"
         >
           Guardar y Listo ✓
         </button>

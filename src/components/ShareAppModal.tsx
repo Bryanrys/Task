@@ -117,7 +117,7 @@ export const ShareAppModal: React.FC<ShareAppModalProps> = ({
       <div
         className={`relative w-full max-w-sm rounded-3xl p-5 border shadow-2xl transition-all ${
           isDark
-            ? 'bg-[#141210] border-[#292524] text-stone-100'
+            ? 'bg-[#0a0d17] border-white/10 text-stone-100'
             : 'bg-white border-stone-200 text-stone-900'
         }`}
       >
@@ -125,7 +125,7 @@ export const ShareAppModal: React.FC<ShareAppModalProps> = ({
         <button
           onClick={onClose}
           className={`absolute top-4 right-4 p-1.5 rounded-full transition-colors cursor-pointer ${
-            isDark ? 'hover:bg-stone-800 text-stone-400' : 'hover:bg-stone-100 text-stone-500'
+            isDark ? 'hover:bg-white/10 text-stone-400' : 'hover:bg-stone-100 text-stone-500'
           }`}
         >
           <X className="w-4 h-4" />
@@ -133,7 +133,7 @@ export const ShareAppModal: React.FC<ShareAppModalProps> = ({
 
         {/* Modal Header */}
         <div className="flex items-center gap-3 mb-4">
-          <div className="p-2.5 rounded-2xl bg-yellow-400/10 text-yellow-400">
+          <div className="p-2.5 rounded-2xl bg-pink-500/15 text-pink-400 border border-pink-500/30">
             <Share2 className="w-5 h-5" />
           </div>
           <div>
@@ -148,9 +148,9 @@ export const ShareAppModal: React.FC<ShareAppModalProps> = ({
 
         {/* Edit Form or URL Display */}
         {isEditing ? (
-          <form onSubmit={handleSaveEdit} className="space-y-3 mb-3 p-3.5 rounded-2xl border bg-stone-900/60 border-stone-700">
+          <form onSubmit={handleSaveEdit} className="space-y-3 mb-3 p-3.5 rounded-2xl border bg-[#05070e] border-white/10">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-bold text-yellow-400 flex items-center gap-1.5 font-mono">
+              <span className="text-xs font-bold text-pink-400 flex items-center gap-1.5 font-mono">
                 <Edit3 className="w-3.5 h-3.5" />
                 Personalizar Enlace Compartido
               </span>
@@ -172,7 +172,7 @@ export const ShareAppModal: React.FC<ShareAppModalProps> = ({
                 value={tempUrl}
                 onChange={(e) => setTempUrl(e.target.value)}
                 placeholder="https://tu-dashboard.vercel.app"
-                className="w-full text-xs font-mono bg-stone-950 border border-stone-700 focus:border-yellow-400 rounded-xl px-3 py-2 text-white outline-none"
+                className="w-full text-xs font-mono bg-[#0a0d17] border border-white/10 focus:border-pink-500 rounded-xl px-3 py-2 text-white outline-none"
                 autoFocus
               />
             </div>
@@ -180,7 +180,7 @@ export const ShareAppModal: React.FC<ShareAppModalProps> = ({
             {/* Presets suggestions */}
             <div>
               <span className="text-[10px] text-stone-400 block mb-1.5 flex items-center gap-1">
-                <Sparkles className="w-3 h-3 text-yellow-400" />
+                <Sparkles className="w-3 h-3 text-pink-400" />
                 O selecciona uno generado automáticamente:
               </span>
               <div className="grid grid-cols-3 gap-1.5">
@@ -191,8 +191,8 @@ export const ShareAppModal: React.FC<ShareAppModalProps> = ({
                     onClick={() => handleSelectPreset(opt.url)}
                     className={`px-2 py-1.5 rounded-lg border text-[10px] font-bold text-center transition-all cursor-pointer truncate ${
                       tempUrl === opt.url
-                        ? 'bg-yellow-400/20 border-yellow-400 text-yellow-300'
-                        : 'bg-stone-800 border-stone-700 text-stone-300 hover:bg-stone-700'
+                        ? 'bg-pink-500/20 border-pink-500 text-pink-300'
+                        : 'bg-white/5 border-white/10 text-stone-300 hover:bg-white/10'
                     }`}
                   >
                     {opt.name}
@@ -205,13 +205,13 @@ export const ShareAppModal: React.FC<ShareAppModalProps> = ({
               <button
                 type="button"
                 onClick={() => setIsEditing(false)}
-                className="flex-1 py-1.5 rounded-xl border border-stone-700 text-xs font-bold text-stone-400 hover:text-white cursor-pointer"
+                className="flex-1 py-1.5 rounded-xl border border-white/10 text-xs font-bold text-stone-400 hover:text-white cursor-pointer"
               >
                 Cancelar
               </button>
               <button
                 type="submit"
-                className="flex-1 py-1.5 rounded-xl bg-yellow-400 hover:bg-yellow-300 text-black text-xs font-black cursor-pointer transition-colors"
+                className="flex-1 py-1.5 rounded-xl bg-gradient-to-r from-pink-500 to-purple-600 hover:opacity-90 text-white text-xs font-black cursor-pointer transition-colors shadow-md shadow-pink-500/20"
               >
                 Guardar Enlace
               </button>
@@ -221,13 +221,13 @@ export const ShareAppModal: React.FC<ShareAppModalProps> = ({
           <div
             className={`p-3 rounded-2xl border mb-3 space-y-2 ${
               isDark
-                ? 'bg-[#1b1917] border-[#292524]'
+                ? 'bg-[#05070e] border-white/10'
                 : 'bg-stone-50 border-stone-200'
             }`}
           >
             <div className="flex items-center justify-between gap-2">
               <div className="flex items-center gap-2 overflow-hidden flex-1">
-                <Globe className="w-4 h-4 text-yellow-500 shrink-0" />
+                <Globe className="w-4 h-4 text-cyan-400 shrink-0" />
                 <span className="text-xs font-mono truncate select-all text-stone-200">
                   {appUrl}
                 </span>
@@ -238,8 +238,8 @@ export const ShareAppModal: React.FC<ShareAppModalProps> = ({
                 title="Copiar enlace"
                 className={`px-2.5 py-1.5 rounded-xl border text-xs font-bold transition-all cursor-pointer shrink-0 flex items-center gap-1 ${
                   copied
-                    ? 'bg-emerald-500 border-emerald-400 text-black'
-                    : 'bg-yellow-400 hover:bg-yellow-300 border-yellow-400 text-black'
+                    ? 'bg-emerald-500/20 border-emerald-500/40 text-emerald-300'
+                    : 'bg-gradient-to-r from-pink-500 to-purple-600 hover:opacity-90 border-transparent text-white shadow-xs'
                 }`}
               >
                 {copied ? <Check className="w-3.5 h-3.5 stroke-[3]" /> : <Copy className="w-3.5 h-3.5" />}

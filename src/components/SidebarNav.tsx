@@ -22,6 +22,9 @@ interface SidebarNavProps {
   onSwitchView: (view: 'dashboard' | 'schedule' | 'cloud') => void;
   subjects: SubjectItem[];
   totalWeeksCount: number;
+  activeWeekNumber?: number;
+  selectedSubjectId?: string | null;
+  onSelectSubject?: (subjectId: string | null) => void;
   loggedUser?: string;
   onScrollToSubject: (subjectId: string) => void;
   onOpenWeeks: () => void;
@@ -38,6 +41,9 @@ export const SidebarNav: React.FC<SidebarNavProps> = ({
   onSwitchView,
   subjects,
   totalWeeksCount,
+  activeWeekNumber,
+  selectedSubjectId,
+  onSelectSubject,
   loggedUser = 'Estudiante UEES',
   onScrollToSubject,
   onOpenWeeks,
@@ -106,10 +112,11 @@ export const SidebarNav: React.FC<SidebarNavProps> = ({
           <button
             onClick={() => {
               onSwitchView('dashboard');
+              if (onSelectSubject) onSelectSubject(null);
               if (onCloseMobileDrawer) onCloseMobileDrawer();
             }}
             className={`w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
-              currentView === 'dashboard'
+              currentView === 'dashboard' && !selectedSubjectId
                 ? 'text-white bg-gradient-to-r from-pink-500/25 to-purple-500/25 border-l-4 border-pink-500 shadow-sm'
                 : 'text-gray-400 hover:text-white hover:bg-white/5'
             }`}
@@ -151,27 +158,52 @@ export const SidebarNav: React.FC<SidebarNavProps> = ({
 
         {/* Materias del Ciclo */}
         <div className="pt-3 border-t border-white/5 space-y-2">
-          <p className="text-[10px] font-extrabold uppercase tracking-wider text-gray-400 px-3 font-mono">
-            Materias Ciclo
-          </p>
-          <div className="space-y-1">
-            {subjects.map((s, idx) => (
+          <div className="flex items-center justify-between px-3">
+            <p className="text-[10px] font-extrabold uppercase tracking-wider text-gray-400 font-mono">
+              Materias Ciclo
+            </p>
+            {selectedSubjectId && (
               <button
-                key={s.id}
                 onClick={() => {
+                  if (onSelectSubject) onSelectSubject(null);
                   onSwitchView('dashboard');
-                  onScrollToSubject(s.id);
-                  if (onCloseMobileDrawer) onCloseMobileDrawer();
                 }}
-                className="w-full text-left flex items-center justify-between px-3 py-2 rounded-xl text-xs text-gray-300 hover:bg-white/5 transition-all cursor-pointer group"
+                className="text-[9px] font-mono text-pink-400 hover:text-pink-300 underline cursor-pointer"
               >
-                <span className="flex items-center space-x-2.5 truncate pr-2">
-                  {getSubjectIcon(s.name, idx)}
-                  <span className="truncate group-hover:text-white font-medium">{s.name}</span>
-                </span>
-                <span className={`w-2 h-2 rounded-full ${getSubjectDotColor(idx)} shrink-0 shadow-xs`} />
+                Ver todas
               </button>
-            ))}
+            )}
+          </div>
+          <div className="space-y-1">
+            {subjects.map((s, idx) => {
+              const isSelected = selectedSubjectId === s.id;
+              return (
+                <button
+                  key={s.id}
+                  onClick={() => {
+                    onSwitchView('dashboard');
+                    if (onSelectSubject) {
+                      onSelectSubject(s.id);
+                    } else {
+                      onScrollToSubject(s.id);
+                    }
+                    if (onCloseMobileDrawer) onCloseMobileDrawer();
+                  }}
+                  className={`w-full text-left flex items-center justify-between px-3 py-2 rounded-xl text-xs transition-all cursor-pointer group ${
+                    isSelected
+                      ? 'bg-gradient-to-r from-pink-500/20 to-purple-500/20 text-white border-l-2 border-pink-500 shadow-sm'
+                      : 'text-gray-300 hover:bg-white/5'
+                  }`}
+                  title={`Abrir ventana de actividades de ${s.name}`}
+                >
+                  <span className="flex items-center space-x-2.5 truncate pr-2">
+                    {getSubjectIcon(s.name, idx)}
+                    <span className={`truncate ${isSelected ? 'text-white font-bold' : 'group-hover:text-white font-medium'}`}>{s.name}</span>
+                  </span>
+                  <span className={`w-2 h-2 rounded-full ${getSubjectDotColor(idx)} shrink-0 shadow-xs ${isSelected ? 'ring-2 ring-pink-500/50' : ''}`} />
+                </button>
+              );
+            })}
           </div>
         </div>
 
@@ -188,8 +220,8 @@ export const SidebarNav: React.FC<SidebarNavProps> = ({
               }}
               className="w-full text-left flex items-center space-x-3 px-3 py-2 rounded-xl text-xs text-gray-300 hover:bg-white/5 transition-all cursor-pointer"
             >
-              <CalendarDays className="w-4 h-4 text-yellow-400 shrink-0" />
-              <span>Semanas ({totalWeeksCount} Sem.)</span>
+              <CalendarDays className="w-4 h-4 text-pink-400 shrink-0" />
+              <span>Semanas ({activeWeekNumber ? `Sem. ${activeWeekNumber} activa` : `${totalWeeksCount} Sem.`})</span>
             </button>
 
             <button

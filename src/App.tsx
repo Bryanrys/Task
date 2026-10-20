@@ -34,6 +34,7 @@ import {
   Share2,
   CheckCircle2,
   ArrowRight,
+  ArrowLeft,
   Flame,
   LogOut,
   User,
@@ -77,6 +78,7 @@ import { PomodoroTimerModal } from './components/PomodoroTimerModal';
 import { ClassScheduleModal } from './components/ClassScheduleModal';
 import { UniversityLinksModal } from './components/UniversityLinksModal';
 import { EditSubjectModal } from './components/EditSubjectModal';
+import { SubjectActivitiesModal } from './components/SubjectActivitiesModal';
 import { ShareAppModal } from './components/ShareAppModal';
 import { ToolsAndLinksView } from './components/ToolsAndLinksView';
 import { UnifiedDashboardHeader } from './components/UnifiedDashboardHeader';
@@ -250,6 +252,10 @@ export default function App() {
   // View switcher (Dashboard Principal, Horario & Clases, Base de Datos Nube - Estilo Image 2)
   const [currentView, setCurrentView] = useState<'dashboard' | 'schedule' | 'cloud'>('dashboard');
   const [showMobileSidebar, setShowMobileSidebar] = useState<boolean>(false);
+  // Selected Subject Focus (abre solo esa materia y los ajustes)
+  const [selectedSubjectId, setSelectedSubjectId] = useState<string | null>(null);
+  // Ventana Emergente de Materia enfocada (abre modal con actividades por entregar)
+  const [subjectForModal, setSubjectForModal] = useState<SubjectItem | null>(null);
 
   // New Task for Subject Modal
   const [targetSubjectForNewTask, setTargetSubjectForNewTask] = useState<SubjectItem | null>(null);
@@ -301,6 +307,7 @@ export default function App() {
   };
 
   const scrollToSubject = (subjectId: string) => {
+    setSelectedSubjectId(subjectId);
     setCurrentView('dashboard');
     setTimeout(() => {
       const el = document.getElementById(`subject-${subjectId}`);
@@ -1538,6 +1545,14 @@ export default function App() {
           }}
           subjects={currentDashboard.subjects}
           totalWeeksCount={currentDashboard.weeks.length}
+          activeWeekNumber={currentWeek.weekNumber}
+          selectedSubjectId={selectedSubjectId}
+          onSelectSubject={(id) => {
+            setSelectedSubjectId(id);
+            setCurrentView('dashboard');
+            const subj = currentDashboard.subjects.find((s) => s.id === id);
+            if (subj) setSubjectForModal(subj);
+          }}
           loggedUser={loggedUser}
           onScrollToSubject={scrollToSubject}
           onOpenWeeks={() => setShowDrawer(true)}
@@ -1582,6 +1597,15 @@ export default function App() {
                     }}
                     subjects={currentDashboard.subjects}
                     totalWeeksCount={currentDashboard.weeks.length}
+                    activeWeekNumber={currentWeek.weekNumber}
+                    selectedSubjectId={selectedSubjectId}
+                    onSelectSubject={(id) => {
+                      setSelectedSubjectId(id);
+                      setCurrentView('dashboard');
+                      setShowMobileSidebar(false);
+                      const subj = currentDashboard.subjects.find((s) => s.id === id);
+                      if (subj) setSubjectForModal(subj);
+                    }}
                     loggedUser={loggedUser}
                     onScrollToSubject={(id: string) => {
                       scrollToSubject(id);
@@ -1631,7 +1655,7 @@ export default function App() {
                 </h1>
               </div>
 
-              {/* Week Pill */}
+              {/* Week Pill - Visible en Móvil y Desktop */}
               {(() => {
                 const displayDateRange = formatOrResolveWeekDateRange(
                   currentWeek.weekNumber,
@@ -1641,11 +1665,13 @@ export default function App() {
                 return (
                   <button
                     onClick={() => setShowDrawer(true)}
-                    className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-[#1a233a] border border-white/10 text-pink-300 hover:border-pink-500/40 transition-all cursor-pointer"
+                    className="inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-1 rounded-full text-xs font-bold bg-[#0d1222] border border-pink-500/40 text-pink-300 shadow-[0_0_10px_rgba(236,72,153,0.18)] hover:border-pink-500/70 transition-all cursor-pointer"
+                    title="Toca para seleccionar semana"
                   >
+                    <span className="w-2 h-2 rounded-full bg-pink-400 animate-pulse" />
                     <span>Semana {currentWeek.weekNumber}</span>
                     {displayDateRange && (
-                      <span className="opacity-75 font-mono">({displayDateRange})</span>
+                      <span className="opacity-75 font-mono text-[10px] hidden sm:inline">({displayDateRange})</span>
                     )}
                   </button>
                 );
@@ -1686,6 +1712,36 @@ export default function App() {
           {/* Conditional View Rendering */}
           {currentView === 'dashboard' && (
             <div>
+              {/* Banner sutil destacado de Semana de trabajo para APK/Móvil */}
+              <div className="flex items-center justify-between px-3.5 py-2.5 mb-5 rounded-2xl bg-gradient-to-r from-pink-500/10 via-[#0a0d1a] to-[#05070e] border border-pink-500/25 shadow-sm">
+                <div className="flex items-center gap-2.5 min-w-0">
+                  <div className="relative flex items-center justify-center shrink-0">
+                    <span className="w-2.5 h-2.5 rounded-full bg-pink-500" />
+                    <span className="w-2.5 h-2.5 rounded-full bg-pink-500 animate-ping absolute" />
+                  </div>
+                  <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5 min-w-0">
+                    <span className="text-xs font-black tracking-wide text-white">
+                      Semana {currentWeek.weekNumber}
+                    </span>
+                    <span className="text-[10px] uppercase font-bold tracking-wider px-1.5 py-0.5 rounded-md bg-pink-500/20 text-pink-300 border border-pink-500/30 font-mono">
+                      En Curso
+                    </span>
+                    {formatOrResolveWeekDateRange(currentWeek.weekNumber, currentDashboard?.startDateISO, currentWeek.dateRange) && (
+                      <span className="text-[11px] text-gray-400 font-mono hidden xs:inline truncate">
+                        • {formatOrResolveWeekDateRange(currentWeek.weekNumber, currentDashboard?.startDateISO, currentWeek.dateRange)}
+                      </span>
+                    )}
+                  </div>
+                </div>
+                <button
+                  onClick={() => setShowDrawer(true)}
+                  className="px-2.5 py-1 rounded-lg text-xs font-bold text-pink-300 hover:text-white bg-pink-500/15 hover:bg-pink-500/30 border border-pink-500/30 transition-all flex items-center gap-1 cursor-pointer shrink-0 ml-2"
+                >
+                  <CalendarDays className="w-3 h-3 text-pink-400" />
+                  <span>Semanas</span>
+                  <ChevronRight className="w-3.5 h-3.5" />
+                </button>
+              </div>
               {/* 4 Métricas Principales (Grid 4 columnas Estilo Imagen 2 AMOLED) */}
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
                 {/* 1. Actividades Pendientes */}
@@ -1866,9 +1922,9 @@ export default function App() {
                 </div>
               )}
 
-              {/* Grid de Materias (3 columnas idéntico a Imagen 2 AMOLED) */}
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 mb-8 items-start">
-                {currentDashboard.subjects.map((subject, sIdx) => {
+              {/* Función para renderizar tarjeta de materia (modular para vista individual y grilla completa) */}
+              {(() => {
+                const renderSubjectCard = (subject: SubjectItem, sIdx: number, isSingleView: boolean = false) => {
                   const tasks = currentWeek.subjectTasks[subject.id] || [];
                   const isSubjectAllDone = tasks.length > 0 && tasks.every((t) => t.completed);
 
@@ -1882,41 +1938,39 @@ export default function App() {
                   const subjectIcon =
                     sIdx % 3 === 0 ? '</>' : sIdx % 3 === 1 ? '√x' : '⚙';
 
-                  const statusLabel = isSubjectAllDone
-                    ? 'Lista ✓'
-                    : sIdx % 3 === 0
-                    ? 'Activa'
-                    : sIdx % 3 === 1
-                    ? 'Pendiente'
-                    : 'En Curso';
-
+                  const statusLabel = isSubjectAllDone ? 'Lista ✓' : 'Pendiente';
                   const badgeColor = isSubjectAllDone
                     ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30'
-                    : sIdx % 3 === 0
-                    ? 'bg-pink-500/20 text-pink-300 border-pink-500/30'
-                    : sIdx % 3 === 1
-                    ? 'bg-purple-500/20 text-purple-300 border-purple-500/30'
-                    : 'bg-cyan-500/20 text-cyan-300 border-cyan-500/30';
+                    : 'bg-pink-500/15 text-pink-300 border-pink-500/25';
 
                   return (
                     <div
                       key={subject.id}
                       id={`subject-${subject.id}`}
-                      className={`rounded-2xl bg-[#05070e] border border-white/5 border-t-2 ${borderTopColor} p-4.5 flex flex-col justify-between transition-all hover:bg-[#080b16] shadow-md`}
+                      className={`rounded-2xl bg-[#05070e] border border-white/5 border-t-2 ${borderTopColor} p-4.5 flex flex-col justify-between transition-all hover:bg-[#080b16] shadow-md ${
+                        isSingleView ? 'max-w-2xl mx-auto w-full' : ''
+                      }`}
                     >
                       {/* Header de Materia */}
                       <div className="flex items-center justify-between mb-4">
                         <div className="flex items-center gap-2 min-w-0">
-                          <span className="font-mono text-xs font-black text-pink-400 select-none">
-                            {subjectIcon}
-                          </span>
-                          <h3 className="font-black text-sm tracking-wide uppercase text-white truncate">
-                            {subject.name}
-                          </h3>
+                          <div
+                            onClick={() => setSubjectForModal(subject)}
+                            className="flex items-center gap-2 min-w-0 cursor-pointer group/title"
+                            title={`Abrir ventana de actividades de ${subject.name}`}
+                          >
+                            <span className="font-mono text-xs font-black text-pink-400 select-none">
+                              {subjectIcon}
+                            </span>
+                            <h3 className="font-black text-sm tracking-wide uppercase text-white truncate group-hover/title:text-pink-300 transition-colors">
+                              {subject.name}
+                            </h3>
+                            <ExternalLink className="w-3 h-3 text-gray-500 group-hover/title:text-pink-400 transition-colors shrink-0" />
+                          </div>
                           <button
                             onClick={() => setEditingSubject(subject)}
-                            title={`Editar "${subject.name}"`}
-                            className="p-1 rounded text-gray-500 hover:text-white transition-colors cursor-pointer"
+                            title={`Editar nombre de "${subject.name}"`}
+                            className="p-1 rounded text-gray-500 hover:text-white transition-colors cursor-pointer shrink-0"
                           >
                             <Edit2 className="w-3 h-3" />
                           </button>
@@ -1965,7 +2019,7 @@ export default function App() {
                                     {task.note || (isForo ? 'Módulo semanal' : isLab ? 'Práctica técnica' : 'Evaluación')}
                                   </span>
                                   {deadlineInfo && (
-                                    <span className="text-[9px] font-mono text-amber-300 mt-0.5">
+                                    <span className="text-[9px] font-mono text-pink-300 mt-0.5">
                                       {deadlineInfo.text}
                                     </span>
                                   )}
@@ -1984,7 +2038,7 @@ export default function App() {
                                       deadlineISO: task.deadlineISO || '',
                                     });
                                   }}
-                                  className="p-1 rounded text-gray-500 hover:text-yellow-300 opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer"
+                                  className="p-1 rounded text-gray-500 hover:text-pink-300 opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer"
                                   title="Editar nota o fecha límite"
                                 >
                                   <Edit3 className="w-3.5 h-3.5" />
@@ -1995,7 +2049,7 @@ export default function App() {
                                   className={`w-6 h-6 rounded-full flex items-center justify-center transition-all cursor-pointer ${
                                     task.completed
                                       ? 'bg-emerald-500 text-white shadow-[0_0_8px_rgba(16,185,129,0.5)]'
-                                      : 'border-2 border-white/20 text-transparent hover:border-yellow-400'
+                                      : 'border-2 border-white/20 text-transparent hover:border-pink-500'
                                   }`}
                                   title={task.completed ? 'Marcar como pendiente' : 'Marcar como entregado'}
                                 >
@@ -2023,17 +2077,178 @@ export default function App() {
                       </button>
                     </div>
                   );
-                })}
-              </div>
+                };
 
-              {/* Analytics Section (Curva de Rendimiento + Donut Completitud) */}
-              <AnalyticsSection
-                weeks={currentDashboard.weeks}
-                activeWeekNumber={currentWeek.weekNumber}
-                completedTasksCount={weekStats.completedTasks}
-                pendingTasksCount={weekStats.pendingTasks}
-                isDark={isDark}
-              />
+                return selectedSubjectId ? (
+                  /* Vista con Materia Seleccionada + Ajustes (Foto 2) */
+                  <div className="space-y-6 mb-8">
+                    {/* Barra de Navegación de Materia Seleccionada */}
+                    <div className="p-4 rounded-2xl bg-[#080b16] border border-pink-500/25 flex flex-col gap-3 shadow-lg">
+                      <div className="flex flex-wrap items-center justify-between gap-2">
+                        <button
+                          onClick={() => setSelectedSubjectId(null)}
+                          className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs font-bold bg-pink-500/15 hover:bg-pink-500/25 border border-pink-500/30 text-pink-300 transition-all cursor-pointer"
+                        >
+                          <ArrowLeft className="w-3.5 h-3.5" />
+                          <span>Ver todas las materias ({currentDashboard.subjects.length})</span>
+                        </button>
+                        <span className="text-[11px] font-mono text-gray-400">
+                          Materia enfocada + Herramientas
+                        </span>
+                      </div>
+
+                      {/* Selector rápido tipo chips */}
+                      <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-thin">
+                        {currentDashboard.subjects.map((s, idx) => {
+                          const isCurrent = s.id === selectedSubjectId;
+                          return (
+                            <button
+                              key={s.id}
+                              onClick={() => setSelectedSubjectId(s.id)}
+                              className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer shrink-0 flex items-center gap-2 border ${
+                                isCurrent
+                                  ? 'bg-gradient-to-r from-pink-500/25 to-purple-500/25 border-pink-500 text-white shadow-[0_0_10px_rgba(236,72,153,0.3)]'
+                                  : 'bg-white/5 border-white/10 text-gray-300 hover:text-white hover:bg-white/10'
+                              }`}
+                            >
+                              <span className="font-mono text-pink-400 text-[10px]">
+                                {idx % 3 === 0 ? '</>' : idx % 3 === 1 ? '√x' : '⚙'}
+                              </span>
+                              <span>{s.name}</span>
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+
+                    {/* Tarjeta exclusiva de la materia */}
+                    {(() => {
+                      const targetSubject = currentDashboard.subjects.find((s) => s.id === selectedSubjectId);
+                      if (!targetSubject) return null;
+                      const sIdx = currentDashboard.subjects.findIndex((s) => s.id === selectedSubjectId);
+                      return (
+                        <div className="max-w-2xl mx-auto w-full">
+                          {renderSubjectCard(targetSubject, sIdx, true)}
+                        </div>
+                      );
+                    })()}
+
+                    {/* Separador de Herramientas y Ajustes */}
+                    <div className="pt-4 flex items-center gap-3">
+                      <div className="h-px bg-white/10 flex-1" />
+                      <span className="text-xs font-black uppercase tracking-wider text-pink-300 font-mono flex items-center gap-2 px-3 py-1 rounded-full bg-[#080b16] border border-pink-500/30 shadow-[0_0_12px_rgba(236,72,153,0.15)]">
+                        <span>⚙</span>
+                        <span>Ajustes y Herramientas</span>
+                      </span>
+                      <div className="h-px bg-white/10 flex-1" />
+                    </div>
+
+                    {/* Herramientas y Ajustes (Foto 2) */}
+                    <div className="pt-2">
+                      <ToolsAndLinksView
+                        isDark={isDark}
+                        cloudStatus={cloudStatus}
+                        accessCode={currentDashboard.accessCode}
+                        startDate={currentDashboard.startDate}
+                        daysElapsed={daysTranscurridos}
+                        pendingTasksCount={weekStats.pendingTasks}
+                        onBackToTasks={() => setSelectedSubjectId(null)}
+                        onExportJSON={handleExportJSON}
+                        onImportJSONClick={() => jsonInputRef.current?.click()}
+                        onOpenSchedule={() => setShowScheduleModal(true)}
+                        onOpenLinks={() => setShowLinksModal(true)}
+                        onOpenGrades={() => setShowGradesModal(true)}
+                        onOpenPomodoro={() => setShowPomodoroModal(true)}
+                        onOpenStartDate={() => setShowStartDateModal(true)}
+                        onUploadCloud={() => setShowUploadConfirm(true)}
+                        onDownloadCloud={handleTriggerCloudDownload}
+                        onCopyLink={handleCopyLink}
+                        onOpenShareModal={() => setShowShareModal(true)}
+                      />
+                    </div>
+                  </div>
+                ) : (
+                  /* Grid con animación de esfumado al completar materia y botón para ver completadas */
+                  (() => {
+                    const completedSubjectsCount = currentDashboard.subjects.length - visibleSubjects.length;
+
+                    return (
+                      <>
+                        {/* Control de materias completadas */}
+                        <div className="flex items-center justify-between mb-4 px-1">
+                          <span className="text-xs font-mono font-bold text-gray-400">
+                            Materias ({visibleSubjects.length} pendientes{completedSubjectsCount > 0 ? ` • ${completedSubjectsCount} completada${completedSubjectsCount > 1 ? 's' : ''}` : ''})
+                          </span>
+                          {completedSubjectsCount > 0 && (
+                            <button
+                              onClick={() => setShowCompletedSubjects(!showCompletedSubjects)}
+                              className="text-xs font-bold text-pink-300 hover:text-white flex items-center gap-1.5 px-3 py-1 rounded-xl bg-pink-500/10 hover:bg-pink-500/20 border border-pink-500/25 transition-all cursor-pointer"
+                            >
+                              {showCompletedSubjects ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
+                              <span>{showCompletedSubjects ? 'Ocultar completadas' : `Mostrar completadas (${completedSubjectsCount})`}</span>
+                            </button>
+                          )}
+                        </div>
+
+                        {visibleSubjects.length === 0 ? (
+                          <motion.div
+                            initial={{ opacity: 0, scale: 0.95 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            className="p-8 text-center rounded-3xl bg-[#080b16] border border-emerald-500/30 mb-8 shadow-xl"
+                          >
+                            <div className="w-16 h-16 mx-auto mb-3 rounded-full bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center text-3xl">
+                              🎉
+                            </div>
+                            <h3 className="text-base font-black text-white uppercase tracking-wider mb-1">
+                              ¡Todas las materias completadas en la Semana {currentWeek.weekNumber}!
+                            </h3>
+                            <p className="text-xs text-gray-400 mb-4 max-w-md mx-auto">
+                              Has entregado todas tus actividades. Las materias se esfumaron del panel para mantener tu enfoque al 100%.
+                            </p>
+                            <button
+                              onClick={() => setShowCompletedSubjects(true)}
+                              className="px-4 py-2 rounded-xl text-xs font-bold bg-white/10 hover:bg-white/20 text-white transition-all cursor-pointer"
+                            >
+                              Ver materias completadas
+                            </button>
+                          </motion.div>
+                        ) : (
+                          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 mb-8 items-start">
+                            <AnimatePresence mode="popLayout">
+                              {visibleSubjects.map((subject, sIdx) => (
+                                <motion.div
+                                  key={subject.id}
+                                  layout
+                                  initial={{ opacity: 0, scale: 0.95 }}
+                                  animate={{ opacity: 1, scale: 1 }}
+                                  exit={{
+                                    opacity: 0,
+                                    scale: 0.8,
+                                    y: -25,
+                                    filter: 'blur(12px)',
+                                    transition: { duration: 0.5, ease: 'easeInOut' },
+                                  }}
+                                >
+                                  {renderSubjectCard(subject, sIdx, false)}
+                                </motion.div>
+                              ))}
+                            </AnimatePresence>
+                          </div>
+                        )}
+
+                        {/* Analytics Section (Curva de Rendimiento + Donut Completitud) */}
+                        <AnalyticsSection
+                          weeks={currentDashboard.weeks}
+                          activeWeekNumber={currentWeek.weekNumber}
+                          completedTasksCount={weekStats.completedTasks}
+                          pendingTasksCount={weekStats.pendingTasks}
+                          isDark={isDark}
+                        />
+                      </>
+                    );
+                  })()
+                );
+              })()}
             </div>
           )}
 
@@ -2398,6 +2613,38 @@ export default function App() {
         onRename={handleRenameSubject}
         onDelete={handleDeleteSubject}
         canDelete={false}
+        isDark={isDark}
+      />
+
+      {/* Subject Focused Activities Modal Window (abre solo esa materia como ventana) */}
+      <SubjectActivitiesModal
+        isOpen={subjectForModal !== null}
+        subject={subjectForModal}
+        tasks={
+          subjectForModal && currentWeek
+            ? currentWeek.subjectTasks[subjectForModal.id] || []
+            : []
+        }
+        weekNumber={currentWeek?.weekNumber || 1}
+        onClose={() => setSubjectForModal(null)}
+        onToggleTask={(taskId) => {
+          if (subjectForModal) {
+            handleToggleTask(subjectForModal.id, taskId);
+          }
+        }}
+        onOpenNewTask={(subj) => handleOpenNewTaskModal(subj)}
+        onEditTaskNote={(task) => {
+          if (subjectForModal) {
+            setActiveNoteTarget({
+              subjectId: subjectForModal.id,
+              taskId: task.id,
+              taskName: `${subjectForModal.name} - ${task.name}`,
+              note: task.note || '',
+              deadlineISO: task.deadlineISO || '',
+            });
+          }
+        }}
+        onEditSubject={(subj) => setEditingSubject(subj)}
         isDark={isDark}
       />
     </div>

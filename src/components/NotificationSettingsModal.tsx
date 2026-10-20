@@ -145,12 +145,12 @@ export const NotificationSettingsModal: React.FC<NotificationSettingsModalProps>
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-md animate-fadeIn">
       <div className="relative w-full max-w-[390px] liquid-modal-dark rounded-3xl p-6 shadow-2xl text-stone-100 overflow-hidden liquid-gloss">
         {/* Subtle Ambient Glow */}
-        <div className="absolute -top-12 -right-12 w-36 h-36 rounded-full bg-yellow-500/15 blur-2xl pointer-events-none" />
+        <div className="absolute -top-12 -right-12 w-36 h-36 rounded-full bg-pink-500/15 blur-2xl pointer-events-none" />
 
         {/* Header */}
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2.5">
-            <div className="p-2.5 rounded-2xl bg-yellow-400/15 text-yellow-400 border border-yellow-400/30">
+            <div className="p-2.5 rounded-2xl bg-pink-500/15 text-pink-400 border border-pink-500/30">
               <BellRing className="w-5 h-5 animate-pulse" />
             </div>
             <div>
@@ -174,7 +174,7 @@ export const NotificationSettingsModal: React.FC<NotificationSettingsModalProps>
         {/* Permission Status Pill */}
         <div className="flex items-center justify-between px-3 py-2 rounded-xl bg-white/[0.04] border border-white/10 mb-3 text-xs backdrop-blur-md">
           <span className="text-stone-400 font-mono text-[11px] flex items-center gap-1.5">
-            <Smartphone className="w-3.5 h-3.5 text-yellow-500" />
+            <Smartphone className="w-3.5 h-3.5 text-pink-400" />
             <span>Permiso del sistema:</span>
           </span>
 
@@ -186,7 +186,7 @@ export const NotificationSettingsModal: React.FC<NotificationSettingsModalProps>
           ) : (
             <button
               onClick={handleRequestPermission}
-              className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-amber-500/20 border border-amber-500/40 text-amber-300 hover:bg-amber-500/30 text-[10px] font-bold font-mono cursor-pointer transition-colors"
+              className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-pink-500/20 border border-pink-500/40 text-pink-300 hover:bg-pink-500/30 text-[10px] font-bold font-mono cursor-pointer transition-colors"
             >
               <AlertCircle className="w-3 h-3" />
               <span>ACTIVAR AHORA</span>
@@ -208,11 +208,11 @@ export const NotificationSettingsModal: React.FC<NotificationSettingsModalProps>
           <button
             onClick={handleToggle}
             className={`w-12 h-6 rounded-full transition-colors relative cursor-pointer ${
-              settings.enabled ? 'bg-yellow-400' : 'bg-stone-700'
+              settings.enabled ? 'bg-gradient-to-r from-pink-500 to-purple-600' : 'bg-stone-700'
             }`}
           >
             <div
-              className={`w-4 h-4 rounded-full bg-black transition-all absolute top-1 ${
+              className={`w-4 h-4 rounded-full bg-white transition-all absolute top-1 ${
                 settings.enabled ? 'left-7' : 'left-1'
               }`}
             />
@@ -221,23 +221,23 @@ export const NotificationSettingsModal: React.FC<NotificationSettingsModalProps>
 
         {/* Live Countdown & Frequency Monitor */}
         {settings.enabled && (
-          <div className="p-3 rounded-2xl bg-gradient-to-r from-yellow-500/15 via-amber-500/5 to-transparent border border-yellow-500/30 mb-3 text-xs backdrop-blur-md">
+          <div className="p-3 rounded-2xl bg-gradient-to-r from-pink-500/15 via-purple-500/5 to-transparent border border-pink-500/30 mb-3 text-xs backdrop-blur-md">
             <div className="flex items-center justify-between text-[11px] font-mono mb-1">
               <span className="text-stone-300 flex items-center gap-1">
-                <Clock className="w-3 h-3 text-yellow-400 animate-spin" />
+                <Clock className="w-3 h-3 text-pink-400 animate-spin" />
                 <span>Próximo aviso en:</span>
               </span>
-              <span className="text-yellow-400 font-black tracking-wider text-xs">
+              <span className="text-pink-300 font-black tracking-wider text-xs">
                 {remainingTimeStr || 'Calculando...'}
               </span>
             </div>
 
-            <div className="flex items-center justify-between text-[10px] text-stone-400 pt-1 border-t border-yellow-500/15">
+            <div className="flex items-center justify-between text-[10px] text-stone-400 pt-1 border-t border-pink-500/15">
               <span>Frecuencia: Cada {settings.intervalMinutes} min</span>
               <button
                 onClick={handleForceSyncAlarms}
                 title="Reiniciar contador desde ahora y programar alarma"
-                className="text-yellow-400 hover:text-yellow-300 font-bold flex items-center gap-1 cursor-pointer transition-colors"
+                className="text-pink-400 hover:text-pink-300 font-bold flex items-center gap-1 cursor-pointer transition-colors"
               >
                 <RefreshCw className={`w-3 h-3 ${justSynced ? 'animate-spin' : ''}`} />
                 <span>{justSynced ? '¡Reiniciado!' : 'Reiniciar ciclo'}</span>
@@ -250,7 +250,7 @@ export const NotificationSettingsModal: React.FC<NotificationSettingsModalProps>
         <div className="mb-4">
           <label className="block text-[11px] font-bold text-stone-400 uppercase tracking-wider mb-2 flex items-center justify-between font-mono">
             <span className="flex items-center gap-1.5">
-              <Clock className="w-3.5 h-3.5 text-yellow-400" />
+              <Clock className="w-3.5 h-3.5 text-pink-400" />
               <span>FRECUENCIA DE RECORDATORIO</span>
             </span>
             <span className="text-[9px] text-stone-500">Toca para aplicar</span>
@@ -270,8 +270,8 @@ export const NotificationSettingsModal: React.FC<NotificationSettingsModalProps>
                 onClick={() => handleIntervalChange(opt.val)}
                 className={`py-2 px-1 text-xs font-extrabold rounded-xl border transition-all cursor-pointer ${
                   settings.intervalMinutes === opt.val
-                    ? 'bg-yellow-400 border-yellow-400 text-black shadow-md shadow-yellow-500/15 scale-[1.02]'
-                    : 'bg-white/[0.04] border-white/10 text-stone-300 hover:border-yellow-400/50 hover:bg-white/[0.08]'
+                    ? 'bg-gradient-to-r from-pink-500 to-purple-600 border-pink-500 text-white shadow-md shadow-pink-500/20 scale-[1.02]'
+                    : 'bg-white/[0.04] border-white/10 text-stone-300 hover:border-pink-500/50 hover:bg-white/[0.08]'
                 }`}
               >
                 {opt.label}
@@ -287,7 +287,7 @@ export const NotificationSettingsModal: React.FC<NotificationSettingsModalProps>
           </span>
           {totalPendingCount > 0 ? (
             <p className="text-stone-300 leading-relaxed text-[11px]">
-              Tienes <strong className="text-yellow-400 font-extrabold">{totalPendingCount}</strong> actividades pendientes en:{' '}
+              Tienes <strong className="text-pink-400 font-extrabold">{totalPendingCount}</strong> actividades pendientes en:{' '}
               <span className="text-stone-200 font-semibold">{pendingSubjects.join(', ')}</span>.
             </p>
           ) : (
@@ -303,16 +303,16 @@ export const NotificationSettingsModal: React.FC<NotificationSettingsModalProps>
             <button
               onClick={playNotificationSound}
               type="button"
-              className="py-2.5 px-3 bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500/40 text-amber-300 font-bold text-xs rounded-xl transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-sm active:scale-98"
+              className="py-2.5 px-3 bg-cyan-500/15 hover:bg-cyan-500/25 border border-cyan-500/30 text-cyan-300 font-bold text-xs rounded-xl transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-sm active:scale-98"
             >
-              <Volume2 className="w-4 h-4 text-yellow-400" />
+              <Volume2 className="w-4 h-4 text-cyan-400" />
               <span>Oír Timbre 🔔</span>
             </button>
 
             <button
               onClick={onTestNotification}
               type="button"
-              className="py-2.5 px-3 bg-yellow-400 hover:bg-yellow-300 text-black font-black text-xs rounded-xl transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-sm active:scale-98"
+              className="py-2.5 px-3 bg-gradient-to-r from-pink-500 to-purple-600 hover:opacity-90 text-white font-black text-xs rounded-xl transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-md shadow-pink-500/20 active:scale-98"
             >
               <BellRing className="w-4 h-4" />
               <span>Enviar Alerta</span>

@@ -202,8 +202,8 @@ export const DrawerDashboards: React.FC<DrawerDashboardsProps> = ({
                               ? 'border-pink-500 bg-pink-950/25 shadow-lg shadow-pink-500/15'
                               : 'border-pink-400 bg-pink-50/80 shadow-sm'
                             : isDark
-                            ? 'border-yellow-400/80 bg-yellow-400/10 shadow-lg shadow-yellow-500/10'
-                            : 'border-amber-400 bg-amber-50/80 shadow-sm'
+                            ? 'border-cyan-400/80 bg-cyan-500/10 shadow-lg shadow-cyan-500/15'
+                            : 'border-cyan-400 bg-cyan-50/80 shadow-sm'
                           : isParcial
                           ? isDark
                             ? 'border-pink-500/25 bg-[#17171d] hover:border-pink-500/50'
@@ -225,19 +225,30 @@ export const DrawerDashboards: React.FC<DrawerDashboardsProps> = ({
                             className={`font-black text-sm ${
                               isActive
                                 ? isParcial
-                                  ? isDark
-                                    ? 'text-pink-300'
-                                    : 'text-pink-600'
-                                  : isDark
-                                  ? 'text-yellow-300'
-                                  : 'text-amber-800'
+                                ? isDark
+                                  ? 'text-pink-300'
+                                  : 'text-pink-600'
                                 : isDark
-                                ? 'text-slate-100'
-                                : 'text-stone-800'
+                                ? 'text-cyan-300'
+                                : 'text-cyan-800'
+                              : isDark
+                              ? 'text-slate-100'
+                              : 'text-stone-800'
                             }`}
                           >
                             Semana {week.weekNumber}
                           </span>
+                          {isActive && !isParcial && (
+                            <span
+                              className={`text-[9px] font-black px-1.5 py-0.5 rounded-full ${
+                                isDark
+                                  ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/30'
+                                  : 'bg-cyan-100 text-cyan-700 border border-cyan-300'
+                              }`}
+                            >
+                              EN CURSO
+                            </span>
+                          )}
                           {isParcial && (
                             <span
                               className={`text-[9px] font-black px-1.5 py-0.5 rounded-full ${

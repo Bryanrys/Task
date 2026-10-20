@@ -62,8 +62,8 @@ export const SegmentedLoader: React.FC<SegmentedLoaderProps> = ({ isOpen, onEnte
           disabled={!isReady}
           className={`w-full max-w-[320px] p-4 rounded-2xl border flex flex-col items-center gap-3 transition-all cursor-pointer ${
             isReady
-              ? 'bg-yellow-400/10 border-yellow-400 text-yellow-300 shadow-xl shadow-yellow-500/20 active:scale-95'
-              : 'bg-[#141210] border-[#292524] text-stone-400 cursor-wait'
+              ? 'bg-gradient-to-r from-pink-500/20 via-purple-500/20 to-cyan-500/20 border-pink-500/50 text-white shadow-xl shadow-pink-500/20 active:scale-95'
+              : 'bg-[#0a0d17] border-white/10 text-stone-400 cursor-wait'
           }`}
         >
           <span className="font-bold text-sm tracking-wide">
@@ -76,7 +76,7 @@ export const SegmentedLoader: React.FC<SegmentedLoaderProps> = ({ isOpen, onEnte
               <div
                 key={i}
                 className={`flex-1 h-full rounded-sm transition-colors duration-150 ${
-                  i < filledCount ? 'bg-yellow-400 shadow-xs shadow-yellow-400' : 'bg-white/15'
+                  i < filledCount ? 'bg-gradient-to-r from-pink-500 to-purple-600 shadow-xs shadow-pink-500/40' : 'bg-white/15'
                 }`}
               />
             ))}
@@ -85,7 +85,7 @@ export const SegmentedLoader: React.FC<SegmentedLoaderProps> = ({ isOpen, onEnte
 
         {isReady && (
           <p className="text-xs text-stone-400 animate-pulse">
-            Toca el botón amarillo para entrar a tu Dashboard
+            Toca el botón para entrar a tu Dashboard
           </p>
         )}
       </motion.div>

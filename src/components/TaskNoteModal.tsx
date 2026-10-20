@@ -50,13 +50,13 @@ export const TaskNoteModal: React.FC<TaskNoteModalProps> = ({
       <div
         className={`relative w-full max-w-sm rounded-3xl p-6 border shadow-2xl transition-colors ${
           isDark
-            ? 'bg-[#141210] border-[#292524] text-stone-100'
+            ? 'bg-[#0a0d17] border-white/10 text-stone-100'
             : 'bg-white border-stone-200 text-stone-900'
         }`}
       >
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-2">
-            <div className="p-2 rounded-xl bg-yellow-400/10 text-yellow-400">
+            <div className="p-2 rounded-xl bg-pink-500/15 text-pink-400 border border-pink-500/30">
               <Edit2 className="w-4 h-4" />
             </div>
             <div>
@@ -77,7 +77,7 @@ export const TaskNoteModal: React.FC<TaskNoteModalProps> = ({
         </div>
 
         <p className="text-xs text-stone-400 mb-3 font-medium">
-          Materia / Actividad: <span className="text-yellow-400 font-bold">{taskName}</span>
+          Materia / Actividad: <span className="text-pink-400 font-bold">{taskName}</span>
         </p>
 
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -93,8 +93,8 @@ export const TaskNoteModal: React.FC<TaskNoteModalProps> = ({
               placeholder="Ej. Formato IEEE, subir en PDF antes de las 11:59..."
               className={`w-full rounded-xl px-3.5 py-2.5 text-xs outline-none resize-none font-mono border transition-all ${
                 isDark
-                  ? 'bg-[#1a1715] border-[#38332e] text-white focus:border-yellow-400'
-                  : 'bg-stone-50 border-stone-300 text-stone-900 focus:border-amber-500'
+                  ? 'bg-[#05070e] border-white/10 text-white focus:border-pink-500/80'
+                  : 'bg-stone-50 border-stone-300 text-stone-900 focus:border-pink-500'
               }`}
             />
           </div>
@@ -103,7 +103,7 @@ export const TaskNoteModal: React.FC<TaskNoteModalProps> = ({
           <div>
             <div className="flex items-center justify-between mb-1">
               <label className="block text-[10px] font-bold text-stone-400 uppercase tracking-wider font-mono flex items-center gap-1">
-                <Clock className="w-3 h-3 text-yellow-500" />
+                <Clock className="w-3 h-3 text-cyan-400" />
                 <span>FECHA Y HORA LÍMITE (DEADLINE):</span>
               </label>
               {deadline && (
@@ -123,8 +123,8 @@ export const TaskNoteModal: React.FC<TaskNoteModalProps> = ({
               onChange={(e) => setDeadline(e.target.value)}
               className={`w-full rounded-xl px-3 py-2 text-xs outline-none font-mono border transition-all ${
                 isDark
-                  ? 'bg-[#1a1715] border-[#38332e] text-yellow-400 focus:border-yellow-400'
-                  : 'bg-stone-50 border-stone-300 text-stone-900 focus:border-amber-500'
+                  ? 'bg-[#05070e] border-white/10 text-cyan-300 focus:border-cyan-400'
+                  : 'bg-stone-50 border-stone-300 text-stone-900 focus:border-cyan-500'
               }`}
             />
 
@@ -135,7 +135,7 @@ export const TaskNoteModal: React.FC<TaskNoteModalProps> = ({
                 onClick={() => handleSetQuickDeadline(0)}
                 className={`flex-1 py-1 text-[10px] font-bold rounded-lg border transition-colors cursor-pointer font-mono ${
                   isDark
-                    ? 'border-stone-800 bg-[#1c1917] text-stone-300 hover:text-white'
+                    ? 'border-white/10 bg-[#05070e] text-stone-300 hover:text-white'
                     : 'border-stone-200 bg-stone-100 text-stone-700 hover:bg-stone-200'
                 }`}
               >
@@ -146,7 +146,7 @@ export const TaskNoteModal: React.FC<TaskNoteModalProps> = ({
                 onClick={() => handleSetQuickDeadline(1)}
                 className={`flex-1 py-1 text-[10px] font-bold rounded-lg border transition-colors cursor-pointer font-mono ${
                   isDark
-                    ? 'border-stone-800 bg-[#1c1917] text-stone-300 hover:text-white'
+                    ? 'border-white/10 bg-[#05070e] text-stone-300 hover:text-white'
                     : 'border-stone-200 bg-stone-100 text-stone-700 hover:bg-stone-200'
                 }`}
               >
@@ -157,7 +157,7 @@ export const TaskNoteModal: React.FC<TaskNoteModalProps> = ({
                 onClick={() => handleSetQuickDeadline(6)}
                 className={`flex-1 py-1 text-[10px] font-bold rounded-lg border transition-colors cursor-pointer font-mono ${
                   isDark
-                    ? 'border-stone-800 bg-[#1c1917] text-stone-300 hover:text-white'
+                    ? 'border-white/10 bg-[#05070e] text-stone-300 hover:text-white'
                     : 'border-stone-200 bg-stone-100 text-stone-700 hover:bg-stone-200'
                 }`}
               >
@@ -166,7 +166,7 @@ export const TaskNoteModal: React.FC<TaskNoteModalProps> = ({
             </div>
           </div>
 
-          <div className="flex items-center justify-end gap-2 pt-2 border-t border-stone-800/60">
+          <div className="flex items-center justify-end gap-2 pt-2 border-t border-white/10">
             <button
               type="button"
               onClick={onClose}
@@ -178,9 +178,9 @@ export const TaskNoteModal: React.FC<TaskNoteModalProps> = ({
             </button>
             <button
               type="submit"
-              className="px-4 py-2 bg-yellow-400 hover:bg-yellow-300 text-black font-extrabold text-xs rounded-xl transition-all shadow-md shadow-yellow-500/20 cursor-pointer flex items-center gap-1.5"
+              className="px-4 py-2 bg-gradient-to-r from-pink-500 to-purple-600 hover:opacity-90 text-white font-extrabold text-xs rounded-xl transition-all shadow-md shadow-pink-500/20 cursor-pointer flex items-center gap-1.5"
             >
-              <Check className="w-3.5 h-3.5" />
+              <Check className="w-3.5 h-3.5 stroke-[3]" />
               <span>Guardar</span>
             </button>
           </div>

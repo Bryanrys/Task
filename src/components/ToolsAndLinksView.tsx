@@ -162,78 +162,7 @@ export const ToolsAndLinksView: React.FC<ToolsAndLinksViewProps> = ({
         </span>
       </motion.div>
 
-      {/* Grid: JSON & Cloud Database Backup */}
-      <motion.div
-        initial={{ opacity: 0, scale: 0.98 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ delay: 0.05 }}
-        className={`rounded-3xl p-5 border transition-all ${
-          isDark
-            ? 'bg-[#05070e] border-emerald-500/25 shadow-[0_0_30px_rgba(16,185,129,0.08)]'
-            : 'bg-white border-emerald-200 shadow-md'
-        }`}
-      >
-        <div className="flex items-center justify-between mb-3.5">
-          <div className="flex items-center gap-2.5">
-            <div className="p-2 rounded-xl bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
-              <FileDown className="w-5 h-5" />
-            </div>
-            <div>
-              <h3 className={`font-black text-sm uppercase tracking-wide ${isDark ? 'text-emerald-300' : 'text-emerald-800'}`}>
-                Copia de Seguridad JSON
-              </h3>
-              <p className={`text-[11px] ${isDark ? 'text-stone-400' : 'text-stone-600'}`}>
-                Descarga o restaura tus semanas, tareas, notas y horario
-              </p>
-            </div>
-          </div>
-          <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 font-bold">
-            .JSON
-          </span>
-        </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-          <button
-            onClick={onExportJSON}
-            className={`p-3.5 rounded-2xl border flex items-center justify-between font-bold text-xs transition-all cursor-pointer active:scale-95 ${
-              isDark
-                ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-300 hover:bg-emerald-500/20 shadow-xs'
-                : 'bg-emerald-50 border-emerald-300 text-emerald-800 hover:bg-emerald-100 shadow-xs'
-            }`}
-          >
-            <div className="flex items-center gap-2.5">
-              <FileDown className="w-4 h-4 text-emerald-400" />
-              <div className="text-left">
-                <div className="font-extrabold">Descargar Respaldo JSON</div>
-                <div className={`text-[10px] font-normal ${isDark ? 'text-stone-400' : 'text-stone-600'}`}>
-                  Guardar archivo en este dispositivo
-                </div>
-              </div>
-            </div>
-            <span className="text-xs">💾</span>
-          </button>
-
-          <button
-            onClick={onImportJSONClick}
-            className={`p-3.5 rounded-2xl border flex items-center justify-between font-bold text-xs transition-all cursor-pointer active:scale-95 ${
-              isDark
-                ? 'bg-cyan-500/10 border-cyan-500/30 text-cyan-300 hover:bg-cyan-500/20 shadow-xs'
-                : 'bg-cyan-50 border-cyan-300 text-cyan-800 hover:bg-cyan-100 shadow-xs'
-            }`}
-          >
-            <div className="flex items-center gap-2.5">
-              <FileUp className="w-4 h-4 text-cyan-400" />
-              <div className="text-left">
-                <div className="font-extrabold">Cargar Respaldo JSON</div>
-                <div className={`text-[10px] font-normal ${isDark ? 'text-stone-400' : 'text-stone-600'}`}>
-                  Restaurar archivo .json previo
-                </div>
-              </div>
-            </div>
-            <span className="text-xs">📂</span>
-          </button>
-        </div>
-      </motion.div>
 
       {/* Class Schedule Card */}
       <motion.div

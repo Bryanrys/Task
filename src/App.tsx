@@ -78,7 +78,6 @@ import { PomodoroTimerModal } from './components/PomodoroTimerModal';
 import { ClassScheduleModal } from './components/ClassScheduleModal';
 import { UniversityLinksModal } from './components/UniversityLinksModal';
 import { EditSubjectModal } from './components/EditSubjectModal';
-import { SubjectActivitiesModal } from './components/SubjectActivitiesModal';
 import { ShareAppModal } from './components/ShareAppModal';
 import { ToolsAndLinksView } from './components/ToolsAndLinksView';
 import { UnifiedDashboardHeader } from './components/UnifiedDashboardHeader';
@@ -254,8 +253,6 @@ export default function App() {
   const [showMobileSidebar, setShowMobileSidebar] = useState<boolean>(false);
   // Selected Subject Focus (abre solo esa materia y los ajustes)
   const [selectedSubjectId, setSelectedSubjectId] = useState<string | null>(null);
-  // Ventana Emergente de Materia enfocada (abre modal con actividades por entregar)
-  const [subjectForModal, setSubjectForModal] = useState<SubjectItem | null>(null);
 
   // New Task for Subject Modal
   const [targetSubjectForNewTask, setTargetSubjectForNewTask] = useState<SubjectItem | null>(null);
@@ -1550,8 +1547,6 @@ export default function App() {
           onSelectSubject={(id) => {
             setSelectedSubjectId(id);
             setCurrentView('dashboard');
-            const subj = currentDashboard.subjects.find((s) => s.id === id);
-            if (subj) setSubjectForModal(subj);
           }}
           loggedUser={loggedUser}
           onScrollToSubject={scrollToSubject}
@@ -1603,8 +1598,6 @@ export default function App() {
                       setSelectedSubjectId(id);
                       setCurrentView('dashboard');
                       setShowMobileSidebar(false);
-                      const subj = currentDashboard.subjects.find((s) => s.id === id);
-                      if (subj) setSubjectForModal(subj);
                     }}
                     loggedUser={loggedUser}
                     onScrollToSubject={(id: string) => {
@@ -1712,214 +1705,202 @@ export default function App() {
           {/* Conditional View Rendering */}
           {currentView === 'dashboard' && (
             <div>
-              {/* Banner sutil destacado de Semana de trabajo para APK/Móvil */}
-              <div className="flex items-center justify-between px-3.5 py-2.5 mb-5 rounded-2xl bg-gradient-to-r from-pink-500/10 via-[#0a0d1a] to-[#05070e] border border-pink-500/25 shadow-sm">
-                <div className="flex items-center gap-2.5 min-w-0">
-                  <div className="relative flex items-center justify-center shrink-0">
-                    <span className="w-2.5 h-2.5 rounded-full bg-pink-500" />
-                    <span className="w-2.5 h-2.5 rounded-full bg-pink-500 animate-ping absolute" />
-                  </div>
-                  <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5 min-w-0">
-                    <span className="text-xs font-black tracking-wide text-white">
-                      Semana {currentWeek.weekNumber}
-                    </span>
-                    <span className="text-[10px] uppercase font-bold tracking-wider px-1.5 py-0.5 rounded-md bg-pink-500/20 text-pink-300 border border-pink-500/30 font-mono">
-                      En Curso
-                    </span>
-                    {formatOrResolveWeekDateRange(currentWeek.weekNumber, currentDashboard?.startDateISO, currentWeek.dateRange) && (
-                      <span className="text-[11px] text-gray-400 font-mono hidden xs:inline truncate">
-                        • {formatOrResolveWeekDateRange(currentWeek.weekNumber, currentDashboard?.startDateISO, currentWeek.dateRange)}
-                      </span>
-                    )}
-                  </div>
-                </div>
-                <button
-                  onClick={() => setShowDrawer(true)}
-                  className="px-2.5 py-1 rounded-lg text-xs font-bold text-pink-300 hover:text-white bg-pink-500/15 hover:bg-pink-500/30 border border-pink-500/30 transition-all flex items-center gap-1 cursor-pointer shrink-0 ml-2"
-                >
-                  <CalendarDays className="w-3 h-3 text-pink-400" />
-                  <span>Semanas</span>
-                  <ChevronRight className="w-3.5 h-3.5" />
-                </button>
-              </div>
-              {/* 4 Métricas Principales (Grid 4 columnas Estilo Imagen 2 AMOLED) */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-                {/* 1. Actividades Pendientes */}
-                <div className="p-4 rounded-2xl bg-[#05070e] border border-white/5 flex flex-col justify-between relative overflow-hidden">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-xs font-medium text-gray-400">Actividades Pendientes</span>
-                    <span
-                      className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
-                        weekStats.pendingTasks > 0
-                          ? 'bg-pink-500/20 text-pink-300 border border-pink-500/30'
-                          : 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
-                      }`}
-                    >
-                      {weekStats.pendingTasks > 0 ? 'Urgente' : 'Al Día'}
-                    </span>
-                  </div>
-                  <div className="text-3xl font-black text-white my-1">{weekStats.pendingTasks}</div>
-                  <div className="flex items-center justify-between text-xs text-gray-400 mt-2">
-                    <span>Tareas activas</span>
+              {/* Contenido Superior General (Semana activa, 4 Métricas, Barra de Acciones y Notas) - Solo visible cuando NO hay una materia enfocada */}
+              {!selectedSubjectId && (
+                <>
+                  {/* Banner sutil destacado de Semana de trabajo para APK/Móvil */}
+                  <div className="flex items-center justify-between px-3.5 py-2.5 mb-5 rounded-2xl bg-gradient-to-r from-pink-500/10 via-[#0a0d1a] to-[#05070e] border border-pink-500/25 shadow-sm">
+                    <div className="flex items-center gap-2.5 min-w-0">
+                      <div className="relative flex items-center justify-center shrink-0">
+                        <span className="w-2.5 h-2.5 rounded-full bg-pink-500" />
+                        <span className="w-2.5 h-2.5 rounded-full bg-pink-500 animate-ping absolute" />
+                      </div>
+                      <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5 min-w-0">
+                        <span className="text-xs font-black tracking-wide text-white">
+                          Semana {currentWeek.weekNumber}
+                        </span>
+                        <span className="text-[10px] uppercase font-bold tracking-wider px-1.5 py-0.5 rounded-md bg-pink-500/20 text-pink-300 border border-pink-500/30 font-mono">
+                          En Curso
+                        </span>
+                        {formatOrResolveWeekDateRange(currentWeek.weekNumber, currentDashboard?.startDateISO, currentWeek.dateRange) && (
+                          <span className="text-[11px] text-gray-400 font-mono hidden xs:inline truncate">
+                            • {formatOrResolveWeekDateRange(currentWeek.weekNumber, currentDashboard?.startDateISO, currentWeek.dateRange)}
+                          </span>
+                        )}
+                      </div>
+                    </div>
                     <button
                       onClick={() => setShowDrawer(true)}
-                      className="text-pink-400 hover:text-pink-300 font-semibold flex items-center gap-1 cursor-pointer"
+                      className="px-2.5 py-1 rounded-lg text-xs font-bold text-pink-300 hover:text-white bg-pink-500/15 hover:bg-pink-500/30 border border-pink-500/30 transition-all flex items-center gap-1 cursor-pointer shrink-0 ml-2"
                     >
-                      Ver todas →
+                      <CalendarDays className="w-3 h-3 text-pink-400" />
+                      <span>Semanas</span>
+                      <ChevronRight className="w-3.5 h-3.5" />
                     </button>
                   </div>
-                </div>
 
-                {/* 2. Inicio de Ciclo */}
-                <div className="p-4 rounded-2xl bg-[#05070e] border border-white/5 flex flex-col justify-between">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-xs font-medium text-gray-400">Inicio de Ciclo</span>
-                    <button
-                      onClick={() => setShowStartDateModal(true)}
-                      className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-cyan-500/15 text-cyan-300 border border-cyan-500/30 hover:bg-cyan-500/25 transition-colors cursor-pointer"
-                      title="Cambiar fecha de inicio"
-                    >
-                      {currentDashboard.startDate || '06 Jul 2026'}
-                    </button>
-                  </div>
-                  <div className="text-3xl font-black text-white my-1 flex items-baseline gap-1.5">
-                    <span>{daysTranscurridos}</span>
-                    <span className="text-sm font-semibold text-cyan-400">Días</span>
-                  </div>
-                  <div className="flex items-center justify-between text-xs text-gray-400 mt-2">
-                    <span>Progreso del ciclo</span>
-                    <span className="text-cyan-400 font-semibold font-mono">
-                      {Math.min(100, Math.round((daysTranscurridos / (16 * 7)) * 100))}% Completado
-                    </span>
-                  </div>
-                </div>
+                  {/* 4 Métricas Principales (Grid 4 columnas Estilo Imagen 2 AMOLED) */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+                    {/* 1. Actividades Pendientes */}
+                    <div className="p-4 rounded-2xl bg-[#05070e] border border-white/5 flex flex-col justify-between relative overflow-hidden">
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-xs font-medium text-gray-400">Actividades Pendientes</span>
+                        <span
+                          className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
+                            weekStats.pendingTasks > 0
+                              ? 'bg-pink-500/20 text-pink-300 border border-pink-500/30'
+                              : 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
+                          }`}
+                        >
+                          {weekStats.pendingTasks > 0 ? 'Urgente' : 'Al Día'}
+                        </span>
+                      </div>
+                      <div className="text-3xl font-black text-white my-1">{weekStats.pendingTasks}</div>
+                      <div className="flex items-center justify-between text-xs text-gray-400 mt-2">
+                        <span>Tareas activas</span>
+                        <button
+                          onClick={() => setShowDrawer(true)}
+                          className="text-pink-400 hover:text-pink-300 font-semibold flex items-center gap-1 cursor-pointer"
+                        >
+                          Ver todas →
+                        </button>
+                      </div>
+                    </div>
 
-                {/* 3. Material de Estudio */}
-                <div className="p-4 rounded-2xl bg-[#05070e] border border-white/5 flex flex-col justify-between">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-xs font-medium text-gray-400">Material de Estudio</span>
-                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-purple-500/20 text-purple-300 border border-purple-500/30">
-                      Listas
-                    </span>
-                  </div>
-                  <div className="text-3xl font-black text-white my-1">
-                    {weekStats.completedSubjects} / {currentDashboard.subjects.length}
-                  </div>
-                  <div className="flex items-center justify-between text-xs text-gray-400 mt-2">
-                    <span>Actualizado hoy</span>
-                    <button
-                      onClick={() => setShowUploadConfirm(true)}
-                      className="text-purple-400 hover:text-purple-300 font-semibold flex items-center gap-1 cursor-pointer"
-                      title="Sincronizar a la nube"
-                    >
-                      <Cloud className="w-3 h-3" /> Sinc
-                    </button>
-                  </div>
-                </div>
+                    {/* 2. Inicio de Ciclo */}
+                    <div className="p-4 rounded-2xl bg-[#05070e] border border-white/5 flex flex-col justify-between">
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-xs font-medium text-gray-400">Inicio de Ciclo</span>
+                        <button
+                          onClick={() => setShowStartDateModal(true)}
+                          className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-cyan-500/15 text-cyan-300 border border-cyan-500/30 hover:bg-cyan-500/25 transition-colors cursor-pointer"
+                          title="Cambiar fecha de inicio"
+                        >
+                          {currentDashboard.startDate || '06 Jul 2026'}
+                        </button>
+                      </div>
+                      <div className="text-3xl font-black text-white my-1 flex items-baseline gap-1.5">
+                        <span>{daysTranscurridos}</span>
+                        <span className="text-sm font-semibold text-cyan-400">Días</span>
+                      </div>
+                      <div className="flex items-center justify-between text-xs text-gray-400 mt-2">
+                        <span>Progreso del ciclo</span>
+                        <span className="text-cyan-400 font-semibold font-mono">
+                          {Math.min(100, Math.round((daysTranscurridos / (16 * 7)) * 100))}% Completado
+                        </span>
+                      </div>
+                    </div>
 
-                {/* 4. Racha de Estudio */}
-                <div className="p-4 rounded-2xl bg-[#05070e] border border-white/5 flex flex-col justify-between">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-xs font-medium text-gray-400">Racha de Estudio</span>
-                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 flex items-center gap-1">
-                      <Check className="w-2.5 h-2.5" /> Activo
-                    </span>
+                    {/* 3. Material de Estudio */}
+                    <div className="p-4 rounded-2xl bg-[#05070e] border border-white/5 flex flex-col justify-between">
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-xs font-medium text-gray-400">Material de Estudio</span>
+                        <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-purple-500/20 text-purple-300 border border-purple-500/30">
+                          Listas
+                        </span>
+                      </div>
+                      <div className="text-3xl font-black text-white my-1">
+                        {weekStats.completedSubjects} / {currentDashboard.subjects.length}
+                      </div>
+                      <div className="flex items-center justify-between text-xs text-gray-400 mt-2">
+                        <span>Actualizado hoy</span>
+                        <button
+                          onClick={() => setShowUploadConfirm(true)}
+                          className="text-purple-400 hover:text-purple-300 font-semibold flex items-center gap-1 cursor-pointer"
+                          title="Sincronizar a la nube"
+                        >
+                          <Cloud className="w-3 h-3" /> Sinc
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* 4. Racha de Estudio */}
+                    <div className="p-4 rounded-2xl bg-[#05070e] border border-white/5 flex flex-col justify-between">
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-xs font-medium text-gray-400">Racha de Estudio</span>
+                        <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 flex items-center gap-1">
+                          <Check className="w-2.5 h-2.5" /> Activo
+                        </span>
+                      </div>
+                      <div className="text-3xl font-black text-white my-1 flex items-baseline gap-1.5">
+                        <span>{streakWeeks > 0 ? streakWeeks * 7 : 13}</span>
+                        <span className="text-sm font-semibold text-emerald-400">Días</span>
+                      </div>
+                      <div className="flex items-center justify-between text-xs text-gray-400 mt-2">
+                        <span>Récord personal</span>
+                        <span className="text-emerald-400 font-semibold font-mono">21 días</span>
+                      </div>
+                    </div>
                   </div>
-                  <div className="text-3xl font-black text-white my-1 flex items-baseline gap-1.5">
-                    <span>{streakWeeks > 0 ? streakWeeks * 7 : 13}</span>
-                    <span className="text-sm font-semibold text-emerald-400">Días</span>
+
+                  {/* Quick Actions Bar (Sin botones de JSON) */}
+                  <div className="p-3 rounded-2xl bg-[#05070e] border border-white/5 flex flex-wrap items-center justify-between gap-3 mb-6 shadow-md">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <button
+                        onClick={() => {
+                          setQuickNoteDraft(currentDashboard.quickNote || '');
+                          setShowQuickNoteModal(true);
+                        }}
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-white/5 border border-white/10 text-gray-300 hover:text-white hover:bg-white/10 transition-all cursor-pointer"
+                      >
+                        <Plus className="w-3.5 h-3.5 text-pink-400" />
+                        <span>+ Agregar nota rápida...</span>
+                      </button>
+                    </div>
+
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={() => setShowUploadConfirm(true)}
+                        className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold bg-pink-500/20 text-pink-300 border border-pink-500/30 hover:bg-pink-500/30 transition-all cursor-pointer shadow-xs"
+                      >
+                        <Upload className="w-3.5 h-3.5" />
+                        <span>Subir Nube</span>
+                      </button>
+
+                      <button
+                        onClick={handleTriggerCloudDownload}
+                        className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 hover:bg-cyan-500/30 transition-all cursor-pointer shadow-xs"
+                        title="Descargar de la nube directamente"
+                      >
+                        <Download className="w-3.5 h-3.5" />
+                        <span>Descargar Nube</span>
+                      </button>
+                    </div>
                   </div>
-                  <div className="flex items-center justify-between text-xs text-gray-400 mt-2">
-                    <span>Récord personal</span>
-                    <span className="text-emerald-400 font-semibold font-mono">21 días</span>
-                  </div>
-                </div>
-              </div>
 
-              {/* Quick Actions Bar (Imagen 2 AMOLED) */}
-              <div className="p-3 rounded-2xl bg-[#05070e] border border-white/5 flex flex-wrap items-center justify-between gap-3 mb-6 shadow-md">
-                <div className="flex flex-wrap items-center gap-2">
-                  <button
-                    onClick={() => {
-                      setQuickNoteDraft(currentDashboard.quickNote || '');
-                      setShowQuickNoteModal(true);
-                    }}
-                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-white/5 border border-white/10 text-gray-300 hover:text-white hover:bg-white/10 transition-all cursor-pointer"
-                  >
-                    <Plus className="w-3.5 h-3.5 text-pink-400" />
-                    <span>+ Agregar nota rápida...</span>
-                  </button>
-
-                  <button
-                    onClick={handleExportJSON}
-                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-white/5 border border-white/10 text-cyan-300 hover:text-cyan-200 hover:bg-white/10 transition-all cursor-pointer"
-                    title="Descargar respaldo local en JSON"
-                  >
-                    <FileDown className="w-3.5 h-3.5 text-cyan-400" />
-                    <span>JSON Respaldo</span>
-                  </button>
-
-                  <button
-                    onClick={() => jsonInputRef.current?.click()}
-                    className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl text-xs font-bold text-gray-400 hover:text-gray-200 hover:bg-white/5 transition-all cursor-pointer"
-                    title="Cargar archivo JSON"
-                  >
-                    <FileUp className="w-3.5 h-3.5" />
-                    <span>Importar</span>
-                  </button>
-                </div>
-
-                <div className="flex items-center gap-2">
-                  <button
-                    onClick={() => setShowUploadConfirm(true)}
-                    className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold bg-pink-500/20 text-pink-300 border border-pink-500/30 hover:bg-pink-500/30 transition-all cursor-pointer shadow-xs"
-                  >
-                    <Upload className="w-3.5 h-3.5" />
-                    <span>Subir Nube</span>
-                  </button>
-
-                  <button
-                    onClick={handleTriggerCloudDownload}
-                    className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 hover:bg-cyan-500/30 transition-all cursor-pointer shadow-xs"
-                    title="Descargar de la nube directamente"
-                  >
-                    <Download className="w-3.5 h-3.5" />
-                    <span>Descargar Nube</span>
-                  </button>
-                </div>
-              </div>
-
-              {/* Banner de Nota Rápida si existe */}
-              {currentDashboard.quickNote && (
-                <div className="p-3 mb-6 rounded-2xl bg-[#05070e] border border-pink-500/30 flex items-center justify-between text-xs text-pink-200 shadow-md">
-                  <div className="flex items-center gap-2.5 min-w-0">
-                    <span className="text-base select-none shrink-0">📌</span>
-                    <span className="font-semibold truncate">{currentDashboard.quickNote}</span>
-                  </div>
-                  <div className="flex items-center gap-2 shrink-0">
-                    <button
-                      onClick={() => {
-                        setQuickNoteDraft(currentDashboard.quickNote || '');
-                        setShowQuickNoteModal(true);
-                      }}
-                      className="px-2.5 py-1 rounded-lg text-xs font-bold bg-pink-500/20 text-pink-300 hover:bg-pink-500/30 transition-colors cursor-pointer"
-                    >
-                      Editar
-                    </button>
-                    <button
-                      onClick={() => {
-                        setDashboards((prev) =>
-                          prev.map((d) => (d.id === currentDashboard.id ? { ...d, quickNote: '' } : d))
-                        );
-                        setToastMessage('Nota rápida eliminada');
-                      }}
-                      className="p-1 rounded text-gray-500 hover:text-white transition-colors cursor-pointer"
-                      title="Eliminar nota"
-                    >
-                      <X className="w-3.5 h-3.5" />
-                    </button>
-                  </div>
-                </div>
+                  {/* Banner de Nota Rápida si existe */}
+                  {currentDashboard.quickNote && (
+                    <div className="p-3 mb-6 rounded-2xl bg-[#05070e] border border-pink-500/30 flex items-center justify-between text-xs text-pink-200 shadow-md">
+                      <div className="flex items-center gap-2.5 min-w-0">
+                        <span className="text-base select-none shrink-0">📌</span>
+                        <span className="font-semibold truncate">{currentDashboard.quickNote}</span>
+                      </div>
+                      <div className="flex items-center gap-2 shrink-0">
+                        <button
+                          onClick={() => {
+                            setQuickNoteDraft(currentDashboard.quickNote || '');
+                            setShowQuickNoteModal(true);
+                          }}
+                          className="px-2.5 py-1 rounded-lg text-xs font-bold bg-pink-500/20 text-pink-300 hover:bg-pink-500/30 transition-colors cursor-pointer"
+                        >
+                          Editar
+                        </button>
+                        <button
+                          onClick={() => {
+                            setDashboards((prev) =>
+                              prev.map((d) => (d.id === currentDashboard.id ? { ...d, quickNote: '' } : d))
+                            );
+                            setToastMessage('Nota rápida eliminada');
+                          }}
+                          className="p-1 rounded text-gray-500 hover:text-white transition-colors cursor-pointer"
+                          title="Eliminar nota"
+                        >
+                          <X className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </>
               )}
 
               {/* Función para renderizar tarjeta de materia (modular para vista individual y grilla completa) */}
@@ -1955,9 +1936,12 @@ export default function App() {
                       <div className="flex items-center justify-between mb-4">
                         <div className="flex items-center gap-2 min-w-0">
                           <div
-                            onClick={() => setSubjectForModal(subject)}
+                            onClick={() => {
+                              setSelectedSubjectId(subject.id);
+                              window.scrollTo({ top: 0, behavior: 'smooth' });
+                            }}
                             className="flex items-center gap-2 min-w-0 cursor-pointer group/title"
-                            title={`Abrir ventana de actividades de ${subject.name}`}
+                            title={`Enfocar materia ${subject.name}`}
                           >
                             <span className="font-mono text-xs font-black text-pink-400 select-none">
                               {subjectIcon}
@@ -1965,7 +1949,6 @@ export default function App() {
                             <h3 className="font-black text-sm tracking-wide uppercase text-white truncate group-hover/title:text-pink-300 transition-colors">
                               {subject.name}
                             </h3>
-                            <ExternalLink className="w-3 h-3 text-gray-500 group-hover/title:text-pink-400 transition-colors shrink-0" />
                           </div>
                           <button
                             onClick={() => setEditingSubject(subject)}
@@ -2613,38 +2596,6 @@ export default function App() {
         onRename={handleRenameSubject}
         onDelete={handleDeleteSubject}
         canDelete={false}
-        isDark={isDark}
-      />
-
-      {/* Subject Focused Activities Modal Window (abre solo esa materia como ventana) */}
-      <SubjectActivitiesModal
-        isOpen={subjectForModal !== null}
-        subject={subjectForModal}
-        tasks={
-          subjectForModal && currentWeek
-            ? currentWeek.subjectTasks[subjectForModal.id] || []
-            : []
-        }
-        weekNumber={currentWeek?.weekNumber || 1}
-        onClose={() => setSubjectForModal(null)}
-        onToggleTask={(taskId) => {
-          if (subjectForModal) {
-            handleToggleTask(subjectForModal.id, taskId);
-          }
-        }}
-        onOpenNewTask={(subj) => handleOpenNewTaskModal(subj)}
-        onEditTaskNote={(task) => {
-          if (subjectForModal) {
-            setActiveNoteTarget({
-              subjectId: subjectForModal.id,
-              taskId: task.id,
-              taskName: `${subjectForModal.name} - ${task.name}`,
-              note: task.note || '',
-              deadlineISO: task.deadlineISO || '',
-            });
-          }
-        }}
-        onEditSubject={(subj) => setEditingSubject(subj)}
         isDark={isDark}
       />
     </div>

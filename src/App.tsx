@@ -1747,8 +1747,8 @@ export default function App() {
                         <span className="text-xs font-medium text-gray-400">Actividades Pendientes</span>
                         <span
                           className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${weekStats.pendingTasks > 0
-                              ? 'bg-pink-500/20 text-pink-300 border border-pink-500/30'
-                              : 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
+                            ? 'bg-pink-500/20 text-pink-300 border border-pink-500/30'
+                            : 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
                             }`}
                         >
                           {weekStats.pendingTasks > 0 ? 'Urgente' : 'Al Día'}
@@ -2027,8 +2027,8 @@ export default function App() {
                                 <button
                                   onClick={() => handleToggleTask(subject.id, task.id)}
                                   className={`w-6 h-6 rounded-full flex items-center justify-center transition-all cursor-pointer ${task.completed
-                                      ? 'bg-emerald-500 text-white shadow-[0_0_8px_rgba(16,185,129,0.5)]'
-                                      : 'border-2 border-white/20 text-transparent hover:border-pink-500'
+                                    ? 'bg-emerald-500 text-white shadow-[0_0_8px_rgba(16,185,129,0.5)]'
+                                    : 'border-2 border-white/20 text-transparent hover:border-pink-500'
                                     }`}
                                   title={task.completed ? 'Marcar como pendiente' : 'Marcar como entregado'}
                                 >
@@ -2085,8 +2085,8 @@ export default function App() {
                               key={s.id}
                               onClick={() => setSelectedSubjectId(s.id)}
                               className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer shrink-0 flex items-center gap-2 border ${isCurrent
-                                  ? 'bg-gradient-to-r from-pink-500/25 to-purple-500/25 border-pink-500 text-white shadow-[0_0_10px_rgba(236,72,153,0.3)]'
-                                  : 'bg-white/5 border-white/10 text-gray-300 hover:text-white hover:bg-white/10'
+                                ? 'bg-gradient-to-r from-pink-500/25 to-purple-500/25 border-pink-500 text-white shadow-[0_0_10px_rgba(236,72,153,0.3)]'
+                                : 'bg-white/5 border-white/10 text-gray-300 hover:text-white hover:bg-white/10'
                                 }`}
                             >
                               <span className="font-mono text-pink-400 text-[10px]">
@@ -2115,8 +2115,8 @@ export default function App() {
                     <div className="pt-4 flex items-center gap-3">
                       <div className="h-px bg-white/10 flex-1" />
                       <span className="text-xs font-black uppercase tracking-wider text-pink-300 font-mono flex items-center gap-2 px-3 py-1 rounded-full bg-[#080b16] border border-pink-500/30 shadow-[0_0_12px_rgba(236,72,153,0.15)]">
-                        <span>⚙</span>
-                        <span>...</span>
+                        <span></span>
+                        <span></span>
                       </span>
                       <div className="h-px bg-white/10 flex-1" />
                     </div>

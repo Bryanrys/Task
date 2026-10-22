@@ -160,7 +160,7 @@ export default function App() {
   const handleLogout = () => {
     try {
       localStorage.removeItem('uees_academic_auth_v1');
-    } catch {}
+    } catch { }
     setIsAuthenticated(false);
     setShowDrawer(false);
     setToastMessage('Sesión cerrada correctamente');
@@ -207,19 +207,19 @@ export default function App() {
               accessCode: !d.accessCode || d.accessCode === 'UEES-2026' ? 'oo' : d.accessCode,
               weeks: Array.isArray(d.weeks)
                 ? d.weeks.map((w: WeekItem) => ({
-                    ...w,
-                    dateRange: formatOrResolveWeekDateRange(
-                      w.weekNumber,
-                      resolvedStartDateISO,
-                      w.dateRange
-                    ),
-                  }))
+                  ...w,
+                  dateRange: formatOrResolveWeekDateRange(
+                    w.weekNumber,
+                    resolvedStartDateISO,
+                    w.dateRange
+                  ),
+                }))
                 : d.weeks,
             };
           });
         }
       }
-    } catch {}
+    } catch { }
     return INITIAL_DASHBOARDS;
   });
 
@@ -325,7 +325,7 @@ export default function App() {
       if (saved && !saved.includes('run.app') && !saved.includes('google')) {
         return saved;
       }
-    } catch {}
+    } catch { }
 
     if (typeof window !== 'undefined') {
       const origin = window.location.origin;
@@ -347,7 +347,7 @@ export default function App() {
     setShareableUrl(newUrl);
     try {
       localStorage.setItem('academic_custom_share_url', newUrl);
-    } catch {}
+    } catch { }
   };
 
   // Hidden file input ref for JSON import
@@ -662,8 +662,8 @@ export default function App() {
             allTasksCount > 0 && doneTasksCount === allTasksCount
               ? 'COMPLETADO'
               : doneTasksCount > 0
-              ? 'EN PROCESO'
-              : 'PENDIENTE';
+                ? 'EN PROCESO'
+                : 'PENDIENTE';
 
           return {
             ...week,
@@ -701,10 +701,10 @@ export default function App() {
           const updatedTasks = currentTasks.map((t) =>
             t.id === taskId
               ? {
-                  ...t,
-                  note: noteText || undefined,
-                  deadlineISO: deadlineISO || undefined,
-                }
+                ...t,
+                note: noteText || undefined,
+                deadlineISO: deadlineISO || undefined,
+              }
               : t
           );
 
@@ -1048,25 +1048,25 @@ export default function App() {
               accessCode: !dashItem.accessCode || dashItem.accessCode === 'UEES-2026' ? 'oo' : dashItem.accessCode,
               weeks: Array.isArray(dashItem.weeks)
                 ? dashItem.weeks.map((w: WeekItem) => {
-                    // Sanitize task notes typo if present
-                    const cleanSubjectTasks: Record<string, TaskItem[]> = {};
-                    Object.entries(w.subjectTasks || {}).forEach(([sId, tList]) => {
-                      cleanSubjectTasks[sId] = tList.map((t) => ({
-                        ...t,
-                        note: t.note?.replace(/VER COOSAS DE EL PROYECTO/gi, 'VER COSAS DEL PROYECTO').replace(/VER COOSAS DEL PROYECTO/gi, 'VER COSAS DEL PROYECTO'),
-                      }));
-                    });
+                  // Sanitize task notes typo if present
+                  const cleanSubjectTasks: Record<string, TaskItem[]> = {};
+                  Object.entries(w.subjectTasks || {}).forEach(([sId, tList]) => {
+                    cleanSubjectTasks[sId] = tList.map((t) => ({
+                      ...t,
+                      note: t.note?.replace(/VER COOSAS DE EL PROYECTO/gi, 'VER COSAS DEL PROYECTO').replace(/VER COOSAS DEL PROYECTO/gi, 'VER COSAS DEL PROYECTO'),
+                    }));
+                  });
 
-                    return {
-                      ...w,
-                      dateRange: formatOrResolveWeekDateRange(
-                        w.weekNumber,
-                        resolvedStartDateISO,
-                        w.dateRange
-                      ),
-                      subjectTasks: cleanSubjectTasks,
-                    };
-                  })
+                  return {
+                    ...w,
+                    dateRange: formatOrResolveWeekDateRange(
+                      w.weekNumber,
+                      resolvedStartDateISO,
+                      w.dateRange
+                    ),
+                    subjectTasks: cleanSubjectTasks,
+                  };
+                })
                 : dashItem.weeks,
             };
           };
@@ -1210,7 +1210,7 @@ export default function App() {
       try {
         const content = event.target?.result as string;
         const parsed = JSON.parse(content);
-        
+
         let loadedDashboards: Dashboard[] | null = null;
         if (Array.isArray(parsed) && parsed.length > 0 && parsed[0].weeks) {
           // Direct array format
@@ -1746,11 +1746,10 @@ export default function App() {
                       <div className="flex items-center justify-between mb-2">
                         <span className="text-xs font-medium text-gray-400">Actividades Pendientes</span>
                         <span
-                          className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
-                            weekStats.pendingTasks > 0
+                          className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${weekStats.pendingTasks > 0
                               ? 'bg-pink-500/20 text-pink-300 border border-pink-500/30'
                               : 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
-                          }`}
+                            }`}
                         >
                           {weekStats.pendingTasks > 0 ? 'Urgente' : 'Al Día'}
                         </span>
@@ -1913,8 +1912,8 @@ export default function App() {
                     sIdx % 3 === 0
                       ? 'border-t-pink-500'
                       : sIdx % 3 === 1
-                      ? 'border-t-purple-500'
-                      : 'border-t-cyan-400';
+                        ? 'border-t-purple-500'
+                        : 'border-t-cyan-400';
 
                   const subjectIcon =
                     sIdx % 3 === 0 ? '</>' : sIdx % 3 === 1 ? '√x' : '⚙';
@@ -1928,9 +1927,8 @@ export default function App() {
                     <div
                       key={subject.id}
                       id={`subject-${subject.id}`}
-                      className={`rounded-2xl bg-[#05070e] border border-white/5 border-t-2 ${borderTopColor} p-4.5 flex flex-col justify-between transition-all hover:bg-[#080b16] shadow-md ${
-                        isSingleView ? 'max-w-2xl mx-auto w-full' : ''
-                      }`}
+                      className={`rounded-2xl bg-[#05070e] border border-white/5 border-t-2 ${borderTopColor} p-4.5 flex flex-col justify-between transition-all hover:bg-[#080b16] shadow-md ${isSingleView ? 'max-w-2xl mx-auto w-full' : ''
+                        }`}
                     >
                       {/* Header de Materia */}
                       <div className="flex items-center justify-between mb-4">
@@ -1992,9 +1990,8 @@ export default function App() {
 
                                 <div className="flex flex-col min-w-0">
                                   <span
-                                    className={`text-xs font-semibold text-gray-200 truncate ${
-                                      task.completed ? 'line-through opacity-60 text-gray-400' : ''
-                                    }`}
+                                    className={`text-xs font-semibold text-gray-200 truncate ${task.completed ? 'line-through opacity-60 text-gray-400' : ''
+                                      }`}
                                   >
                                     {task.name}
                                   </span>
@@ -2029,11 +2026,10 @@ export default function App() {
 
                                 <button
                                   onClick={() => handleToggleTask(subject.id, task.id)}
-                                  className={`w-6 h-6 rounded-full flex items-center justify-center transition-all cursor-pointer ${
-                                    task.completed
+                                  className={`w-6 h-6 rounded-full flex items-center justify-center transition-all cursor-pointer ${task.completed
                                       ? 'bg-emerald-500 text-white shadow-[0_0_8px_rgba(16,185,129,0.5)]'
                                       : 'border-2 border-white/20 text-transparent hover:border-pink-500'
-                                  }`}
+                                    }`}
                                   title={task.completed ? 'Marcar como pendiente' : 'Marcar como entregado'}
                                 >
                                   {task.completed && <Check className="w-3.5 h-3.5 stroke-[3]" />}
@@ -2088,11 +2084,10 @@ export default function App() {
                             <button
                               key={s.id}
                               onClick={() => setSelectedSubjectId(s.id)}
-                              className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer shrink-0 flex items-center gap-2 border ${
-                                isCurrent
+                              className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer shrink-0 flex items-center gap-2 border ${isCurrent
                                   ? 'bg-gradient-to-r from-pink-500/25 to-purple-500/25 border-pink-500 text-white shadow-[0_0_10px_rgba(236,72,153,0.3)]'
                                   : 'bg-white/5 border-white/10 text-gray-300 hover:text-white hover:bg-white/10'
-                              }`}
+                                }`}
                             >
                               <span className="font-mono text-pink-400 text-[10px]">
                                 {idx % 3 === 0 ? '</>' : idx % 3 === 1 ? '√x' : '⚙'}
@@ -2121,7 +2116,7 @@ export default function App() {
                       <div className="h-px bg-white/10 flex-1" />
                       <span className="text-xs font-black uppercase tracking-wider text-pink-300 font-mono flex items-center gap-2 px-3 py-1 rounded-full bg-[#080b16] border border-pink-500/30 shadow-[0_0_12px_rgba(236,72,153,0.15)]">
                         <span>⚙</span>
-                        <span>Ajustes y Herramientas</span>
+                        <span>...</span>
                       </span>
                       <div className="h-px bg-white/10 flex-1" />
                     </div>

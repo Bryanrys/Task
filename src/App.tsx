@@ -2069,10 +2069,10 @@ export default function App() {
                           className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs font-bold bg-pink-500/15 hover:bg-pink-500/25 border border-pink-500/30 text-pink-300 transition-all cursor-pointer"
                         >
                           <ArrowLeft className="w-3.5 h-3.5" />
-                          <span>Ver todas las materias ({currentDashboard.subjects.length})</span>
+                          <span> ({currentDashboard.subjects.length})</span>
                         </button>
                         <span className="text-[11px] font-mono text-gray-400">
-                          Materia enfocada + Herramientas
+
                         </span>
                       </div>
 

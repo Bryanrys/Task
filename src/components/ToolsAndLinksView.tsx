@@ -205,8 +205,8 @@ export const ToolsAndLinksView: React.FC<ToolsAndLinksViewProps> = ({
         animate={{ opacity: 1, scale: 1 }}
         transition={{ delay: 0.1 }}
         className={`rounded-3xl p-5 border transition-all ${isDark
-            ? 'bg-[#05070e] border-cyan-500/25 shadow-[0_0_30px_rgba(6,182,212,0.08)]'
-            : 'bg-white border-cyan-200 shadow-md'
+          ? 'bg-[#05070e] border-cyan-500/25 shadow-[0_0_30px_rgba(6,182,212,0.08)]'
+          : 'bg-white border-cyan-200 shadow-md'
           }`}
       >
         <div className="flex items-center justify-between mb-3.5">
@@ -233,8 +233,8 @@ export const ToolsAndLinksView: React.FC<ToolsAndLinksViewProps> = ({
           <button
             onClick={onOpenSchedule}
             className={`px-3 py-1.5 rounded-xl border text-xs font-bold transition-all cursor-pointer active:scale-95 ${isDark
-                ? 'bg-cyan-500/15 border-cyan-400/40 text-cyan-300 hover:bg-cyan-500/25'
-                : 'bg-cyan-50 border-cyan-300 text-cyan-800 hover:bg-cyan-100'
+              ? 'bg-cyan-500/15 border-cyan-400/40 text-cyan-300 hover:bg-cyan-500/25'
+              : 'bg-cyan-50 border-cyan-300 text-cyan-800 hover:bg-cyan-100'
               }`}
           >
             Ver Todo / Editar
@@ -252,8 +252,8 @@ export const ToolsAndLinksView: React.FC<ToolsAndLinksViewProps> = ({
                 <div
                   key={item.id}
                   className={`p-3.5 rounded-2xl border flex flex-col sm:flex-row sm:items-center justify-between gap-3 transition-all ${isDark
-                      ? 'bg-white/[0.04] border-white/10 text-stone-200 hover:border-cyan-500/30'
-                      : 'bg-stone-50 border-stone-200 text-stone-800 hover:border-cyan-400/40'
+                    ? 'bg-white/[0.04] border-white/10 text-stone-200 hover:border-cyan-500/30'
+                    : 'bg-stone-50 border-stone-200 text-stone-800 hover:border-cyan-400/40'
                     }`}
                 >
                   <div className="min-w-0 flex-1">
@@ -299,8 +299,8 @@ export const ToolsAndLinksView: React.FC<ToolsAndLinksViewProps> = ({
                         <button
                           onClick={() => handleOpenQuickTeams(item)}
                           className={`p-1.5 rounded-xl border transition-all cursor-pointer ${isDark
-                              ? 'bg-white/5 border-white/10 text-stone-300 hover:text-white hover:bg-white/10'
-                              : 'bg-stone-100 border-stone-200 text-stone-600 hover:text-stone-900'
+                            ? 'bg-white/5 border-white/10 text-stone-300 hover:text-white hover:bg-white/10'
+                            : 'bg-stone-100 border-stone-200 text-stone-600 hover:text-stone-900'
                             }`}
                           title="Cambiar o configurar enlace de Teams"
                         >
@@ -336,8 +336,8 @@ export const ToolsAndLinksView: React.FC<ToolsAndLinksViewProps> = ({
         animate={{ opacity: 1, scale: 1 }}
         transition={{ delay: 0.15 }}
         className={`rounded-3xl p-5 border transition-all ${isDark
-            ? 'bg-[#05070e] border-violet-500/25 shadow-[0_0_30px_rgba(168,85,247,0.08)]'
-            : 'bg-white border-violet-200 shadow-md'
+          ? 'bg-[#05070e] border-violet-500/25 shadow-[0_0_30px_rgba(168,85,247,0.08)]'
+          : 'bg-white border-violet-200 shadow-md'
           }`}
       >
         <div className="flex items-center justify-between mb-3.5">
@@ -358,8 +358,8 @@ export const ToolsAndLinksView: React.FC<ToolsAndLinksViewProps> = ({
           <button
             onClick={onOpenLinks}
             className={`px-3 py-1.5 rounded-xl border text-xs font-bold transition-all cursor-pointer active:scale-95 ${isDark
-                ? 'bg-violet-500/15 border-violet-400/40 text-violet-300 hover:bg-violet-500/25'
-                : 'bg-violet-50 border-violet-300 text-violet-800 hover:bg-violet-100'
+              ? 'bg-violet-500/15 border-violet-400/40 text-violet-300 hover:bg-violet-500/25'
+              : 'bg-violet-50 border-violet-300 text-violet-800 hover:bg-violet-100'
               }`}
           >
             Administrar
@@ -375,8 +375,8 @@ export const ToolsAndLinksView: React.FC<ToolsAndLinksViewProps> = ({
               target="_blank"
               rel="noopener noreferrer"
               className={`p-3 rounded-2xl border flex flex-col justify-between transition-all cursor-pointer active:scale-95 hover:scale-[1.02] ${isDark
-                  ? 'bg-white/[0.04] border-white/10 hover:border-violet-400/40 text-stone-200 shadow-xs'
-                  : 'bg-stone-50 border-stone-200 hover:border-violet-300 text-stone-800 shadow-2xs'
+                ? 'bg-white/[0.04] border-white/10 hover:border-violet-400/40 text-stone-200 shadow-xs'
+                : 'bg-stone-50 border-stone-200 hover:border-violet-300 text-stone-800 shadow-2xs'
                 }`}
             >
               <div className="flex items-start justify-between gap-1 mb-1">
@@ -400,8 +400,8 @@ export const ToolsAndLinksView: React.FC<ToolsAndLinksViewProps> = ({
         animate={{ opacity: 1, scale: 1 }}
         transition={{ delay: 0.2 }}
         className={`rounded-3xl p-5 border transition-all ${isDark
-            ? 'bg-[#05070e] border-blue-500/25 shadow-[0_0_30px_rgba(59,130,246,0.08)]'
-            : 'bg-white border-blue-200 shadow-md'
+          ? 'bg-[#05070e] border-blue-500/25 shadow-[0_0_30px_rgba(59,130,246,0.08)]'
+          : 'bg-white border-blue-200 shadow-md'
           }`}
       >
         <div className="flex items-center justify-between mb-3.5">
@@ -428,8 +428,8 @@ export const ToolsAndLinksView: React.FC<ToolsAndLinksViewProps> = ({
           <button
             onClick={onUploadCloud}
             className={`p-3 rounded-2xl border flex items-center justify-center gap-2 font-bold text-xs transition-all cursor-pointer active:scale-95 ${isDark
-                ? 'bg-blue-500/15 border-blue-400/40 text-blue-300 hover:bg-blue-500/25'
-                : 'bg-blue-50 border-blue-300 text-blue-800 hover:bg-blue-100'
+              ? 'bg-blue-500/15 border-blue-400/40 text-blue-300 hover:bg-blue-500/25'
+              : 'bg-blue-50 border-blue-300 text-blue-800 hover:bg-blue-100'
               }`}
           >
             <Upload className="w-4 h-4" />
@@ -439,8 +439,8 @@ export const ToolsAndLinksView: React.FC<ToolsAndLinksViewProps> = ({
           <button
             onClick={onDownloadCloud}
             className={`p-3 rounded-2xl border flex items-center justify-center gap-2 font-bold text-xs transition-all cursor-pointer active:scale-95 ${isDark
-                ? 'bg-white/[0.04] border-white/10 text-stone-200 hover:bg-white/[0.08]'
-                : 'bg-stone-50 border-stone-200 text-stone-800 hover:bg-stone-100'
+              ? 'bg-white/[0.04] border-white/10 text-stone-200 hover:bg-white/[0.08]'
+              : 'bg-stone-50 border-stone-200 text-stone-800 hover:bg-stone-100'
               }`}
           >
             <Download className="w-4 h-4 text-emerald-400" />
@@ -450,8 +450,8 @@ export const ToolsAndLinksView: React.FC<ToolsAndLinksViewProps> = ({
           <button
             onClick={onCopyLink}
             className={`p-3 rounded-2xl border flex items-center justify-center gap-2 font-bold text-xs transition-all cursor-pointer active:scale-95 ${isDark
-                ? 'bg-white/[0.04] border-white/10 text-cyan-300 hover:bg-white/[0.08]'
-                : 'bg-stone-50 border-stone-200 text-cyan-800 hover:bg-stone-100'
+              ? 'bg-white/[0.04] border-white/10 text-cyan-300 hover:bg-white/[0.08]'
+              : 'bg-stone-50 border-stone-200 text-cyan-800 hover:bg-stone-100'
               }`}
           >
             <LinkIcon className="w-4 h-4" />
@@ -471,8 +471,8 @@ export const ToolsAndLinksView: React.FC<ToolsAndLinksViewProps> = ({
         <button
           onClick={onOpenGrades}
           className={`p-4 rounded-3xl border text-left transition-all cursor-pointer active:scale-95 ${isDark
-              ? 'bg-[#05070e] border-purple-500/25 hover:border-purple-400/50 shadow-xs'
-              : 'bg-white border-purple-200 hover:border-purple-400 shadow-md'
+            ? 'bg-[#05070e] border-purple-500/25 hover:border-purple-400/50 shadow-xs'
+            : 'bg-white border-purple-200 hover:border-purple-400 shadow-md'
             }`}
         >
           <div className="flex items-center justify-between mb-2">
@@ -491,8 +491,8 @@ export const ToolsAndLinksView: React.FC<ToolsAndLinksViewProps> = ({
         <button
           onClick={onOpenPomodoro}
           className={`p-4 rounded-3xl border text-left transition-all cursor-pointer active:scale-95 ${isDark
-              ? 'bg-[#05070e] border-pink-500/25 hover:border-pink-400/50 shadow-xs'
-              : 'bg-white border-pink-200 hover:border-pink-400 shadow-md'
+            ? 'bg-[#05070e] border-pink-500/25 hover:border-pink-400/50 shadow-xs'
+            : 'bg-white border-pink-200 hover:border-pink-400 shadow-md'
             }`}
         >
           <div className="flex items-center justify-between mb-2">
@@ -511,8 +511,8 @@ export const ToolsAndLinksView: React.FC<ToolsAndLinksViewProps> = ({
         <button
           onClick={onOpenStartDate}
           className={`p-4 rounded-3xl border text-left transition-all cursor-pointer active:scale-95 ${isDark
-              ? 'bg-[#05070e] border-cyan-500/25 hover:border-cyan-400/50 shadow-xs'
-              : 'bg-white border-cyan-200 hover:border-cyan-400 shadow-md'
+            ? 'bg-[#05070e] border-cyan-500/25 hover:border-cyan-400/50 shadow-xs'
+            : 'bg-white border-cyan-200 hover:border-cyan-400 shadow-md'
             }`}
         >
           <div className="flex items-center justify-between mb-2">
@@ -533,8 +533,8 @@ export const ToolsAndLinksView: React.FC<ToolsAndLinksViewProps> = ({
         <button
           onClick={onOpenShareModal}
           className={`inline-flex items-center gap-2 px-5 py-2.5 rounded-full border text-xs font-bold transition-all cursor-pointer active:scale-95 ${isDark
-              ? 'bg-cyan-500/10 border-cyan-400/30 text-cyan-300 hover:bg-cyan-500/20'
-              : 'bg-cyan-50 border-cyan-300 text-cyan-800 hover:bg-cyan-100'
+            ? 'bg-cyan-500/10 border-cyan-400/30 text-cyan-300 hover:bg-cyan-500/20'
+            : 'bg-cyan-50 border-cyan-300 text-cyan-800 hover:bg-cyan-100'
             }`}
         >
           <Share2 className="w-4 h-4" />
@@ -547,8 +547,8 @@ export const ToolsAndLinksView: React.FC<ToolsAndLinksViewProps> = ({
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-fadeIn">
           <div
             className={`relative w-full max-w-sm rounded-3xl p-5 border shadow-2xl transition-all ${isDark
-                ? 'bg-[#0a0d17] border-indigo-500/40 text-stone-100'
-                : 'bg-white border-indigo-200 text-stone-900'
+              ? 'bg-[#0a0d17] border-indigo-500/40 text-stone-100'
+              : 'bg-white border-indigo-200 text-stone-900'
               }`}
           >
             <div className="flex items-center justify-between mb-3 pb-2 border-b border-white/10">

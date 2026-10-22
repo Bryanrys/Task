@@ -267,7 +267,7 @@ export const ShareAppModal: React.FC<ShareAppModalProps> = ({
         <div className="space-y-2">
           {/* Download APK from GitHub */}
           <button
-            onClick={() => window.open('https://github.com/Bryanrys/Task/releases', '_blank')}
+            onClick={() => window.open('https://github.com/Bryanrys/Task/raw/main/apk/app-debug.apk', '_blank')}
             className={`w-full py-2.5 px-3 rounded-2xl border font-bold text-xs flex items-center justify-center gap-2 transition-all cursor-pointer active:scale-98 ${
               isDark
                 ? 'bg-gradient-to-r from-pink-500/20 via-purple-600/20 to-cyan-500/20 border-pink-500/30 text-white hover:border-pink-400 shadow-md'

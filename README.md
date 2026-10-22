@@ -1,6 +1,6 @@
 # 🎓 Dashboard Académico UEES
 
-[![Android APK](https://img.shields.io/badge/Descargar-APK%20Android-FF2D55?style=for-the-badge&logo=android&logoColor=white)](https://github.com/Bryanrys/Task/releases/download/apk/app-debug.apk)
+[![Android APK](https://img.shields.io/badge/Descargar-APK%20Android-FF2D55?style=for-the-badge&logo=android&logoColor=white)](https://github.com/Bryanrys/Task/raw/main/apk/app-debug.apk)
 [![GitHub Release](https://img.shields.io/github/v/release/Bryanrys/Task?style=for-the-badge&color=8B5CF6&label=Releases)](https://github.com/Bryanrys/Task/releases)
 [![Vite](https://img.shields.io/badge/Vite-8.3-646CFF?style=for-the-badge&logo=vite&logoColor=white)](https://vitejs.dev/)
 [![React](https://img.shields.io/badge/React-19.0-61DAFB?style=for-the-badge&logo=react&logoColor=black)](https://react.dev/)
@@ -15,7 +15,8 @@ Plataforma integral y moderna de organización académica universitaria (Ciclo I
 Puedes descargar e instalar la versión para Android directamente en tu teléfono móvil desde cualquiera de los siguientes enlaces:
 
 ### 📥 Enlaces de Descarga:
-- 🚀 **[Descarga Directa del APK (`app-debug.apk`)](https://github.com/Bryanrys/Task/releases/download/apk/app-debug.apk)**
+- 🚀 **[Descarga Directa del APK (`app-debug.apk`)](https://github.com/Bryanrys/Task/raw/main/apk/app-debug.apk)** *(Garantizado sin 404, archivo incluido en el repositorio)*
+- 📂 **[Ver carpeta de APK en el Repositorio](./apk)**
 - 📦 **[Ver todas las versiones y Releases en GitHub](https://github.com/Bryanrys/Task/releases)**
 
 ### 📲 Pasos para Instalar en Android:

@@ -6,10 +6,10 @@ En este apartado puedes acceder a las descargas directas del instalador APK para
 
 ## 📥 Enlaces de Descarga Directa
 
-| Versión | Archivo | Plataforma | Enlace Directo |
+| Versión | Archivo Físico en Repositorio | Plataforma | Enlace de Descarga Inmediata |
 | :--- | :--- | :--- | :--- |
-| **Última Versión (Debug)** | `app-debug.apk` | Android 7.0+ (Universal) | [Descargar APK](https://github.com/Bryanrys/Task/releases/download/apk/app-debug.apk) |
-| **Página de Releases** | Todos los instaladores | Android | [Ver Releases en GitHub](https://github.com/Bryanrys/Task/releases) |
+| **Última Versión (Debug)** | [`app-debug.apk`](./app-debug.apk) | Android 7.0+ (Universal) | 📥 **[Descargar APK Directo (Sin 404)](https://github.com/Bryanrys/Task/raw/main/apk/app-debug.apk)** |
+| **Página de Releases** | Releases y tags | Android | 📦 **[Ver Releases en GitHub](https://github.com/Bryanrys/Task/releases)** |
 
 ---
 

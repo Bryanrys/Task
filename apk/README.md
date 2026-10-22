@@ -24,7 +24,10 @@ En este apartado puedes acceder a las descargas directas del instalador APK para
 
 ## ⚙️ Detalles Técnicos del APK
 
-- **Nombre del Paquete**: `com.example.taskdashboard`
+- **Nombre de la Aplicación**: `0`
+- **Nombre del Paquete**: `com.uees.dashboard`
+- **Nombre del Archivo**: `app-debug.apk`
 - **Framework**: Capacitor 8.5 + Android Native Wrapper
 - **Compilador**: Gradle con Java 21 / OpenJDK
 - **Canal de Notificaciones**: Alertas heads-up con timbre y vibración para recordatorios de entregas académicas.
+- **Regla Multi-Dispositivo**: La aplicación se mantiene con el nombre interno `0` para actualización cruzada directa entre PC de escritorio y laptop sin requerir desinstalación.

@@ -27,6 +27,18 @@ Puedes descargar e instalar la versión para Android directamente en tu teléfon
 
 ---
 
+## 📌 Regla de Identidad del APK (Multi-dispositivo PC / Laptop)
+
+> [!IMPORTANT]
+> **Nombre de la Aplicación en Android:** El nombre interno de la aplicación (`app_name` y `title_activity_main` en `android/app/src/main/res/values/strings.xml`) **debe mantenerse estrictamente como `0`**.
+>
+> **Motivo técnico:**
+> - El archivo descargable se compila y distribuye bajo el nombre de archivo `app-debug.apk`.
+> - Al pulsar e instalar el archivo en el teléfono, Android lee el manifiesto interno y registra la app con su nombre oficial: **`0`**.
+> - Mantener este nombre idéntico garantiza la compatibilidad de actualización directa entre la PC de escritorio y la laptop sin que Android bloquee la instalación con el error *"No se instaló la app"*.
+
+---
+
 ## ✨ Características Principales
 
 - **Gestión de Entregas y Semanas**: Organización semanal del semestre (semanas 1 a 20) con soporte automático para semanas de evaluaciones parciales (semanas 6, 12 y 18).

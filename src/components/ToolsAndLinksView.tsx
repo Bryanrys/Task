@@ -20,12 +20,20 @@ import {
   Sparkles,
   ArrowLeft,
   Share2,
+  Video,
+  Pencil,
+  ClipboardPaste,
+  Check,
+  X,
+  Plus,
 } from 'lucide-react';
 import {
   ClassSlot,
   DAYS,
   DEFAULT_SCHEDULE,
   SCHEDULE_STORAGE_KEY,
+  getTeamsUrl,
+  getDisplayLocation,
 } from './ClassScheduleModal';
 import {
   UniversityLinkItem,
@@ -82,6 +90,59 @@ export const ToolsAndLinksView: React.FC<ToolsAndLinksViewProps> = ({
     } catch {}
     return DEFAULT_SCHEDULE;
   });
+
+  // Modal rápido para configurar enlace de Teams de una materia
+  const [quickTeamsSlot, setQuickTeamsSlot] = useState<ClassSlot | null>(null);
+  const [quickTeamsUrl, setQuickTeamsUrl] = useState<string>('');
+  const [quickTeamsSaved, setQuickTeamsSaved] = useState<boolean>(false);
+
+  const handleOpenQuickTeams = (slot: ClassSlot) => {
+    setQuickTeamsSlot(slot);
+    setQuickTeamsUrl(getTeamsUrl(slot));
+    setQuickTeamsSaved(false);
+  };
+
+  const handleSaveQuickTeams = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!quickTeamsSlot) return;
+
+    const rawUrl = quickTeamsUrl.trim();
+    const formattedUrl = rawUrl
+      ? (rawUrl.startsWith('http://') || rawUrl.startsWith('https://') ? rawUrl : `https://${rawUrl}`)
+      : undefined;
+
+    const updatedSchedule = schedule.map((s) => {
+      if (s.id === quickTeamsSlot.id) {
+        let loc = s.location;
+        if (loc && (loc.startsWith('http://') || loc.startsWith('https://') || loc.includes('teams.microsoft.com'))) {
+          loc = 'Aula Virtual';
+        }
+        return {
+          ...s,
+          teamsUrl: formattedUrl,
+          location: loc || 'Aula Virtual',
+        };
+      }
+      return s;
+    });
+
+    setSchedule(updatedSchedule);
+    localStorage.setItem(SCHEDULE_STORAGE_KEY, JSON.stringify(updatedSchedule));
+    window.dispatchEvent(new Event('storage'));
+    window.dispatchEvent(new Event('academic_data_synced'));
+    setQuickTeamsSaved(true);
+    setTimeout(() => {
+      setQuickTeamsSlot(null);
+      setQuickTeamsSaved(false);
+    }, 450);
+  };
+
+  const handlePasteQuickTeams = async () => {
+    try {
+      const text = await navigator.clipboard.readText();
+      if (text) setQuickTeamsUrl(text.trim());
+    } catch {}
+  };
 
   // Read university links for direct quick buttons
   const [links, setLinks] = useState<UniversityLinkItem[]>(() => {
@@ -210,41 +271,88 @@ export const ToolsAndLinksView: React.FC<ToolsAndLinksViewProps> = ({
         </div>
 
         {/* Classes of today preview list */}
-        <div className="space-y-2 mb-3">
+        <div className="space-y-2.5 mb-3">
           {todayClasses.length > 0 ? (
-            todayClasses.map((item) => (
-              <div
-                key={item.id}
-                className={`p-3 rounded-2xl border flex items-center justify-between ${
-                  isDark
-                    ? 'bg-white/[0.04] border-white/10 text-stone-200'
-                    : 'bg-stone-50 border-stone-200 text-stone-800'
-                }`}
-              >
-                <div className="min-w-0">
-                  <div className="font-extrabold text-xs tracking-wide truncate">
-                    {item.subjectName}
-                  </div>
-                  <div className={`text-[10px] flex items-center gap-2 mt-0.5 ${isDark ? 'text-stone-400' : 'text-stone-500'}`}>
-                    <span className="flex items-center gap-1 font-mono">
-                      <Clock className="w-3 h-3 text-cyan-400" />
-                      {item.timeRange}
-                    </span>
-                    {item.location && (
-                      <span className="flex items-center gap-1 truncate">
-                        <MapPin className="w-3 h-3 text-rose-400" />
-                        {item.location}
+            todayClasses.map((item) => {
+              const teamsLink = getTeamsUrl(item);
+              const displayLoc = getDisplayLocation(item);
+
+              return (
+                <div
+                  key={item.id}
+                  className={`p-3.5 rounded-2xl border flex flex-col sm:flex-row sm:items-center justify-between gap-3 transition-all ${
+                    isDark
+                      ? 'bg-white/[0.04] border-white/10 text-stone-200 hover:border-cyan-500/30'
+                      : 'bg-stone-50 border-stone-200 text-stone-800 hover:border-cyan-400/40'
+                  }`}
+                >
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-center gap-2">
+                      <span className="font-extrabold text-xs tracking-wide uppercase">
+                        {item.subjectName}
                       </span>
+                      <span className={`text-[9px] font-mono px-1.5 py-0.5 rounded-md font-bold shrink-0 ${
+                        isDark ? 'bg-cyan-500/15 text-cyan-300' : 'bg-cyan-100 text-cyan-800'
+                      }`}>
+                        CLASE
+                      </span>
+                    </div>
+
+                    <div className={`text-[10px] flex flex-wrap items-center gap-x-3 gap-y-1 mt-1 ${isDark ? 'text-stone-400' : 'text-stone-500'}`}>
+                      <span className="flex items-center gap-1 font-mono">
+                        <Clock className="w-3 h-3 text-cyan-400 shrink-0" />
+                        {item.timeRange}
+                      </span>
+                      {displayLoc && (
+                        <span className="flex items-center gap-1 truncate max-w-[220px]">
+                          <MapPin className="w-3 h-3 text-rose-400 shrink-0" />
+                          <span>{displayLoc}</span>
+                        </span>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Acciones: Entrar a Teams y Edición rápida */}
+                  <div className="flex items-center gap-2 shrink-0">
+                    {teamsLink ? (
+                      <>
+                        <a
+                          href={teamsLink}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-indigo-600 via-indigo-500 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white font-extrabold text-xs shadow-md shadow-indigo-600/30 active:scale-95 transition-all cursor-pointer border border-indigo-400/30"
+                          title="Entrar directamente a la clase en Microsoft Teams"
+                        >
+                          <Video className="w-3.5 h-3.5 animate-pulse" />
+                          <span>Entrar a Teams</span>
+                          <ExternalLink className="w-3 h-3 opacity-80" />
+                        </a>
+                        <button
+                          onClick={() => handleOpenQuickTeams(item)}
+                          className={`p-1.5 rounded-xl border transition-all cursor-pointer ${
+                            isDark
+                              ? 'bg-white/5 border-white/10 text-stone-300 hover:text-white hover:bg-white/10'
+                              : 'bg-stone-100 border-stone-200 text-stone-600 hover:text-stone-900'
+                          }`}
+                          title="Cambiar o configurar enlace de Teams"
+                        >
+                          <Pencil className="w-3.5 h-3.5" />
+                        </button>
+                      </>
+                    ) : (
+                      <button
+                        onClick={() => handleOpenQuickTeams(item)}
+                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-indigo-500/15 hover:bg-indigo-500/25 text-indigo-300 border border-indigo-500/30 text-xs font-bold active:scale-95 transition-all cursor-pointer"
+                        title="Configurar enlace de Microsoft Teams para esta clase"
+                      >
+                        <Video className="w-3.5 h-3.5 text-indigo-400" />
+                        <span>+ Link Teams</span>
+                      </button>
                     )}
                   </div>
                 </div>
-                <span className={`text-[10px] font-mono px-2 py-0.5 rounded-md font-bold shrink-0 ${
-                  isDark ? 'bg-cyan-500/20 text-cyan-300' : 'bg-cyan-100 text-cyan-800'
-                }`}>
-                  CLASE
-                </span>
-              </div>
-            ))
+              );
+            })
           ) : (
             <div className={`p-3 text-center rounded-2xl border text-xs italic ${
               isDark ? 'border-white/5 text-stone-500 bg-white/[0.02]' : 'border-stone-200 text-stone-400 bg-stone-50'
@@ -479,6 +587,106 @@ export const ToolsAndLinksView: React.FC<ToolsAndLinksViewProps> = ({
           <span>Compartir Dashboard o Abrir en Navegador</span>
         </button>
       </div>
+
+      {/* Modal Rápido para Configurar Link de Teams */}
+      {quickTeamsSlot && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-fadeIn">
+          <div
+            className={`relative w-full max-w-sm rounded-3xl p-5 border shadow-2xl transition-all ${
+              isDark
+                ? 'bg-[#0a0d17] border-indigo-500/40 text-stone-100'
+                : 'bg-white border-indigo-200 text-stone-900'
+            }`}
+          >
+            <div className="flex items-center justify-between mb-3 pb-2 border-b border-white/10">
+              <div className="flex items-center gap-2">
+                <div className="p-2 rounded-xl bg-indigo-500/20 text-indigo-400 border border-indigo-500/30">
+                  <Video className="w-4 h-4" />
+                </div>
+                <div>
+                  <h4 className="font-black text-xs uppercase tracking-wide">
+                    Enlace de Teams
+                  </h4>
+                  <p className="text-[10px] text-stone-400">
+                    Materia: <strong className="text-indigo-300">{quickTeamsSlot.subjectName}</strong>
+                  </p>
+                </div>
+              </div>
+              <button
+                onClick={() => setQuickTeamsSlot(null)}
+                className="p-1 rounded-lg text-stone-400 hover:text-white cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <form onSubmit={handleSaveQuickTeams} className="space-y-3">
+              <div>
+                <div className="flex items-center justify-between mb-1.5">
+                  <label className="text-[10px] text-stone-400 font-semibold">
+                    Pega tu link de Microsoft Teams:
+                  </label>
+                  <button
+                    type="button"
+                    onClick={handlePasteQuickTeams}
+                    className="text-[10px] font-mono text-indigo-300 hover:text-white flex items-center gap-1 cursor-pointer bg-indigo-500/10 px-1.5 py-0.5 rounded border border-indigo-500/20"
+                    title="Pegar del portapapeles"
+                  >
+                    <ClipboardPaste className="w-2.5 h-2.5" />
+                    <span>Pegar</span>
+                  </button>
+                </div>
+                <input
+                  type="text"
+                  placeholder="https://teams.microsoft.com/meet/..."
+                  value={quickTeamsUrl}
+                  onChange={(e) => setQuickTeamsUrl(e.target.value)}
+                  className="w-full text-xs bg-[#05070e] border border-indigo-500/30 rounded-xl px-3 py-2 text-white outline-none focus:border-indigo-400 font-mono placeholder:text-stone-600"
+                  autoFocus
+                />
+              </div>
+
+              {quickTeamsUrl && (
+                <div className="flex items-center justify-between text-[11px] pt-0.5">
+                  <a
+                    href={quickTeamsUrl.startsWith('http') ? quickTeamsUrl : `https://${quickTeamsUrl}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-indigo-400 hover:text-indigo-300 flex items-center gap-1 text-[10px] font-bold"
+                  >
+                    <span>Probar enlace de Teams</span>
+                    <ExternalLink className="w-2.5 h-2.5" />
+                  </a>
+                  <button
+                    type="button"
+                    onClick={() => setQuickTeamsUrl('')}
+                    className="text-rose-400 hover:text-rose-300 text-[10px] cursor-pointer"
+                  >
+                    Quitar enlace
+                  </button>
+                </div>
+              )}
+
+              <div className="flex gap-2 pt-2">
+                <button
+                  type="button"
+                  onClick={() => setQuickTeamsSlot(null)}
+                  className="flex-1 py-2 text-xs font-bold text-stone-400 hover:text-white bg-white/5 rounded-xl cursor-pointer"
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="submit"
+                  className="flex-1 py-2 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-extrabold text-xs rounded-xl shadow-md shadow-indigo-600/30 cursor-pointer active:scale-95 transition-all flex items-center justify-center gap-1"
+                >
+                  {quickTeamsSaved ? <Check className="w-3.5 h-3.5" /> : null}
+                  <span>{quickTeamsSaved ? '¡Guardado!' : 'Guardar Enlace'}</span>
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

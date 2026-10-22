@@ -13,7 +13,6 @@ import {
   BookOpen,
   Sparkles,
   LogOut,
-  X,
 } from 'lucide-react';
 import { SubjectItem } from '../types';
 
@@ -84,27 +83,16 @@ export const SidebarNav: React.FC<SidebarNavProps> = ({
     >
       <div className="p-5 space-y-6 overflow-y-auto">
         {/* Brand / Logo Header */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-3">
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-pink-500 to-purple-600 flex items-center justify-center text-white shadow-md shadow-pink-500/25 shrink-0">
-              <GraduationCap className="w-5 h-5" />
-            </div>
-            <div>
-              <h2 className="text-xs font-black text-white tracking-widest uppercase">
-                REYES ALVARADO
-              </h2>
-              <p className="text-[10px] text-gray-400 font-mono">UEES Dashboard</p>
-            </div>
+        <div className="flex items-center space-x-3">
+          <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-pink-500 to-purple-600 flex items-center justify-center text-white shadow-md shadow-pink-500/25 shrink-0">
+            <GraduationCap className="w-5 h-5" />
           </div>
-
-          {isMobileDrawer && onCloseMobileDrawer && (
-            <button
-              onClick={onCloseMobileDrawer}
-              className="p-1 rounded-lg text-gray-400 hover:text-white"
-            >
-              <X className="w-5 h-5" />
-            </button>
-          )}
+          <div>
+            <h2 className="text-xs font-black text-white tracking-widest uppercase">
+              REYES ALVARADO
+            </h2>
+            <p className="text-[10px] text-gray-400 font-mono">UEES Dashboard</p>
+          </div>
         </div>
 
         {/* Navigation Section */}

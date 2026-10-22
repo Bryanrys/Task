@@ -1723,14 +1723,6 @@ export default function App() {
                 className="w-72 h-full bg-[#000000] border-r border-white/10 flex flex-col"
                 onClick={(e) => e.stopPropagation()}
               >
-                <div className="flex justify-end p-3">
-                  <button
-                    onClick={() => setShowMobileSidebar(false)}
-                    className="p-1.5 rounded-lg text-gray-400 hover:text-white cursor-pointer"
-                  >
-                    <X className="w-5 h-5" />
-                  </button>
-                </div>
                 <div className="flex-1 overflow-y-auto">
                   <SidebarNav
                     currentView={currentView}

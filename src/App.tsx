@@ -85,6 +85,7 @@ import { getDeadlineStatus } from './utils/deadline';
 import { formatOrResolveWeekDateRange, computeWeekRangeFromDate } from './utils/dateRange';
 
 import { cloudSave, cloudLoad } from './services/supabase';
+import { Capacitor } from '@capacitor/core';
 import {
   getNotificationSettings,
   sendSystemNotification,
@@ -434,6 +435,163 @@ export default function App() {
       document.documentElement.classList.remove('dark');
     }
   }, [isDark]);
+
+  // Deslizar el dedo para abrir/cerrar el panel lateral SOLO en la app nativa (APK / Capacitor)
+  useEffect(() => {
+    // Exclusivo para la aplicación móvil nativa (Capacitor / Android APK).
+    // En la versión web (navegadores) permanece estrictamente inactivo.
+    if (!Capacitor.isNativePlatform() || !isAuthenticated) return;
+
+    let touchStartX = 0;
+    let touchStartY = 0;
+    let touchStartTime = 0;
+    let isVerticalScroll = false;
+    let hasTriggered = false;
+
+    const handleTouchStart = (e: TouchEvent) => {
+      if (e.touches.length !== 1) return;
+      if (window.innerWidth >= 768) return;
+
+      const touch = e.touches[0];
+      touchStartX = touch.clientX;
+      touchStartY = touch.clientY;
+      touchStartTime = Date.now();
+      isVerticalScroll = false;
+      hasTriggered = false;
+
+      // No activar sobre inputs, textareas, selects o scroll horizontal de semanas/pestañas
+      const target = touch.target as HTMLElement | null;
+      if (
+        target?.closest(
+          'input, textarea, select, [contenteditable="true"], .overflow-x-auto, [data-no-swipe]'
+        )
+      ) {
+        isVerticalScroll = true;
+        return;
+      }
+
+      // Si hay un modal abierto, no interferir con la navegación del modal
+      const isModalOpen =
+        showQuickNoteModal ||
+        showWelcome ||
+        showWizard ||
+        showDrawer ||
+        showStartDateModal ||
+        showNotificationModal ||
+        showParcialSplash ||
+        showGradesModal ||
+        showPomodoroModal ||
+        showScheduleModal ||
+        showLinksModal ||
+        showShareModal ||
+        showUploadConfirm ||
+        showDownloadPrompt ||
+        showDownloadConfirm ||
+        showResetConfirm ||
+        showEditNotePrompt ||
+        Boolean(targetSubjectForNewTask) ||
+        Boolean(editingSubject) ||
+        Boolean(activeNoteTarget);
+
+      if (!showMobileSidebar && isModalOpen) {
+        isVerticalScroll = true;
+        return;
+      }
+
+      // Para abrir el panel, el gesto debe iniciar en el área izquierda o central (hasta el 75% del ancho de la pantalla)
+      if (!showMobileSidebar && touchStartX > window.innerWidth * 0.75) {
+        isVerticalScroll = true;
+        return;
+      }
+    };
+
+    const handleTouchMove = (e: TouchEvent) => {
+      if (isVerticalScroll || hasTriggered || e.touches.length !== 1) return;
+
+      const touch = e.touches[0];
+      const deltaX = touch.clientX - touchStartX;
+      const deltaY = touch.clientY - touchStartY;
+      const absX = Math.abs(deltaX);
+      const absY = Math.abs(deltaY);
+
+      // Si el movimiento vertical inicial predomina sobre el horizontal, es scroll vertical de la pantalla
+      if (absY > 12 && absY > absX) {
+        isVerticalScroll = true;
+        return;
+      }
+
+      // Panel cerrado: deslizar el dedo hacia la derecha (swipe right) abre el panel
+      if (!showMobileSidebar) {
+        if (deltaX > 50 && deltaX > absY * 1.3) {
+          hasTriggered = true;
+          setShowMobileSidebar(true);
+        }
+      } else {
+        // Panel abierto: deslizar hacia la izquierda (swipe left) cierra el panel
+        if (deltaX < -45 && absX > absY * 1.2) {
+          hasTriggered = true;
+          setShowMobileSidebar(false);
+        }
+      }
+    };
+
+    const handleTouchEnd = (e: TouchEvent) => {
+      if (!isVerticalScroll && !hasTriggered && e.changedTouches.length === 1) {
+        const touch = e.changedTouches[0];
+        const deltaX = touch.clientX - touchStartX;
+        const deltaY = touch.clientY - touchStartY;
+        const absX = Math.abs(deltaX);
+        const absY = Math.abs(deltaY);
+        const deltaTime = Date.now() - touchStartTime;
+
+        // Soporte para gestos rápidos (flicks)
+        if (deltaTime < 450) {
+          if (!showMobileSidebar && deltaX > 40 && deltaX > absY * 1.3) {
+            setShowMobileSidebar(true);
+          } else if (showMobileSidebar && deltaX < -40 && absX > absY * 1.2) {
+            setShowMobileSidebar(false);
+          }
+        }
+      }
+      isVerticalScroll = false;
+      hasTriggered = false;
+    };
+
+    window.addEventListener('touchstart', handleTouchStart, { passive: true });
+    window.addEventListener('touchmove', handleTouchMove, { passive: true });
+    window.addEventListener('touchend', handleTouchEnd, { passive: true });
+    window.addEventListener('touchcancel', handleTouchEnd, { passive: true });
+
+    return () => {
+      window.removeEventListener('touchstart', handleTouchStart);
+      window.removeEventListener('touchmove', handleTouchMove);
+      window.removeEventListener('touchend', handleTouchEnd);
+      window.removeEventListener('touchcancel', handleTouchEnd);
+    };
+  }, [
+    isAuthenticated,
+    showMobileSidebar,
+    showQuickNoteModal,
+    showWelcome,
+    showWizard,
+    showDrawer,
+    showStartDateModal,
+    showNotificationModal,
+    showParcialSplash,
+    showGradesModal,
+    showPomodoroModal,
+    showScheduleModal,
+    showLinksModal,
+    showShareModal,
+    showUploadConfirm,
+    showDownloadPrompt,
+    showDownloadConfirm,
+    showResetConfirm,
+    showEditNotePrompt,
+    targetSubjectForNewTask,
+    editingSubject,
+    activeNoteTarget,
+  ]);
 
   // Current active dashboard
   const currentDashboard = useMemo(() => {

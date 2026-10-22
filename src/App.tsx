@@ -598,16 +598,6 @@ export default function App() {
     setToastMessage('🔔 ¡Notificación de prueba enviada con éxito!');
   };
 
-  // Streak calculation (completed consecutive weeks)
-  const streakWeeks = useMemo(() => {
-    if (!currentDashboard) return 11;
-    let count = 0;
-    for (const w of currentDashboard.weeks) {
-      if (w.status === 'COMPLETADO') count++;
-    }
-    return count || 11;
-  }, [currentDashboard]);
-
   // Save new start date
   const handleSaveStartDate = (newDateISO: string, formattedStr: string) => {
     if (!currentDashboard) return;
@@ -1739,8 +1729,8 @@ export default function App() {
                     </button>
                   </div>
 
-                  {/* 4 Métricas Principales (Grid 4 columnas Estilo Imagen 2 AMOLED) */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+                  {/* 3 Métricas Principales (Grid 3 columnas AMOLED) */}
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
                     {/* 1. Actividades Pendientes */}
                     <div className="p-4 rounded-2xl bg-[#05070e] border border-white/5 flex flex-col justify-between relative overflow-hidden">
                       <div className="flex items-center justify-between mb-2">
@@ -1810,24 +1800,6 @@ export default function App() {
                         >
                           <Cloud className="w-3 h-3" /> Sinc
                         </button>
-                      </div>
-                    </div>
-
-                    {/* 4. Racha de Estudio */}
-                    <div className="p-4 rounded-2xl bg-[#05070e] border border-white/5 flex flex-col justify-between">
-                      <div className="flex items-center justify-between mb-2">
-                        <span className="text-xs font-medium text-gray-400">Racha de Estudio</span>
-                        <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 flex items-center gap-1">
-                          <Check className="w-2.5 h-2.5" /> Activo
-                        </span>
-                      </div>
-                      <div className="text-3xl font-black text-white my-1 flex items-baseline gap-1.5">
-                        <span>{streakWeeks > 0 ? streakWeeks * 7 : 13}</span>
-                        <span className="text-sm font-semibold text-emerald-400">Días</span>
-                      </div>
-                      <div className="flex items-center justify-between text-xs text-gray-400 mt-2">
-                        <span>Récord personal</span>
-                        <span className="text-emerald-400 font-semibold font-mono">21 días</span>
                       </div>
                     </div>
                   </div>

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, Copy, Check, Share2, Globe, ExternalLink, MessageCircle, Edit3, Sparkles, CheckCircle2, RotateCcw } from 'lucide-react';
+import { X, Copy, Check, Share2, Globe, ExternalLink, MessageCircle, Edit3, Sparkles, CheckCircle2, RotateCcw, Smartphone, Download } from 'lucide-react';
 
 export const PRESET_HOSTING_OPTIONS = [
   {
@@ -265,6 +265,19 @@ export const ShareAppModal: React.FC<ShareAppModalProps> = ({
 
         {/* Action Buttons */}
         <div className="space-y-2">
+          {/* Download APK from GitHub */}
+          <button
+            onClick={() => window.open('https://github.com/Bryanrys/Task/releases', '_blank')}
+            className={`w-full py-2.5 px-3 rounded-2xl border font-bold text-xs flex items-center justify-center gap-2 transition-all cursor-pointer active:scale-98 ${
+              isDark
+                ? 'bg-gradient-to-r from-pink-500/20 via-purple-600/20 to-cyan-500/20 border-pink-500/30 text-white hover:border-pink-400 shadow-md'
+                : 'bg-pink-50 border-pink-200 text-pink-700 hover:bg-pink-100 shadow-xs'
+            }`}
+          >
+            <Smartphone className="w-4 h-4 text-pink-400" />
+            <span>Descargar APK Android (GitHub)</span>
+          </button>
+
           {/* WhatsApp Button */}
           <button
             onClick={handleWhatsAppShare}

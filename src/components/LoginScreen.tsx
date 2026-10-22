@@ -33,7 +33,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLoginSuccess }) => {
         onLoginSuccess(resolvedName);
       } else {
         setIsLoading(false);
-        setErrorMessage('Usuario o contraseña incorrectos. (Usa: admin / oo)');
+        setErrorMessage('Usuario o contraseña incorrectos.');
       }
     }, 350);
   };
@@ -84,7 +84,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLoginSuccess }) => {
                 type="text"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
-                placeholder="admin"
+                placeholder="Ingresa tu usuario"
                 required
                 autoCapitalize="none"
                 autoCorrect="off"
@@ -150,10 +150,10 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLoginSuccess }) => {
           </button>
         </form>
 
-        {/* Pie de credenciales por defecto */}
+        {/* Pie de seguridad */}
         <div className="text-center pt-3 border-t border-white/10 space-y-1">
-          <p className="text-[11px] text-gray-400 font-mono">
-            Credenciales por defecto: Usuario / Clave
+          <p className="text-[11px] text-gray-500 font-mono">
+            Acceso seguro y privado • Sistema Académico UEES
           </p>
         </div>
       </motion.div>

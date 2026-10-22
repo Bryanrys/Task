@@ -1,0 +1,82 @@
+name: Compilar y Publicar APK
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-apk:
+    name: Build Android APK
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Clonar Repositorio
+        uses: actions/checkout@v4
+
+      - name: Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Instalar Dependencias
+        run: npm ci
+
+      - name: Compilar Frontend Web
+        run: npm run build
+
+      - name: Configurar Java 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+
+      - name: Configurar Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Sincronizar Capacitor con Android
+        run: npx cap sync android
+
+      - name: Dar permisos de ejecución a gradlew
+        run: chmod +x android/gradlew
+
+      - name: Compilar APK Debug
+        run: |
+          cd android
+          ./gradlew assembleDebug --no-daemon
+
+      - name: Subir APK como Artefacto del Workflow
+        uses: actions/upload-artifact@v4
+        with:
+          name: UEES-Academic-Dashboard-APK
+          path: android/app/build/outputs/apk/debug/app-debug.apk
+
+      - name: Publicar / Actualizar Release de GitHub (APK)
+        uses: softprops/action-gh-release@v2
+        if: github.ref == 'refs/heads/main'
+        with:
+          tag_name: apk
+          name: "📱 APK - Descargar Aplicación Android"
+          body: |
+            ## 🚀 Descarga de la Aplicación Android (APK)
+
+            Aquí puedes descargar la última versión compilada del Dashboard Académico UEES para dispositivos móviles Android.
+
+            ### 📥 Descarga Directa:
+            - **[Descargar app-debug.apk](https://github.com/Bryanrys/Task/releases/download/apk/app-debug.apk)**
+
+            ---
+            ### 📋 Instrucciones de Instalación:
+            1. Descarga el archivo `.apk` directamente en tu teléfono Android.
+            2. Si tu navegador te lo solicita, selecciona **"Permitir desde esta fuente"** (Instalar apps desconocidas).
+            3. Abre el archivo descargado y presiona **Instalar**.
+            4. ¡Listo! Disfruta de la aplicación con todas las funciones nativas, notificaciones locales y recordatorios de entregas.
+          draft: false
+          prerelease: false
+          files: android/app/build/outputs/apk/debug/app-debug.apk
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

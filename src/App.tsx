@@ -2504,7 +2504,7 @@ export default function App() {
         isOpen={showDownloadPrompt}
         title="task-dashboard dice"
         message="Ingresa la clave de acceso:"
-        placeholder="Ingresa tu clave (ej. oo)"
+        placeholder="Ingresa tu clave"
         defaultValue=""
         onConfirm={handlePromptDownload}
         onCancel={() => setShowDownloadPrompt(false)}

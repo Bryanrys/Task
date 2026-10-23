@@ -479,11 +479,11 @@ export const ToolsAndLinksView: React.FC<ToolsAndLinksViewProps> = ({
             <div className="p-2 rounded-xl bg-purple-500/20 text-purple-400 border border-purple-500/30">
               <Calculator className="w-4 h-4" />
             </div>
-            <span className="text-[10px] font-mono uppercase text-purple-400 font-bold">Cálculo</span>
+            <span className="text-[10px] font-mono uppercase text-purple-400 font-bold">Oficial UEES</span>
           </div>
-          <div className="font-extrabold text-xs text-purple-300 uppercase">Calculadora Promedios</div>
+          <div className="font-extrabold text-xs text-purple-300 uppercase">Sistema de Notas UEES</div>
           <p className={`text-[10px] mt-0.5 ${isDark ? 'text-stone-400' : 'text-stone-600'}`}>
-            Calcula notas y proyecciones de parciales
+            Consulta notas oficiales, registros (30%-30%-40%) y promedios
           </p>
         </button>
 

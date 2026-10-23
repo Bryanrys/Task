@@ -230,8 +230,8 @@ export const SidebarNav: React.FC<SidebarNavProps> = ({
               }}
               className="w-full text-left flex items-center space-x-3 px-3 py-2 rounded-xl text-xs text-gray-300 hover:bg-white/5 transition-all cursor-pointer"
             >
-              <Calculator className="w-4 h-4 text-blue-400 shrink-0" />
-              <span>Calculadora Promedios</span>
+              <Calculator className="w-4 h-4 text-purple-400 shrink-0" />
+              <span>Notas y Promedios UEES</span>
             </button>
           </div>
         </div>

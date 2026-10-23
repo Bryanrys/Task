@@ -1,9 +1,11 @@
 import { Dashboard, WeekItem, SubjectItem } from '../types';
 
 export const MATERIAS_DEFAULT = [
-  'Materia 1',
-  'Materia 2',
-  'Materia 3',
+  'Bases de Datos I (Relacionales)',
+  'Comunicación y Redacción',
+  'Matemática II',
+  'Física II',
+  'Programación II',
 ];
 
 export const ACTIVIDADES_CLASES = ['Foro entregado', 'Tarea entregada'];
@@ -37,9 +39,11 @@ export const createDefaultWeeks = (subjectIds: string[]): WeekItem[] => {
 };
 
 const defaultSubjects: SubjectItem[] = [
-  { id: 'subj-1', name: 'Materia 1' },
-  { id: 'subj-2', name: 'Materia 2' },
-  { id: 'subj-3', name: 'Materia 3' },
+  { id: 'subj-1', name: 'Bases de Datos I (Relacionales)' },
+  { id: 'subj-2', name: 'Comunicación y Redacción' },
+  { id: 'subj-3', name: 'Matemática II' },
+  { id: 'subj-4', name: 'Física II' },
+  { id: 'subj-5', name: 'Programación II' },
 ];
 
 export const INITIAL_DASHBOARDS: Dashboard[] = [

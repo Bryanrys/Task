@@ -83,6 +83,12 @@ import { ToolsAndLinksView } from './components/ToolsAndLinksView';
 import { UnifiedDashboardHeader } from './components/UnifiedDashboardHeader';
 import { getDeadlineStatus } from './utils/deadline';
 import { formatOrResolveWeekDateRange, computeWeekRangeFromDate } from './utils/dateRange';
+import {
+  calculateUeesGrade,
+  findGradeDataForSubject,
+  getSavedGradesData,
+  SubjectGradeData,
+} from './utils/gradeCalculation';
 
 import { cloudSave, cloudLoad } from './services/supabase';
 import { Capacitor } from '@capacitor/core';
@@ -201,20 +207,41 @@ export default function App() {
             const resolvedStartDateISO = needsStartDateFix ? '2026-07-06' : d.startDateISO || '2026-07-06';
             const resolvedStartDate = needsStartDateFix ? '06 JUL 2026' : d.startDate || '06 JUL 2026';
 
+            const isGenericSubjects =
+              !d.subjects ||
+              (d.subjects.length <= 3 &&
+                d.subjects.every((s: SubjectItem) => s.name.startsWith('Materia ')));
+
+            const resolvedSubjects = isGenericSubjects ? INITIAL_DASHBOARDS[0].subjects : d.subjects;
+
             return {
               ...d,
               startDateISO: resolvedStartDateISO,
               startDate: resolvedStartDate,
               accessCode: !d.accessCode || d.accessCode === 'UEES-2026' ? 'oo' : d.accessCode,
+              subjects: resolvedSubjects,
               weeks: Array.isArray(d.weeks)
-                ? d.weeks.map((w: WeekItem) => ({
-                  ...w,
-                  dateRange: formatOrResolveWeekDateRange(
-                    w.weekNumber,
-                    resolvedStartDateISO,
-                    w.dateRange
-                  ),
-                }))
+                ? d.weeks.map((w: WeekItem) => {
+                    const taskMap = { ...(w.subjectTasks || {}) };
+                    resolvedSubjects.forEach((subj) => {
+                      if (!taskMap[subj.id] || taskMap[subj.id].length === 0) {
+                        taskMap[subj.id] = (d.defaultTaskNames || ACTIVIDADES_CLASES).map((tName, tIdx) => ({
+                          id: `task-${w.weekNumber}-${subj.id}-${tIdx}`,
+                          name: tName,
+                          completed: false,
+                        }));
+                      }
+                    });
+                    return {
+                      ...w,
+                      dateRange: formatOrResolveWeekDateRange(
+                        w.weekNumber,
+                        resolvedStartDateISO,
+                        w.dateRange
+                      ),
+                      subjectTasks: taskMap,
+                    };
+                  })
                 : d.weeks,
             };
           });
@@ -227,6 +254,24 @@ export default function App() {
   const [activeDashId, setActiveDashId] = useState<string>(() => {
     return dashboards[0]?.id || 'dash-uees';
   });
+
+  // Grades tracker state & synchronization for live UI updates
+  const [gradesTracker, setGradesTracker] = useState<Record<string, SubjectGradeData>>(() => {
+    return getSavedGradesData();
+  });
+  const [selectedGradeSubjectId, setSelectedGradeSubjectId] = useState<string | undefined>(undefined);
+
+  useEffect(() => {
+    const handleSyncGrades = () => {
+      setGradesTracker(getSavedGradesData());
+    };
+    window.addEventListener('academic_data_synced', handleSyncGrades);
+    window.addEventListener('storage', handleSyncGrades);
+    return () => {
+      window.removeEventListener('academic_data_synced', handleSyncGrades);
+      window.removeEventListener('storage', handleSyncGrades);
+    };
+  }, []);
 
   // Toggle whether to show completed subjects or keep them automatically hidden
   const [showCompletedSubjects, setShowCompletedSubjects] = useState<boolean>(false);
@@ -2029,6 +2074,8 @@ export default function App() {
                 const renderSubjectCard = (subject: SubjectItem, sIdx: number, isSingleView: boolean = false) => {
                   const tasks = currentWeek.subjectTasks[subject.id] || [];
                   const isSubjectAllDone = tasks.length > 0 && tasks.every((t) => t.completed);
+                  const subjectGradeData = findGradeDataForSubject(subject.id, subject.name, gradesTracker);
+                  const ueesCalc = calculateUeesGrade(subjectGradeData);
 
                   const borderTopColor =
                     sIdx % 3 === 0
@@ -2053,7 +2100,7 @@ export default function App() {
                         }`}
                     >
                       {/* Header de Materia */}
-                      <div className="flex items-center justify-between mb-4">
+                      <div className="flex items-center justify-between mb-3">
                         <div className="flex items-center gap-2 min-w-0">
                           <div
                             onClick={() => {
@@ -2082,6 +2129,37 @@ export default function App() {
                         <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${badgeColor}`}>
                           {statusLabel}
                         </span>
+                      </div>
+
+                      {/* Mini-Panel de Calificación Oficial UEES */}
+                      <div className="flex items-center justify-between mb-3.5 px-3 py-1.5 rounded-xl bg-[#080b16] border border-white/5 shadow-xs">
+                        <div className="flex items-center gap-2 min-w-0">
+                          <div className={`w-2 h-2 rounded-full shrink-0 ${ueesCalc.isPassed ? 'bg-emerald-400' : 'bg-purple-400 animate-pulse'}`} />
+                          <span className="text-[10px] font-mono font-bold text-stone-400 uppercase">
+                            Prom. UEES:
+                          </span>
+                          <span className="text-xs font-mono font-black text-emerald-400">
+                            {ueesCalc.ueesAverageFormatted}
+                          </span>
+                          {ueesCalc.neededInR3 && !ueesCalc.isPassed && (
+                            <span className="text-[9px] font-mono text-pink-300 truncate hidden sm:inline">
+                              • Meta R3: {ueesCalc.neededInR3}
+                            </span>
+                          )}
+                        </div>
+
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setSelectedGradeSubjectId(subject.id);
+                            setShowGradesModal(true);
+                          }}
+                          className="text-[10px] font-mono font-bold text-purple-300 hover:text-white px-2 py-0.5 rounded-lg bg-purple-500/15 hover:bg-purple-500/30 border border-purple-500/25 transition-all cursor-pointer flex items-center gap-1 shrink-0"
+                          title={`Ver cálculo oficial UEES y registros de ${subject.name}`}
+                        >
+                          <Calculator className="w-3 h-3 text-purple-400" />
+                          <span>Notas</span>
+                        </button>
                       </div>
 
                       {/* Lista de Tareas de la Materia */}
@@ -2669,9 +2747,13 @@ export default function App() {
       {/* Grade & Average Calculator Modal */}
       <GradeCalculatorModal
         isOpen={showGradesModal}
-        onClose={() => setShowGradesModal(false)}
+        onClose={() => {
+          setShowGradesModal(false);
+          setSelectedGradeSubjectId(undefined);
+        }}
         subjects={currentDashboard.subjects}
         isDark={isDark}
+        initialSubjectId={selectedGradeSubjectId}
       />
 
       {/* Pomodoro Study Timer Modal */}

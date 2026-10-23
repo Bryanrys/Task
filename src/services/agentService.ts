@@ -68,7 +68,7 @@ export async function validateGeminiApiKey(
   if (!cleanKey) return { valid: false, error: 'La clave está vacía.' };
 
   try {
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${cleanKey}`;
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-lite-latest:generateContent?key=${cleanKey}`;
     const res = await fetch(url, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -669,12 +669,17 @@ export async function sendAgentMessage(
       return { ok: res.ok, status: res.status, data };
     };
 
-    let result = await makeRequest('gemini-2.0-flash');
+    // Intento con modelos activos y estables de Gemini
+    let result = await makeRequest('gemini-flash-lite-latest');
 
-    // Si 2.0 arroja 404, reintentar con gemini-1.5-flash
-    if (!result.ok && result.status === 404) {
-      console.warn('Reintentando con gemini-1.5-flash');
-      result = await makeRequest('gemini-1.5-flash');
+    if (!result.ok && (result.status === 404 || result.status === 503)) {
+      console.warn('Reintentando con gemini-3.5-flash-lite...');
+      result = await makeRequest('gemini-3.5-flash-lite');
+    }
+
+    if (!result.ok && (result.status === 404 || result.status === 503)) {
+      console.warn('Reintentando con gemini-flash-latest...');
+      result = await makeRequest('gemini-flash-latest');
     }
 
     if (result.ok) {

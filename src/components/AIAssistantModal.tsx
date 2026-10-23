@@ -154,7 +154,7 @@ export const AIAssistantModal: React.FC<AIAssistantModalProps> = ({
       setHasApiKey(true);
       setKeyValidationFeedback({
         valid: true,
-        message: '✓ Clave verificada y activa con Google Gemini 2.0 Flash.',
+        message: '✓ Clave verificada y activa con Google Gemini Flash IA.',
       });
       setTimeout(() => {
         setShowKeySettings(false);
@@ -276,7 +276,7 @@ export const AIAssistantModal: React.FC<AIAssistantModalProps> = ({
                 </h3>
               </div>
               <p className="text-[10px] sm:text-[11px] text-stone-400 font-mono flex items-center gap-1.5">
-                <span>{hasApiKey ? '🟢 Gemini 2.0 Conectado' : '⚡ Motor Académico Local'}</span>
+                <span>{hasApiKey ? '🟢 Gemini Flash IA Conectado' : '⚡ Motor Académico Local'}</span>
               </p>
             </div>
           </div>

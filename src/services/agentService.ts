@@ -59,6 +59,44 @@ export function clearGeminiApiKey(): void {
 }
 
 /**
+ * Valida la API Key directamente contra los servidores de Google Generative AI
+ */
+export async function validateGeminiApiKey(
+  key: string
+): Promise<{ valid: boolean; error?: string }> {
+  const cleanKey = key.trim();
+  if (!cleanKey) return { valid: false, error: 'La clave está vacía.' };
+
+  try {
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${cleanKey}`;
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        contents: [{ role: 'user', parts: [{ text: 'hola' }] }],
+        generationConfig: { maxOutputTokens: 5 },
+      }),
+    });
+
+    if (res.ok) {
+      return { valid: true };
+    }
+
+    const data = await res.json().catch(() => ({}));
+    const rawError = data?.error?.message || `Error HTTP ${res.status}`;
+    let userMsg = rawError;
+    if (rawError.includes('API key not valid') || rawError.includes('API_KEY_INVALID')) {
+      userMsg = 'Google rechazó la API Key (API key no válida o mal copiada).';
+    } else if (rawError.includes('quota') || data?.error?.status === 'RESOURCE_EXHAUSTED') {
+      userMsg = 'La clave ha agotado su cuota gratuita en Google Cloud.';
+    }
+    return { valid: false, error: userMsg };
+  } catch (err: any) {
+    return { valid: false, error: err?.message || 'Error de conexión de red.' };
+  }
+}
+
+/**
  * Construye el prompt de sistema con todos los datos académicos del estudiante en vivo
  */
 export function buildSystemInstruction(context: AgentContextData): string {
@@ -526,6 +564,31 @@ export function generateLocalFallbackResponse(
     };
   }
 
+  // ----------------------------------------------------------------------
+  // PRIORIDAD 12: Operaciones matemáticas directas (ej. "cuanto es 3 + 5", "calcula 15 * 8")
+  // ----------------------------------------------------------------------
+  const cleanMath = p
+    .replace(/cuanto es/gi, '')
+    .replace(/calcula/gi, '')
+    .replace(/resultado de/gi, '')
+    .replace(/cuanto da/gi, '')
+    .replace(/x/gi, '*')
+    .replace(/,/g, '.')
+    .replace(/\?/g, '')
+    .trim();
+
+  if (/^[\d\s\+\-\*\/\(\)\.]+$/.test(cleanMath) && /[\+\-\*\/]/.test(cleanMath)) {
+    try {
+      const calcResult = Function(`'use strict'; return (${cleanMath})`)();
+      if (typeof calcResult === 'number' && !isNaN(calcResult)) {
+        return {
+          text: `🧮 **Resultado Matemático:**\n\n\`${cleanMath.replace(/\*/g, '×')} = ${calcResult}\``,
+          action: null,
+        };
+      }
+    } catch {}
+  }
+
   // Respuesta general
   return {
     text: `¡Hola ${context.studentName}! Soy **KALI**, tu Copiloto IA de la UEES.\n\nPuedes preguntarme:\n• *"Analiza mis materias y notas y dime qué debería estudiar hoy para no atrasarme"*\n• *"¿Qué dicen las notas de mis tareas?"*\n• *"¿Cómo se calcula el promedio en la UEES?"*\n• *"¿Quiénes son mis catedráticos?"*\n• *"¿Cuánto necesito en R3 para pasar Matemática II?"*\n• *"Agrega la tarea de laboratorio de Física"*\n\n*(Nota: Con tu API Key de Google Gemini conectada, también puedo resolver dudas teóricas de código, fórmulas de física o ejercicios paso a paso).*`,
@@ -534,7 +597,7 @@ export function generateLocalFallbackResponse(
 }
 
 /**
- * Envía el mensaje al agente (usando Gemini 2.0 / 1.5 o fallback inteligente de KALI)
+ * Envía el mensaje al agente (usando Gemini 2.0 / 1.5 vía REST o fallback inteligente de KALI)
  */
 export async function sendAgentMessage(
   userText: string,
@@ -549,60 +612,106 @@ export async function sendAgentMessage(
   }
 
   try {
-    const ai = new GoogleGenAI({ apiKey });
     const systemInstruction = buildSystemInstruction(context);
 
-    // Formatear historial reciente (últimos 8 mensajes)
-    const contents: any[] = [];
+    // Sanitizar historial garantizando estricta alternancia de roles (user -> model -> user)
+    const contents: Array<{ role: 'user' | 'model'; parts: Array<{ text: string }> }> = [];
 
-    // Prompt del sistema inicial
-    contents.push({
-      role: 'user',
-      parts: [{ text: `[INSTRUCCIÓN DE SISTEMA Y CONTEXTO ACADÉMICO]\n${systemInstruction}` }],
-    });
-    contents.push({
-      role: 'model',
-      parts: [{ text: 'Entendido. Soy KALI, conozco perfectamente a Bryan, sus 5 materias de la UEES, sus notas y tareas actuales. ¿En qué te puedo ayudar hoy?' }],
-    });
+    const relevantHistory = chatHistory
+      .filter((m) => m.sender === 'user' || m.sender === 'agent')
+      .map((m) => ({
+        role: (m.sender === 'user' ? 'user' : 'model') as 'user' | 'model',
+        text: m.text,
+      }));
 
-    // Historial
-    chatHistory.slice(-6).forEach((msg) => {
-      contents.push({
-        role: msg.sender === 'user' ? 'user' : 'model',
-        parts: [{ text: msg.text }],
-      });
-    });
+    // Descartar mensajes de bienvenida o reinicio del bot antes del primer turno de usuario
+    const firstUserIdx = relevantHistory.findIndex((m) => m.role === 'user');
+    const validHistory = firstUserIdx >= 0 ? relevantHistory.slice(firstUserIdx) : [];
 
-    // Nuevo mensaje
-    contents.push({
-      role: 'user',
-      parts: [{ text: userText }],
-    });
-
-    // Llamada con modelo rápido y oficial (gemini-2.0-flash con fallback a gemini-1.5-flash)
-    let responseText = '';
-    try {
-      const response = await ai.models.generateContent({
-        model: 'gemini-2.0-flash',
-        contents,
-      });
-      responseText = response.text || '';
-    } catch (modelErr) {
-      console.warn('Reintentando con gemini-1.5-flash:', modelErr);
-      const fallbackResponse = await ai.models.generateContent({
-        model: 'gemini-1.5-flash',
-        contents,
-      });
-      responseText = fallbackResponse.text || '';
+    for (const item of validHistory) {
+      if (contents.length === 0) {
+        contents.push({ role: item.role, parts: [{ text: item.text }] });
+      } else {
+        const last = contents[contents.length - 1];
+        if (last.role === item.role) {
+          last.parts.push({ text: item.text });
+        } else {
+          contents.push({ role: item.role, parts: [{ text: item.text }] });
+        }
+      }
     }
 
-    if (!responseText) {
-      return generateLocalFallbackResponse(userText, context);
+    // Agregar el mensaje actual del usuario garantizando turno 'user'
+    if (contents.length > 0 && contents[contents.length - 1].role === 'user') {
+      contents[contents.length - 1].parts.push({ text: userText });
+    } else {
+      contents.push({ role: 'user', parts: [{ text: userText }] });
     }
 
-    return extractAgentAction(responseText);
+    // Petición REST directa a Google Generative AI
+    const makeRequest = async (model: string) => {
+      const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+      const res = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          system_instruction: {
+            parts: [{ text: systemInstruction }],
+          },
+          contents,
+          generationConfig: {
+            temperature: 0.7,
+            maxOutputTokens: 1200,
+          },
+        }),
+      });
+      const data = await res.json().catch(() => ({}));
+      return { ok: res.ok, status: res.status, data };
+    };
+
+    let result = await makeRequest('gemini-2.0-flash');
+
+    // Si 2.0 arroja 404, reintentar con gemini-1.5-flash
+    if (!result.ok && result.status === 404) {
+      console.warn('Reintentando con gemini-1.5-flash');
+      result = await makeRequest('gemini-1.5-flash');
+    }
+
+    if (result.ok) {
+      const responseText = result.data?.candidates?.[0]?.content?.parts?.[0]?.text || '';
+      if (responseText.trim()) {
+        return extractAgentAction(responseText);
+      }
+    }
+
+    // Si Google reportó un error específico (clave inválida, cuota, etc.)
+    if (result.data?.error?.message) {
+      const rawError = result.data.error.message;
+      console.warn('Google Gemini API Error:', rawError);
+
+      let errorBanner = '';
+      if (rawError.includes('API key not valid') || rawError.includes('API_KEY_INVALID')) {
+        errorBanner = `⚠️ **Aviso de Clave:** Google rechazó tu clave (*API key no válida o mal copiada*). Por favor verifícala en Google AI Studio tocando el botón 🔑.\n\n*(Respondiendo con el motor local de KALI:)*\n\n`;
+      } else if (rawError.includes('quota') || result.data.error.status === 'RESOURCE_EXHAUSTED') {
+        errorBanner = `⚠️ **Aviso de Cuota:** Has alcanzado el límite de cuota gratuita en tu cuenta de Google Gemini.\n\n*(Respondiendo con el motor local de KALI:)*\n\n`;
+      } else {
+        errorBanner = `⚠️ **Aviso de Google Gemini:** ${rawError}\n\n*(Respondiendo con el motor local de KALI:)*\n\n`;
+      }
+
+      const fallback = generateLocalFallbackResponse(userText, context);
+      return {
+        text: `${errorBanner}${fallback.text}`,
+        action: fallback.action,
+      };
+    }
+
+    return generateLocalFallbackResponse(userText, context);
   } catch (error: any) {
     console.warn('Fallo en conexión Gemini API, recurriendo a motor local KALI:', error);
-    return generateLocalFallbackResponse(userText, context);
+    const fallback = generateLocalFallbackResponse(userText, context);
+    return {
+      text: fallback.text,
+      action: fallback.action,
+    };
   }
 }

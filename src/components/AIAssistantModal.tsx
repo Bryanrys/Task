@@ -20,6 +20,7 @@ import {
   getGeminiApiKey,
   setGeminiApiKey,
   clearGeminiApiKey,
+  validateGeminiApiKey,
   sendAgentMessage,
 } from '../services/agentService';
 
@@ -105,6 +106,12 @@ export const AIAssistantModal: React.FC<AIAssistantModalProps> = ({
   const [apiKeyDraft, setApiKeyDraft] = useState<string>(() => getGeminiApiKey());
   const [hasApiKey, setHasApiKey] = useState<boolean>(() => !!getGeminiApiKey());
 
+  const [isValidatingKey, setIsValidatingKey] = useState<boolean>(false);
+  const [keyValidationFeedback, setKeyValidationFeedback] = useState<{
+    valid?: boolean;
+    message?: string;
+  } | null>(null);
+
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   // Auto-scroll al final del chat
@@ -126,10 +133,42 @@ export const AIAssistantModal: React.FC<AIAssistantModalProps> = ({
     } catch {}
   }, [messages]);
 
-  const handleSaveApiKey = () => {
-    setGeminiApiKey(apiKeyDraft);
-    setHasApiKey(!!apiKeyDraft.trim());
-    setShowKeySettings(false);
+  const handleSaveApiKey = async () => {
+    const clean = apiKeyDraft.trim();
+    if (!clean) {
+      clearGeminiApiKey();
+      setHasApiKey(false);
+      setKeyValidationFeedback(null);
+      setShowKeySettings(false);
+      return;
+    }
+
+    setIsValidatingKey(true);
+    setKeyValidationFeedback({ message: 'Conectando con Google AI Studio para verificar la clave...' });
+
+    const check = await validateGeminiApiKey(clean);
+    setIsValidatingKey(false);
+
+    if (check.valid) {
+      setGeminiApiKey(clean);
+      setHasApiKey(true);
+      setKeyValidationFeedback({
+        valid: true,
+        message: '✓ Clave verificada y activa con Google Gemini 2.0 Flash.',
+      });
+      setTimeout(() => {
+        setShowKeySettings(false);
+        setKeyValidationFeedback(null);
+      }, 1200);
+    } else {
+      // Guardar de todas formas por si es un tema transitorio, pero advertir al usuario claramente
+      setGeminiApiKey(clean);
+      setHasApiKey(true);
+      setKeyValidationFeedback({
+        valid: false,
+        message: `⚠️ Google rechazó la clave: ${check.error || 'Clave no válida'}. Verifica que la hayas copiado completa de Google AI Studio.`,
+      });
+    }
   };
 
   const handleClearChat = () => {
@@ -299,9 +338,10 @@ export const AIAssistantModal: React.FC<AIAssistantModalProps> = ({
               />
               <button
                 onClick={handleSaveApiKey}
-                className="px-3 py-1.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-bold cursor-pointer transition-all"
+                disabled={isValidatingKey}
+                className="px-3 py-1.5 rounded-xl bg-purple-600 hover:bg-purple-500 disabled:opacity-50 text-white font-bold cursor-pointer transition-all flex items-center gap-1.5"
               >
-                Guardar
+                {isValidatingKey ? 'Validando...' : 'Guardar'}
               </button>
               {hasApiKey && (
                 <button
@@ -309,6 +349,7 @@ export const AIAssistantModal: React.FC<AIAssistantModalProps> = ({
                     clearGeminiApiKey();
                     setApiKeyDraft('');
                     setHasApiKey(false);
+                    setKeyValidationFeedback(null);
                   }}
                   className="px-2.5 py-1.5 rounded-xl bg-rose-500/20 text-rose-300 border border-rose-500/30 cursor-pointer"
                 >
@@ -316,6 +357,22 @@ export const AIAssistantModal: React.FC<AIAssistantModalProps> = ({
                 </button>
               )}
             </div>
+
+            {/* Mensaje de validación en tiempo real */}
+            {keyValidationFeedback && (
+              <div
+                className={`p-2 rounded-xl text-[11px] font-mono flex items-start gap-1.5 ${
+                  keyValidationFeedback.valid === true
+                    ? 'bg-emerald-500/15 border border-emerald-500/30 text-emerald-300'
+                    : keyValidationFeedback.valid === false
+                    ? 'bg-rose-500/15 border border-rose-500/30 text-rose-300'
+                    : 'bg-amber-500/15 border border-amber-500/30 text-amber-200'
+                }`}
+              >
+                <span>{keyValidationFeedback.message}</span>
+              </div>
+            )}
+
             <p className="text-[10px] text-stone-500">
               Tu clave se almacena únicamente en tu navegador/dispositivo y no se comparte con nadie.
             </p>

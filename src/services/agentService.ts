@@ -80,15 +80,14 @@ export function buildSystemInstruction(context: AgentContextData): string {
     })
     .join('\n');
 
-  // Resumen de tareas de la semana activa
+  // Resumen de tareas de la semana activa (incluyendo notas/apuntes rápidos)
   const tasksSummary = activeDashboard.subjects
     .map((s) => {
       const tasks = currentWeek.subjectTasks[s.id] || [];
-      const pending = tasks.filter((t) => !t.completed).map((t) => t.name);
-      const completed = tasks.filter((t) => t.completed).map((t) => t.name);
-      return `- ${s.name}:
-  * Pendientes (${pending.length}): ${pending.join(', ') || 'Ninguna pendiente'}
-  * Completadas (${completed.length}): ${completed.join(', ') || 'Ninguna completada'}`;
+      const taskLines = tasks.map(
+        (t) => `  * ${t.name} [${t.completed ? 'Completada' : 'Pendiente'}]${t.note ? ` -> Nota rápida/Apunte: "${t.note}"` : ''}`
+      );
+      return `- ${s.name}:\n${taskLines.join('\n') || '  (Sin tareas)'}`;
     })
     .join('\n');
 
@@ -181,6 +180,65 @@ export function generateLocalFallbackResponse(
   const lowestSubj = sortedByAvg[0];
   const highestSubj = sortedByAvg[sortedByAvg.length - 1];
 
+  // Recopilar notas rápidas y apuntes de las tareas de la semana activa
+  const taskNotesBySubject: {
+    subjectName: string;
+    tasksWithNotes: { name: string; note: string; completed: boolean }[];
+  }[] = [];
+
+  activeDashboard.subjects.forEach((s) => {
+    const tasks = currentWeek.subjectTasks[s.id] || [];
+    const withNotes = tasks
+      .filter((t) => t.note && t.note.trim() !== '')
+      .map((t) => ({ name: t.name, note: t.note!.trim(), completed: t.completed }));
+
+    if (withNotes.length > 0) {
+      taskNotesBySubject.push({
+        subjectName: s.name,
+        tasksWithNotes: withNotes,
+      });
+    }
+  });
+
+  // Detección si se refiere a notas rápidas / apuntes de tareas:
+  const isAskingTaskNotes =
+    p.includes('nota rapida') ||
+    p.includes('notas rapidas') ||
+    p.includes('apunte') ||
+    p.includes('apuntes') ||
+    p.includes('esas notas') ||
+    p.includes('que dice') ||
+    p.includes('dice las que') ||
+    p.includes('las que tiene notas') ||
+    p.includes('notas de las tareas') ||
+    p.includes('nota de la tarea') ||
+    p.includes('toidavia') ||
+    p.includes('mandarla') ||
+    (p.includes('nota') && (p.includes('foro') || p.includes('entregar') || p.includes('mandar')));
+
+  if (isAskingTaskNotes) {
+    if (taskNotesBySubject.length === 0) {
+      return {
+        text: `📝 **Notas rápidas de tus tareas:**\n\nActualmente no tienes apuntes o notas escritas en las tareas de la **Semana ${currentWeek.weekNumber}**.\n\nPuedes agregar una nota rápida tocando el icono de lápiz ✏️ al lado de cualquier tarea (ej. *"falta mandarla"*, *"Me falta uno toidavia"*).`,
+        action: null,
+      };
+    }
+
+    let msg = `📝 **¡Ah, te referías a las notas rápidas y apuntes de tus tareas!** 😂\n\nAquí tienes lo que dice cada una en la **Semana ${currentWeek.weekNumber}**:\n\n`;
+
+    taskNotesBySubject.forEach((group) => {
+      msg += `* **${group.subjectName}**:\n`;
+      group.tasksWithNotes.forEach((t) => {
+        const icon = t.completed ? '✓' : '⏳';
+        msg += `  - **${t.name}** (${icon} ${t.completed ? 'Entregada' : 'Pendiente'}): 📌 *«${t.note}»*\n`;
+      });
+      msg += `\n`;
+    });
+
+    msg += `💡 *Tip: Puedes editar o cambiar estas notas en cualquier momento pulsando el icono del lápiz ✏️ en la tarea.*`;
+    return { text: msg, action: null };
+  }
+
   // 1. Pregunta específica: "¿Qué materias tienen notas?" o "dime las que tienen notas" o "¿cuáles tienen notas?"
   const isAskingWhichHaveGrades =
     (p.includes('que') || p.includes('cuales') || p.includes('dime') || p.includes('solo')) &&
@@ -219,6 +277,17 @@ export function generateLocalFallbackResponse(
     }
 
     msg += `💡 **En resumen:** En todas las materias ya tienes calificados los cómputos 1 y 2 (60% del ciclo). Solo te falta el **Registro 3 (40%)** para cerrar el semestre.`;
+
+    if (taskNotesBySubject.length > 0) {
+      msg += `\n\n📝 **Notas rápidas escritas en tus tareas:**\n`;
+      taskNotesBySubject.forEach((group) => {
+        msg += `* **${group.subjectName}**:\n`;
+        group.tasksWithNotes.forEach((t) => {
+          msg += `  - ${t.name}: 📌 *«${t.note}»*\n`;
+        });
+      });
+    }
+
     return { text: msg, action: null };
   }
 
@@ -268,6 +337,16 @@ export function generateLocalFallbackResponse(
 
     if (highestSubj && lowestSubj) {
       msg += `\n💡 **Recomendación de KALI:** Tu materia con mejor promedio es **${highestSubj.subject.name}** (${highestSubj.calc.ueesAverageFormatted}). Tu prioridad número 1 debe ser **${lowestSubj.subject.name}** (${lowestSubj.calc.ueesAverageFormatted}), donde requieres al menos **${lowestSubj.calc.neededInR3 || 'calificación alta'}** en R3.`;
+    }
+
+    if (taskNotesBySubject.length > 0) {
+      msg += `\n\n📝 **Notas rápidas anotadas en tus tareas de esta semana:**\n`;
+      taskNotesBySubject.forEach((group) => {
+        msg += `* **${group.subjectName}**:\n`;
+        group.tasksWithNotes.forEach((t) => {
+          msg += `  - ${t.name}: 📌 *«${t.note}»*\n`;
+        });
+      });
     }
 
     return { text: msg, action: null };

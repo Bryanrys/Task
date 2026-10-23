@@ -483,7 +483,7 @@ export const ToolsAndLinksView: React.FC<ToolsAndLinksViewProps> = ({
             </div>
             <span className="text-[10px] font-mono uppercase text-pink-400 font-bold">Agente IA</span>
           </div>
-          <div className="font-extrabold text-xs text-pink-300 uppercase">Copiloto IA UEES</div>
+          <div className="font-extrabold text-xs text-pink-300 uppercase">KALI • Copiloto IA</div>
           <p className={`text-[10px] mt-0.5 ${isDark ? 'text-stone-400' : 'text-stone-600'}`}>
             Asistente académico, tutor de dudas y gestor de tareas
           </p>

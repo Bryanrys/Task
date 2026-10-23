@@ -2896,18 +2896,18 @@ export default function App() {
         isDark={isDark}
       />
 
-      {/* Floating Action Button (FAB) para el Copiloto IA */}
+      {/* Floating Action Button (FAB) para KALI IA */}
       <button
         onClick={() => setShowAIAssistant(true)}
         className="fixed bottom-5 right-5 sm:bottom-6 sm:right-6 z-40 p-3 sm:px-4 sm:py-3 rounded-2xl sm:rounded-full bg-gradient-to-r from-pink-500 via-purple-600 to-cyan-400 text-white shadow-[0_0_25px_rgba(236,72,153,0.4)] hover:shadow-[0_0_35px_rgba(236,72,153,0.6)] hover:scale-105 active:scale-95 transition-all flex items-center gap-2 cursor-pointer group"
-        title="Abrir Copiloto IA UEES"
+        title="Abrir KALI • Copiloto IA UEES"
       >
         <div className="relative">
           <Bot className="w-5 h-5 text-white" />
           <span className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-cyan-300 animate-ping" />
         </div>
         <span className="hidden sm:inline font-mono font-black text-xs uppercase tracking-wider drop-shadow-md">
-          Copiloto IA
+          KALI IA
         </span>
       </button>
     </div>

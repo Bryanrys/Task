@@ -244,7 +244,7 @@ export const SidebarNav: React.FC<SidebarNavProps> = ({
               className="w-full text-left flex items-center space-x-3 px-3 py-2 rounded-xl text-xs text-pink-300 hover:bg-pink-500/10 border border-pink-500/20 transition-all cursor-pointer font-bold"
             >
               <Sparkles className="w-4 h-4 text-pink-400 shrink-0 animate-pulse" />
-              <span>Copiloto IA UEES</span>
+              <span>KALI • Copiloto IA</span>
             </button>
           </div>
         </div>

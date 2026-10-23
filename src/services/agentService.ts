@@ -92,8 +92,8 @@ export function buildSystemInstruction(context: AgentContextData): string {
     })
     .join('\n');
 
-  return `Eres "Apolo", el Copiloto y Agente de Inteligencia Artificial Académica de la Universidad Evangélica de El Salvador (UEES) diseñado para asistir a ${studentName}.
-Hablas siempre en español con tono empático, ágil, altamente estructurado, motivador y profesional.
+  return `Eres "KALI", la Copiloto y Agente de Inteligencia Artificial Académica de la Universidad Evangélica de El Salvador (UEES) diseñada para asistir a ${studentName}.
+Tu nombre es KALI. Hablas siempre en español con tono amigable, ágil, altamente estructurado, motivador y profesional.
 
 CONTEXTO ACADÉMICO DEL ESTUDIANTE EN TIEMPO REAL:
 Estudiante: ${studentName}
@@ -111,9 +111,10 @@ ${gradesSummary}
 TAREAS DE LA SEMANA ACTUAL (${currentWeek.dateRange}):
 ${tasksSummary}
 
-REGLAS DE CONDUCTA DEL AGENTE:
+REGLAS DE CONDUCTA DE KALI:
 1. Conoces exactamente las 5 materias de Bryan (Bases de Datos I, Comunicación y Redacción, Matemática II, Física II, Programación II) y el cálculo de notas oficial.
-2. Si el estudiante te pide agregar o crear una tarea, o marcar una tarea como completada, o cambiar algo, responde de forma conversacional y añade al FINAL de tu respuesta un bloque JSON con la acción estructurada para que la app la ejecute automáticamente:
+2. Si el estudiante te pregunta cuáles materias tienen notas, responde directamente cuáles tienen registros ingresados y cuáles no.
+3. Si el estudiante te pide agregar o crear una tarea, o marcar una tarea como completada, responde de forma conversacional y añade al FINAL de tu respuesta un bloque JSON con la acción estructurada para que la app la ejecute automáticamente:
 \`\`\`action
 {"action": "create_task", "subjectName": "Nombre Materia", "taskName": "Nombre de la Tarea"}
 \`\`\`
@@ -121,8 +122,8 @@ O para completar:
 \`\`\`action
 {"action": "complete_task", "subjectName": "Nombre Materia", "taskName": "Nombre de la Tarea"}
 \`\`\`
-3. Si el estudiante te pide explicaciones teóricas o prácticas de sus materias (SQL, programación orientada a objetos, cálculo, física o redacción), explícaselo con ejemplos claros y concisos.
-4. Mantén tus respuestas directas al punto y fáciles de leer en pantalla de smartphone o PC.`;
+4. Si el estudiante te pide explicaciones teóricas o prácticas de sus materias (SQL, programación orientada a objetos, cálculo, física o redacción), explícaselo con ejemplos claros y concisos.
+5. Mantén tus respuestas directas al punto y fáciles de leer en pantalla de smartphone o PC.`;
 }
 
 /**
@@ -146,34 +147,134 @@ export function extractAgentAction(
 }
 
 /**
- * Motor de Fallback inteligente (offline o sin API Key)
+ * Motor de Fallback inteligente (offline o sin API Key) con lógica adaptativa de KALI
  */
 export function generateLocalFallbackResponse(
   prompt: string,
   context: AgentContextData
 ): { text: string; action: any | null } {
-  const p = prompt.toLowerCase();
+  const p = prompt.toLowerCase().trim();
   const { activeDashboard, currentWeek, gradesData } = context;
 
-  // 1. Consulta de cómo va en las materias / notas
-  if (p.includes('nota') || p.includes('promedio') || p.includes('como voy') || p.includes('calificac')) {
+  // Analizar datos de todas las materias
+  const subjectsReport = activeDashboard.subjects.map((s) => {
+    const g = findGradeDataForSubject(s.id, s.name, gradesData);
+    const c = calculateUeesGrade(g);
+    const hasR1 = g.p1 !== undefined && g.p1.trim() !== '';
+    const hasR2 = g.p2 !== undefined && g.p2.trim() !== '';
+    const hasR3 = g.p3 !== undefined && g.p3.trim() !== '';
+    const hasAnyGrade = hasR1 || hasR2 || hasR3;
+    return {
+      subject: s,
+      gradeData: g,
+      calc: c,
+      hasR1,
+      hasR2,
+      hasR3,
+      hasAnyGrade,
+      averageNum: c.ueesAverage,
+    };
+  });
+
+  // Ordenar por promedio para recomendaciones dinámicas
+  const sortedByAvg = [...subjectsReport].sort((a, b) => a.averageNum - b.averageNum);
+  const lowestSubj = sortedByAvg[0];
+  const highestSubj = sortedByAvg[sortedByAvg.length - 1];
+
+  // 1. Pregunta específica: "¿Qué materias tienen notas?" o "dime las que tienen notas" o "¿cuáles tienen notas?"
+  const isAskingWhichHaveGrades =
+    (p.includes('que') || p.includes('cuales') || p.includes('dime') || p.includes('solo')) &&
+    (p.includes('tienen nota') || p.includes('tiene nota') || p.includes('tienen notas') || p.includes('con nota'));
+
+  if (isAskingWhichHaveGrades) {
+    const withGrades = subjectsReport.filter((s) => s.hasAnyGrade);
+    const withoutGrades = subjectsReport.filter((s) => !s.hasAnyGrade);
+
+    let msg = '';
+    if (withGrades.length === subjectsReport.length) {
+      msg += `📌 **Actualmente las 5 materias tienen notas ingresadas** en el Registro 1 y Registro 2 (el Registro 3 aún está pendiente en todas):\n\n`;
+    } else {
+      msg += `📌 **Materias que tienen notas ingresadas (${withGrades.length} de ${subjectsReport.length}):**\n\n`;
+    }
+
+    withGrades.forEach((item, idx) => {
+      const g = item.gradeData;
+      const c = item.calc;
+      msg += `${idx + 1}. **${item.subject.name}**\n`;
+      msg += `   • **R1:** ${g.p1 || '-'} | **R2:** ${g.p2 || '-'} | **R3:** ${g.p3 || 'pendiente'}\n`;
+      msg += `   • **Promedio Oficial:** **${c.ueesAverageFormatted}** (Acumulado: ${c.accumulatedFormatted}/10.0)\n`;
+      if (c.neededInR3 && !c.isPassed) {
+        msg += `   • *Meta para pasar (6.0):* Requiere **${c.neededInR3}** en Registro 3.\n\n`;
+      } else {
+        msg += `\n`;
+      }
+    });
+
+    if (withoutGrades.length > 0) {
+      msg += `⚠️ **Materias sin notas registradas:**\n`;
+      withoutGrades.forEach((item) => {
+        msg += `• **${item.subject.name}** (Notas pendientes de publicación)\n`;
+      });
+      msg += `\n`;
+    }
+
+    msg += `💡 **En resumen:** En todas las materias ya tienes calificados los cómputos 1 y 2 (60% del ciclo). Solo te falta el **Registro 3 (40%)** para cerrar el semestre.`;
+    return { text: msg, action: null };
+  }
+
+  // 2. Pregunta por una materia específica (ej: "cómo voy en matemática", "notas de física", "programación", etc.)
+  const matchedSubject = subjectsReport.find((s) => {
+    const sName = s.subject.name.toLowerCase();
+    const words = sName.split(' ');
+    return words.some((w) => w.length > 3 && p.includes(w));
+  });
+
+  if (matchedSubject && (p.includes('nota') || p.includes('como voy') || p.includes('promedio') || p.includes('docente') || p.includes('r3') || p.includes('pasar'))) {
+    const s = matchedSubject.subject;
+    const g = matchedSubject.gradeData;
+    const c = matchedSubject.calc;
+
+    let msg = `📘 **Detalle de ${s.name}:**\n\n`;
+    msg += `* **Catedrático:** ${g.teacher || 'Catedrático UEES'}\n`;
+    msg += `* **Registro 1 (30%):** ${g.p1 || 'Sin nota'}\n`;
+    msg += `* **Registro 2 (30%):** ${g.p2 || 'Sin nota'}\n`;
+    msg += `* **Registro 3 (40%):** ${g.p3 || 'Pendiente de evaluación'}\n`;
+    if (g.repo) {
+      msg += `* **Reposición:** ${g.repo}\n`;
+    }
+    msg += `* **Promedio Oficial UEES:** **${c.ueesAverageFormatted}** (Puntaje acumulado: ${c.accumulatedFormatted} de 10.0)\n\n`;
+
+    if (c.isPassed) {
+      msg += `🎉 **Estado:** ¡Ya alcanzaste el puntaje de aprobación (≥ 6.0)!`;
+    } else if (c.neededInR3) {
+      msg += `🎯 **Meta para aprobar:** Necesitas sacar al menos **${c.neededInR3}** en el Registro 3 (40%) para alcanzar la nota mínima de 6.0.`;
+    }
+
+    return { text: msg, action: null };
+  }
+
+  // 3. Consulta general de notas / promedios / calificaciones
+  if (p.includes('nota') || p.includes('promedio') || p.includes('como voy') || p.includes('calificac') || p.includes('r3') || p.includes('cuanto necesito')) {
     let msg = `📊 **Estado Oficial de tus Calificaciones UEES:**\n\n`;
-    activeDashboard.subjects.forEach((s) => {
-      const g = findGradeDataForSubject(s.id, s.name, gradesData);
-      const c = calculateUeesGrade(g);
+    subjectsReport.forEach((item) => {
+      const g = item.gradeData;
+      const c = item.calc;
       const icon = c.isPassed ? '🎉' : parseFloat(c.ueesAverageFormatted) >= 5.0 ? '👍' : '⚠️';
-      msg += `* ${icon} **${s.name}**: Promedio **${c.ueesAverageFormatted}** (R1: ${g.p1 || '-'}, R2: ${g.p2 || '-'}, R3: ${g.p3 || 'pendiente'})\n`;
+      msg += `* ${icon} **${item.subject.name}**: Promedio **${c.ueesAverageFormatted}** (R1: ${g.p1 || '-'}, R2: ${g.p2 || '-'}, R3: ${g.p3 || 'pendiente'})\n`;
       if (c.neededInR3 && !c.isPassed) {
         msg += `  ↳ *Meta para pasar con 6.0:* Necesitas **${c.neededInR3}** en Registro 3 (40%).\n`;
       }
     });
 
-    msg += `\n💡 **Recomendación estratégica:** En **Programación II** (5.6) y **Bases de Datos I** (5.5) estás prácticamente aprobado. Tu prioridad número 1 debe ser **Matemática II** (4.6), donde requieres al menos 3.49 en R3.`;
+    if (highestSubj && lowestSubj) {
+      msg += `\n💡 **Recomendación de KALI:** Tu materia con mejor promedio es **${highestSubj.subject.name}** (${highestSubj.calc.ueesAverageFormatted}). Tu prioridad número 1 debe ser **${lowestSubj.subject.name}** (${lowestSubj.calc.ueesAverageFormatted}), donde requieres al menos **${lowestSubj.calc.neededInR3 || 'calificación alta'}** en R3.`;
+    }
+
     return { text: msg, action: null };
   }
 
-  // 2. Consulta de tareas pendientes
-  if (p.includes('tarea') || p.includes('pendiente') || p.includes('semana') || p.includes('falta')) {
+  // 4. Consulta de tareas pendientes de la semana
+  if (p.includes('tarea') || p.includes('pendiente') || p.includes('semana') || p.includes('falta') || p.includes('actividad')) {
     let totalPending = 0;
     let msg = `📅 **Tareas pendientes en la Semana ${currentWeek.weekNumber} (${currentWeek.dateRange}):**\n\n`;
 
@@ -197,9 +298,8 @@ export function generateLocalFallbackResponse(
     return { text: msg, action: null };
   }
 
-  // 3. Crear una tarea
+  // 5. Crear una tarea
   if (p.includes('agrega') || p.includes('crea') || p.includes('anota') || p.includes('recordatorio')) {
-    // Buscar si mencionó alguna materia
     let matchedSubj = activeDashboard.subjects.find((s) =>
       p.includes(s.name.toLowerCase().slice(0, 5))
     );
@@ -225,29 +325,40 @@ export function generateLocalFallbackResponse(
     };
   }
 
-  // 4. Qué estudiar hoy
+  // 6. Qué estudiar hoy
   if (p.includes('estudio') || p.includes('hoy') || p.includes('plan')) {
+    let msg = `🎯 **Plan de Estudio Recomendado para Hoy (por KALI):**\n\n`;
+    if (lowestSubj) {
+      msg += `1. **${lowestSubj.subject.name} (Prioridad Alta):** Es la materia con promedio de **${lowestSubj.calc.ueesAverageFormatted}**. Dedica 1 sesión de 25 min de Pomodoro a repasar ejercicios del Registro 3 para asegurar tu meta de **${lowestSubj.calc.neededInR3 || '6.0'}**.\n`;
+    }
+    const secondLowest = sortedByAvg[1] || lowestSubj;
+    if (secondLowest && secondLowest !== lowestSubj) {
+      msg += `2. **${secondLowest.subject.name} (Prioridad Media):** Promedio de **${secondLowest.calc.ueesAverageFormatted}**. Revisa tus entregas y reportes pendientes.\n`;
+    }
+    if (highestSubj) {
+      msg += `3. **${highestSubj.subject.name}:** Vas excelente con **${highestSubj.calc.ueesAverageFormatted}**. Solo mantén las tareas al día.\n\n`;
+    }
+    msg += `¿Quieres que iniciemos una sesión de Pomodoro de 25 minutos para empezar?`;
+    return { text: msg, action: null };
+  }
+
+  // 7. Saludo / Identidad
+  if (p.includes('hola') || p.includes('quien eres') || p.includes('como te llamas') || p.includes('kali')) {
     return {
-      text: `🎯 **Plan de Estudio Recomendado para Hoy:**\n\n1. **Matemática II (Prioridad Alta):** Es la materia con promedio de 4.6. Dedica 1 sesión de 25 min de Pomodoro a repasar ejercicios clave del tercer cómputo.\n2. **Física II (Prioridad Media):** Promedio de 4.8. Revisa los conceptos del laboratorio actual.\n3. **Bases de Datos / Programación:** Vas excelente con 5.5 y 5.6. Solo mantén la entrega de tareas al día.\n\n¿Quieres que configuremos un temporizador Pomodoro para empezar ahora?`,
+      text: `¡Hola ${context.studentName}! Soy **KALI**, tu Copiloto Académica de la UEES. 🎓\n\nPuedo ayudarte a:\n• 📊 Consultar qué materias tienen notas y cuánto necesitas en Registro 3.\n• 📋 Revisar tus actividades y tareas de la Semana ${currentWeek.weekNumber}.\n• ✍️ Crear o marcar tareas automáticamente.\n• 🎯 Guiarte con un plan de estudio diario.\n\n¿En qué te puedo apoyar ahora mismo?`,
       action: null,
     };
   }
 
-  // Respuesta general con invitación a conectar Gemini
+  // Respuesta general
   return {
-    text: `¡Hola ${context.studentName}! Soy tu Copiloto IA de la UEES. Puedo ayudarte a:
-- 📊 Analizar tus notas oficiales y calcular cuánto necesitas en Registro 3.
-- 📋 Organizar y consultar tus tareas de la Semana ${currentWeek.weekNumber}.
-- ✍️ Crear actividades directamente hablándome.
-- 💡 Resolver dudas de tus 5 materias.
-
-*(Nota: Para respuestas avanzadas de razonamiento libre con red neuronal en vivo, puedes ingresar tu API Key gratuita de Google Gemini en el botón de ajustes ⚙️ arriba a la derecha).*`,
+    text: `¡Hola ${context.studentName}! Soy **KALI**, tu Copiloto IA de la UEES.\n\nPuedes preguntarme:\n• *"¿Qué materias tienen notas?"*\n• *"¿Cuánto necesito en R3 para pasar [Materia]?"*\n• *"¿Qué tareas tengo pendientes esta semana?"*\n• *"Agrega la tarea de laboratorio de Física"*\n\n*(Nota: Si deseas razonamiento libre y explicaciones teóricas avanzadas de tus materias con red neuronal en la nube, puedes ingresar tu API Key gratuita de Google Gemini en el botón 🔑).*`,
     action: null,
   };
 }
 
 /**
- * Envía el mensaje al agente (usando Gemini API o fallback inteligente)
+ * Envía el mensaje al agente (usando Gemini API o fallback inteligente de KALI)
  */
 export async function sendAgentMessage(
   userText: string,
@@ -256,7 +367,7 @@ export async function sendAgentMessage(
 ): Promise<{ text: string; action: any | null }> {
   const apiKey = getGeminiApiKey();
 
-  // Si no hay API Key, usar motor local inteligente
+  // Si no hay API Key, usar motor local inteligente de KALI
   if (!apiKey) {
     return generateLocalFallbackResponse(userText, context);
   }
@@ -275,7 +386,7 @@ export async function sendAgentMessage(
     });
     contents.push({
       role: 'model',
-      parts: [{ text: 'Entendido. Conozco perfectamente a Bryan, sus 5 materias de la UEES, sus notas y tareas actuales. ¿En qué te puedo ayudar hoy?' }],
+      parts: [{ text: 'Entendido. Soy KALI, conozco perfectamente a Bryan, sus 5 materias de la UEES, sus notas y tareas actuales. ¿En qué te puedo ayudar hoy?' }],
     });
 
     // Historial
@@ -305,8 +416,7 @@ export async function sendAgentMessage(
 
     return extractAgentAction(responseText);
   } catch (error: any) {
-    console.warn('Fallo en conexión Gemini API, recurriendo a motor local:', error);
-    // Si la API falla (ej. red caída o clave inválida), el fallback toma el control suavemente
+    console.warn('Fallo en conexión Gemini API, recurriendo a motor local KALI:', error);
     return generateLocalFallbackResponse(userText, context);
   }
 }

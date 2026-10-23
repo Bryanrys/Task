@@ -33,6 +33,41 @@ interface AIAssistantModalProps {
 
 const CHAT_STORAGE_KEY = 'academic_ai_chat_history_v1';
 
+/**
+ * Renderizador de formato inline para negritas (**texto**), cursivas (*texto*) y código (`codigo`)
+ */
+function renderFormattedLine(text: string): React.ReactNode {
+  const parts: React.ReactNode[] = [];
+  const regex = /(\*\*.*?\*\*|\*.*?\*|`.*?`)/g;
+  const segments = text.split(regex);
+
+  segments.forEach((seg, idx) => {
+    if (seg.startsWith('**') && seg.endsWith('**') && seg.length >= 4) {
+      parts.push(
+        <strong key={idx} className="font-black text-white">
+          {seg.slice(2, -2)}
+        </strong>
+      );
+    } else if (seg.startsWith('*') && seg.endsWith('*') && seg.length >= 2) {
+      parts.push(
+        <em key={idx} className="italic text-purple-200">
+          {seg.slice(1, -1)}
+        </em>
+      );
+    } else if (seg.startsWith('`') && seg.endsWith('`') && seg.length >= 2) {
+      parts.push(
+        <code key={idx} className="font-mono bg-black/50 px-1 py-0.5 rounded text-pink-300 border border-white/10">
+          {seg.slice(1, -1)}
+        </code>
+      );
+    } else {
+      parts.push(seg);
+    }
+  });
+
+  return parts;
+}
+
 export const AIAssistantModal: React.FC<AIAssistantModalProps> = ({
   isOpen,
   onClose,
@@ -43,13 +78,22 @@ export const AIAssistantModal: React.FC<AIAssistantModalProps> = ({
   const [messages, setMessages] = useState<ChatMessage[]>(() => {
     try {
       const saved = localStorage.getItem(CHAT_STORAGE_KEY);
-      if (saved) return JSON.parse(saved);
+      if (saved) {
+        const parsed: ChatMessage[] = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          // Reemplazar nombre antiguo Apolo por KALI si existía
+          return parsed.map((m) => ({
+            ...m,
+            text: m.text.replace(/Apolo/g, 'KALI'),
+          }));
+        }
+      }
     } catch {}
     return [
       {
         id: 'msg-welcome',
         sender: 'agent',
-        text: `¡Hola ${contextData.studentName}! Soy **Apolo**, tu Copiloto Académico de la UEES. 🎓\n\nConozco tus materias (*Bases de Datos, Programación, Mate II, Física y Comunicación*), tus notas oficiales y las tareas de la **Semana ${contextData.currentWeek.weekNumber}**.\n\n¿En qué te puedo apoyar hoy?`,
+        text: `¡Hola ${contextData.studentName}! Soy **KALI**, tu Copiloto Académica de la UEES. 🎓\n\nConozco tus 5 materias (*Bases de Datos, Programación II, Matemática II, Física II y Comunicación*), tus notas oficiales del portal y las tareas de la **Semana ${contextData.currentWeek.weekNumber}**.\n\n¿En qué te puedo apoyar hoy?`,
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
       },
     ];
@@ -93,7 +137,7 @@ export const AIAssistantModal: React.FC<AIAssistantModalProps> = ({
       {
         id: 'msg-fresh',
         sender: 'agent',
-        text: `Chat reiniciado. ¿En qué tema de tus materias o tareas te ayudo hoy, ${contextData.studentName}?`,
+        text: `Chat reiniciado. Soy **KALI**, tu Copiloto Académica. ¿Qué duda de tus materias o tareas resolvemos ahora, ${contextData.studentName}?`,
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
       },
     ];
@@ -151,10 +195,11 @@ export const AIAssistantModal: React.FC<AIAssistantModalProps> = ({
   };
 
   const QUICK_PROMPTS = [
+    { label: '📋 ¿Qué materias tienen notas?', prompt: '¿Qué materias tienen notas?' },
     { label: '📊 ¿Cómo voy en mis materias?', prompt: '¿Cómo voy en mis notas oficiales y promedios de la UEES?' },
     { label: '🎯 Tareas pendientes esta semana', prompt: '¿Qué tareas tengo pendientes de entregar en esta semana?' },
     { label: '⚡ ¿Qué debería estudiar hoy?', prompt: 'Analiza mis materias y notas y dime qué debería estudiar hoy para no atrasarme.' },
-    { label: '🧮 ¿Cuánto necesito en R3?', prompt: '¿Cuánto necesito sacar exactamente en el Registro 3 (40%) en cada una de mis 5 materias para pasar con 6.0?' },
+    { label: '🧮 ¿Cuánto necesito en R3?', prompt: '¿Cuánto necesito sacar en el Registro 3 (40%) para pasar con 6.0?' },
   ];
 
   if (!isOpen) return null;
@@ -168,7 +213,7 @@ export const AIAssistantModal: React.FC<AIAssistantModalProps> = ({
             : 'bg-white border-stone-200 text-stone-900'
         }`}
       >
-        {/* Header Agente */}
+        {/* Header KALI */}
         <div className="p-3.5 sm:p-4 border-b border-white/10 flex items-center justify-between shrink-0 bg-gradient-to-r from-purple-950/60 via-indigo-950/40 to-pink-950/40">
           <div className="flex items-center gap-3">
             <div className="relative">
@@ -183,7 +228,7 @@ export const AIAssistantModal: React.FC<AIAssistantModalProps> = ({
             <div>
               <div className="flex items-center gap-2">
                 <h3 className="font-black text-sm sm:text-base uppercase tracking-wider font-mono text-white flex items-center gap-1.5">
-                  Copiloto IA UEES
+                  KALI • IA UEES
                   <span className="px-1.5 py-0.2 rounded text-[9px] bg-gradient-to-r from-pink-500 to-purple-500 text-white font-mono font-bold">
                     PRO
                   </span>
@@ -312,18 +357,35 @@ export const AIAssistantModal: React.FC<AIAssistantModalProps> = ({
                       : 'bg-[#0e1322] border border-white/10 text-stone-200 shadow-sm'
                   }`}
                 >
-                  {/* Contenido del Mensaje con formato amigable */}
-                  <div className="whitespace-pre-wrap break-words space-y-1">
+                  {/* Contenido del Mensaje con formato amigable y parseo Markdown */}
+                  <div className="space-y-1.5 break-words">
                     {msg.text.split('\n').map((line, i) => {
-                      if (line.startsWith('* ') || line.startsWith('- ')) {
+                      const trimmed = line.trim();
+                      if (!trimmed) {
+                        return <div key={i} className="h-1" />;
+                      }
+
+                      // Sub-viñeta / flecha
+                      if (trimmed.startsWith('↳') || trimmed.startsWith('• *') || trimmed.startsWith('•*')) {
                         return (
-                          <div key={i} className="flex items-start gap-1.5 my-0.5">
-                            <span className="text-pink-400 shrink-0">•</span>
-                            <span>{line.replace(/^[*|-]\s*/, '')}</span>
+                          <div key={i} className="pl-3.5 text-[11px] text-purple-200/90 flex items-start gap-1">
+                            <span className="text-pink-400 shrink-0">↳</span>
+                            <div>{renderFormattedLine(trimmed.replace(/^[↳•]\s*/, ''))}</div>
                           </div>
                         );
                       }
-                      return <p key={i}>{line}</p>;
+
+                      // Viñeta principal
+                      if (trimmed.startsWith('* ') || trimmed.startsWith('- ') || trimmed.startsWith('• ')) {
+                        return (
+                          <div key={i} className="flex items-start gap-1.5 my-0.5 pl-1">
+                            <span className="text-pink-400 shrink-0 mt-0.5">•</span>
+                            <div>{renderFormattedLine(trimmed.replace(/^[*|-|•]\s*/, ''))}</div>
+                          </div>
+                        );
+                      }
+
+                      return <p key={i}>{renderFormattedLine(line)}</p>;
                     })}
                   </div>
 
@@ -377,7 +439,7 @@ export const AIAssistantModal: React.FC<AIAssistantModalProps> = ({
               type="text"
               value={inputPrompt}
               onChange={(e) => setInputPrompt(e.target.value)}
-              placeholder="Pregúntale a tu Copiloto o pídele una tarea..."
+              placeholder="Pregúntale a KALI o pídele una tarea..."
               disabled={isLoading}
               className="flex-1 bg-[#05070e] border border-white/15 focus:border-pink-500 text-white rounded-2xl px-4 py-3 text-xs outline-none transition-all placeholder:text-stone-500 font-mono"
             />

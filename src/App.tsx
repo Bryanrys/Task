@@ -48,6 +48,7 @@ import {
   ExternalLink,
   Globe,
   X,
+  Bot,
 } from 'lucide-react';
 
 import { Dashboard, WeekItem, SubjectItem, TaskItem } from './types';
@@ -79,6 +80,7 @@ import { ClassScheduleModal } from './components/ClassScheduleModal';
 import { UniversityLinksModal } from './components/UniversityLinksModal';
 import { EditSubjectModal } from './components/EditSubjectModal';
 import { ShareAppModal } from './components/ShareAppModal';
+import { AIAssistantModal } from './components/AIAssistantModal';
 import { ToolsAndLinksView } from './components/ToolsAndLinksView';
 import { UnifiedDashboardHeader } from './components/UnifiedDashboardHeader';
 import { getDeadlineStatus } from './utils/deadline';
@@ -287,6 +289,7 @@ export default function App() {
   const [showNotificationModal, setShowNotificationModal] = useState<boolean>(false);
   const [showParcialSplash, setShowParcialSplash] = useState<boolean>(false);
   const [showGradesModal, setShowGradesModal] = useState<boolean>(false);
+  const [showAIAssistant, setShowAIAssistant] = useState<boolean>(false);
   const [showPomodoroModal, setShowPomodoroModal] = useState<boolean>(false);
   const [showScheduleModal, setShowScheduleModal] = useState<boolean>(false);
   const [showLinksModal, setShowLinksModal] = useState<boolean>(false);
@@ -525,6 +528,7 @@ export default function App() {
         showNotificationModal ||
         showParcialSplash ||
         showGradesModal ||
+        showAIAssistant ||
         showPomodoroModal ||
         showScheduleModal ||
         showLinksModal ||
@@ -624,6 +628,7 @@ export default function App() {
     showNotificationModal,
     showParcialSplash,
     showGradesModal,
+    showAIAssistant,
     showPomodoroModal,
     showScheduleModal,
     showLinksModal,
@@ -819,6 +824,78 @@ export default function App() {
     setShowStartDateModal(false);
     const newDays = calculateDaysElapsed(formattedStr, newDateISO);
     setToastMessage(`Fecha de inicio actualizada: ${formattedStr} (${newDays} días transcurridos).`);
+  };
+
+  // Ejecución de acciones ordenadas por el Copiloto IA
+  const handleExecuteAgentAction = (action: any) => {
+    if (!action || typeof action !== 'object' || !currentDashboard || !currentWeek) return;
+
+    if (action.action === 'create_task') {
+      const subjectName = (action.subjectName || '').toLowerCase();
+      const targetSubj =
+        currentDashboard.subjects.find(
+          (s) =>
+            s.name.toLowerCase().includes(subjectName) ||
+            subjectName.includes(s.name.toLowerCase())
+        ) || currentDashboard.subjects[0];
+
+      if (!targetSubj) return;
+
+      const newTaskName = action.taskName || 'Nueva actividad académica';
+      const newId = `task-${currentWeek.weekNumber}-${targetSubj.id}-${Date.now()}`;
+
+      const newTask: TaskItem = {
+        id: newId,
+        name: newTaskName,
+        completed: false,
+        deadlineISO: action.deadline || undefined,
+      };
+
+      setDashboards((prev) =>
+        prev.map((d) => {
+          if (d.id !== currentDashboard.id) return d;
+          return {
+            ...d,
+            weeks: d.weeks.map((w) => {
+              if (w.id !== currentWeek.id) return w;
+              const prevTasks = w.subjectTasks[targetSubj.id] || [];
+              return {
+                ...w,
+                subjectTasks: {
+                  ...w.subjectTasks,
+                  [targetSubj.id]: [...prevTasks, newTask],
+                },
+              };
+            }),
+          };
+        })
+      );
+      setToastMessage(`🤖 Tarea creada por el Copiloto IA: "${newTaskName}" en ${targetSubj.name}`);
+    } else if (action.action === 'complete_task') {
+      const taskName = (action.taskName || '').toLowerCase();
+      setDashboards((prev) =>
+        prev.map((d) => {
+          if (d.id !== currentDashboard.id) return d;
+          return {
+            ...d,
+            weeks: d.weeks.map((w) => {
+              if (w.id !== currentWeek.id) return w;
+              const newSubjTasks = { ...w.subjectTasks };
+              Object.keys(newSubjTasks).forEach((sId) => {
+                newSubjTasks[sId] = newSubjTasks[sId].map((t) => {
+                  if (t.name.toLowerCase().includes(taskName)) {
+                    return { ...t, completed: true };
+                  }
+                  return t;
+                });
+              });
+              return { ...w, subjectTasks: newSubjTasks };
+            }),
+          };
+        })
+      );
+      setToastMessage(`✓ Tarea marcada como entregada por el Copiloto IA`);
+    }
   };
 
   // Toggle task checkbox
@@ -1746,6 +1823,7 @@ export default function App() {
           onOpenWeeks={() => setShowDrawer(true)}
           onOpenPomodoro={() => setShowPomodoroModal(true)}
           onOpenCalculator={() => setShowGradesModal(true)}
+          onOpenAIAssistant={() => setShowAIAssistant(true)}
           onTriggerCelebration={handleTriggerCelebration}
           onLogout={handleLogout}
         />
@@ -1799,6 +1877,10 @@ export default function App() {
                     }}
                     onOpenCalculator={() => {
                       setShowGradesModal(true);
+                      setShowMobileSidebar(false);
+                    }}
+                    onOpenAIAssistant={() => {
+                      setShowAIAssistant(true);
                       setShowMobileSidebar(false);
                     }}
                     onTriggerCelebration={handleTriggerCelebration}
@@ -2336,6 +2418,7 @@ export default function App() {
                         onOpenSchedule={() => setShowScheduleModal(true)}
                         onOpenLinks={() => setShowLinksModal(true)}
                         onOpenGrades={() => setShowGradesModal(true)}
+                        onOpenAIAssistant={() => setShowAIAssistant(true)}
                         onOpenPomodoro={() => setShowPomodoroModal(true)}
                         onOpenStartDate={() => setShowStartDateModal(true)}
                         onUploadCloud={() => setShowUploadConfirm(true)}
@@ -2446,6 +2529,7 @@ export default function App() {
                 onOpenSchedule={() => setShowScheduleModal(true)}
                 onOpenLinks={() => setShowLinksModal(true)}
                 onOpenGrades={() => setShowGradesModal(true)}
+                onOpenAIAssistant={() => setShowAIAssistant(true)}
                 onOpenPomodoro={() => setShowPomodoroModal(true)}
                 onOpenStartDate={() => setShowStartDateModal(true)}
                 onUploadCloud={() => setShowUploadConfirm(true)}
@@ -2797,6 +2881,35 @@ export default function App() {
         canDelete={false}
         isDark={isDark}
       />
+
+      {/* Copiloto IA UEES Modal */}
+      <AIAssistantModal
+        isOpen={showAIAssistant}
+        onClose={() => setShowAIAssistant(false)}
+        contextData={{
+          studentName: loggedUser || 'Bryan Reyes',
+          activeDashboard: currentDashboard,
+          currentWeek: currentWeek,
+          gradesData: gradesTracker,
+        }}
+        onExecuteAction={handleExecuteAgentAction}
+        isDark={isDark}
+      />
+
+      {/* Floating Action Button (FAB) para el Copiloto IA */}
+      <button
+        onClick={() => setShowAIAssistant(true)}
+        className="fixed bottom-5 right-5 sm:bottom-6 sm:right-6 z-40 p-3 sm:px-4 sm:py-3 rounded-2xl sm:rounded-full bg-gradient-to-r from-pink-500 via-purple-600 to-cyan-400 text-white shadow-[0_0_25px_rgba(236,72,153,0.4)] hover:shadow-[0_0_35px_rgba(236,72,153,0.6)] hover:scale-105 active:scale-95 transition-all flex items-center gap-2 cursor-pointer group"
+        title="Abrir Copiloto IA UEES"
+      >
+        <div className="relative">
+          <Bot className="w-5 h-5 text-white" />
+          <span className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-cyan-300 animate-ping" />
+        </div>
+        <span className="hidden sm:inline font-mono font-black text-xs uppercase tracking-wider drop-shadow-md">
+          Copiloto IA
+        </span>
+      </button>
     </div>
   );
 }

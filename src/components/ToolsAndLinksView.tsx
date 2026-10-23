@@ -54,6 +54,7 @@ interface ToolsAndLinksViewProps {
   onOpenSchedule: () => void;
   onOpenLinks: () => void;
   onOpenGrades: () => void;
+  onOpenAIAssistant?: () => void;
   onOpenPomodoro: () => void;
   onOpenStartDate: () => void;
   onUploadCloud: () => void;
@@ -75,6 +76,7 @@ export const ToolsAndLinksView: React.FC<ToolsAndLinksViewProps> = ({
   onOpenSchedule,
   onOpenLinks,
   onOpenGrades,
+  onOpenAIAssistant,
   onOpenPomodoro,
   onOpenStartDate,
   onUploadCloud,
@@ -460,13 +462,33 @@ export const ToolsAndLinksView: React.FC<ToolsAndLinksViewProps> = ({
         </div>
       </motion.div>
 
-      {/* Academic Utilities Grid (Promedios, Pomodoro, Ciclo) */}
+      {/* Academic Utilities Grid (Promedios, Pomodoro, Ciclo, Copiloto IA) */}
       <motion.div
         initial={{ opacity: 0, scale: 0.98 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ delay: 0.25 }}
-        className="grid grid-cols-1 sm:grid-cols-3 gap-3"
+        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3"
       >
+        {/* Copiloto IA UEES */}
+        <button
+          onClick={onOpenAIAssistant}
+          className={`p-4 rounded-3xl border text-left transition-all cursor-pointer active:scale-95 ${isDark
+            ? 'bg-gradient-to-br from-[#0e071c] to-[#070b18] border-pink-500/40 hover:border-pink-400 shadow-lg shadow-pink-500/10'
+            : 'bg-gradient-to-br from-pink-50 to-purple-50 border-pink-300 hover:border-pink-400 shadow-md'
+            }`}
+        >
+          <div className="flex items-center justify-between mb-2">
+            <div className="p-2 rounded-xl bg-pink-500/20 text-pink-400 border border-pink-500/30">
+              <Sparkles className="w-4 h-4 animate-pulse" />
+            </div>
+            <span className="text-[10px] font-mono uppercase text-pink-400 font-bold">Agente IA</span>
+          </div>
+          <div className="font-extrabold text-xs text-pink-300 uppercase">Copiloto IA UEES</div>
+          <p className={`text-[10px] mt-0.5 ${isDark ? 'text-stone-400' : 'text-stone-600'}`}>
+            Asistente académico, tutor de dudas y gestor de tareas
+          </p>
+        </button>
+
         {/* Promedios */}
         <button
           onClick={onOpenGrades}

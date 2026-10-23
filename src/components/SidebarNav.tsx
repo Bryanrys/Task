@@ -29,6 +29,7 @@ interface SidebarNavProps {
   onOpenWeeks: () => void;
   onOpenPomodoro: () => void;
   onOpenCalculator: () => void;
+  onOpenAIAssistant?: () => void;
   onTriggerCelebration: () => void;
   onLogout: () => void;
   isMobileDrawer?: boolean;
@@ -48,6 +49,7 @@ export const SidebarNav: React.FC<SidebarNavProps> = ({
   onOpenWeeks,
   onOpenPomodoro,
   onOpenCalculator,
+  onOpenAIAssistant,
   onTriggerCelebration,
   onLogout,
   isMobileDrawer = false,
@@ -232,6 +234,17 @@ export const SidebarNav: React.FC<SidebarNavProps> = ({
             >
               <Calculator className="w-4 h-4 text-purple-400 shrink-0" />
               <span>Notas y Promedios UEES</span>
+            </button>
+
+            <button
+              onClick={() => {
+                if (onOpenAIAssistant) onOpenAIAssistant();
+                if (onCloseMobileDrawer) onCloseMobileDrawer();
+              }}
+              className="w-full text-left flex items-center space-x-3 px-3 py-2 rounded-xl text-xs text-pink-300 hover:bg-pink-500/10 border border-pink-500/20 transition-all cursor-pointer font-bold"
+            >
+              <Sparkles className="w-4 h-4 text-pink-400 shrink-0 animate-pulse" />
+              <span>Copiloto IA UEES</span>
             </button>
           </div>
         </div>

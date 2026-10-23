@@ -195,11 +195,13 @@ export const AIAssistantModal: React.FC<AIAssistantModalProps> = ({
   };
 
   const QUICK_PROMPTS = [
+    { label: '⚡ ¿Qué estudiar hoy?', prompt: 'Analiza mis materias y notas y dime qué debería estudiar hoy para no atrasarme.' },
+    { label: '📝 Notas de mis tareas', prompt: '¿Qué notas y apuntes rápidos tengo anotados en mis tareas de la semana?' },
     { label: '📋 ¿Qué materias tienen notas?', prompt: '¿Qué materias tienen notas?' },
     { label: '📊 ¿Cómo voy en mis materias?', prompt: '¿Cómo voy en mis notas oficiales y promedios de la UEES?' },
-    { label: '🎯 Tareas pendientes esta semana', prompt: '¿Qué tareas tengo pendientes de entregar en esta semana?' },
-    { label: '⚡ ¿Qué debería estudiar hoy?', prompt: 'Analiza mis materias y notas y dime qué debería estudiar hoy para no atrasarme.' },
     { label: '🧮 ¿Cuánto necesito en R3?', prompt: '¿Cuánto necesito sacar en el Registro 3 (40%) para pasar con 6.0?' },
+    { label: '👨‍🏫 Mis catedráticos', prompt: '¿Quiénes son los catedráticos de mis materias?' },
+    { label: '📐 Fórmula de notas UEES', prompt: '¿Cómo se calcula el promedio y qué porcentaje tiene cada registro en la UEES?' },
   ];
 
   if (!isOpen) return null;
@@ -235,7 +237,7 @@ export const AIAssistantModal: React.FC<AIAssistantModalProps> = ({
                 </h3>
               </div>
               <p className="text-[10px] sm:text-[11px] text-stone-400 font-mono flex items-center gap-1.5">
-                <span>{hasApiKey ? '🟢 Gemini 2.5 Conectado' : '⚡ Motor Académico Local'}</span>
+                <span>{hasApiKey ? '🟢 Gemini 2.0 Conectado' : '⚡ Motor Académico Local'}</span>
               </p>
             </div>
           </div>

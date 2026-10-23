@@ -80,7 +80,7 @@ export function buildSystemInstruction(context: AgentContextData): string {
     })
     .join('\n');
 
-  // Resumen de tareas de la semana activa (incluyendo notas/apuntes rápidos)
+  // Resumen de tareas de la semana activa (incluyendo notas y apuntes rápidos)
   const tasksSummary = activeDashboard.subjects
     .map((s) => {
       const tasks = currentWeek.subjectTasks[s.id] || [];
@@ -107,12 +107,12 @@ Nota de Aprobación Mínima: 6.0.
 ESTADO OFICIAL DE SUS 5 MATERIAS Y NOTAS:
 ${gradesSummary}
 
-TAREAS DE LA SEMANA ACTUAL (${currentWeek.dateRange}):
+TAREAS Y NOTAS RÁPIDAS DE LA SEMANA ACTUAL (${currentWeek.dateRange}):
 ${tasksSummary}
 
 REGLAS DE CONDUCTA DE KALI:
-1. Conoces exactamente las 5 materias de Bryan (Bases de Datos I, Comunicación y Redacción, Matemática II, Física II, Programación II) y el cálculo de notas oficial.
-2. Si el estudiante te pregunta cuáles materias tienen notas, responde directamente cuáles tienen registros ingresados y cuáles no.
+1. Conoces exactamente las 5 materias de Bryan (Bases de Datos I, Comunicación y Redacción, Matemática II, Física II, Programación II), el cálculo oficial de notas y sus apuntes de tareas.
+2. Si el estudiante te pide analizar qué estudiar hoy para no atrasarse, dale un plan estratégico priorizando las materias con cómputo más bajo (como Matemática II) y revisando sus notas rápidas (ej. "Me falta uno toidavia", "falta mandarla").
 3. Si el estudiante te pide agregar o crear una tarea, o marcar una tarea como completada, responde de forma conversacional y añade al FINAL de tu respuesta un bloque JSON con la acción estructurada para que la app la ejecute automáticamente:
 \`\`\`action
 {"action": "create_task", "subjectName": "Nombre Materia", "taskName": "Nombre de la Tarea"}
@@ -121,8 +121,7 @@ O para completar:
 \`\`\`action
 {"action": "complete_task", "subjectName": "Nombre Materia", "taskName": "Nombre de la Tarea"}
 \`\`\`
-4. Si el estudiante te pide explicaciones teóricas o prácticas de sus materias (SQL, programación orientada a objetos, cálculo, física o redacción), explícaselo con ejemplos claros y concisos.
-5. Mantén tus respuestas directas al punto y fáciles de leer en pantalla de smartphone o PC.`;
+4. Responde con calidez, formato limpio en viñetas y negritas, sin redundancias secas.`;
 }
 
 /**
@@ -175,9 +174,10 @@ export function generateLocalFallbackResponse(
     };
   });
 
-  // Ordenar por promedio para recomendaciones dinámicas
+  // Ordenar por promedio para recomendaciones dinámicas (de menor a mayor)
   const sortedByAvg = [...subjectsReport].sort((a, b) => a.averageNum - b.averageNum);
   const lowestSubj = sortedByAvg[0];
+  const secondLowest = sortedByAvg[1] || lowestSubj;
   const highestSubj = sortedByAvg[sortedByAvg.length - 1];
 
   // Recopilar notas rápidas y apuntes de las tareas de la semana activa
@@ -200,7 +200,59 @@ export function generateLocalFallbackResponse(
     }
   });
 
-  // Detección si se refiere a notas rápidas / apuntes de tareas:
+  // ----------------------------------------------------------------------
+  // PRIORIDAD 1: Plan de estudio / Qué estudiar hoy / Para no atrasarme
+  // ----------------------------------------------------------------------
+  const isAskingStudyPlan =
+    p.includes('estudi') ||
+    p.includes('hoy') ||
+    p.includes('plan') ||
+    p.includes('atrasar') ||
+    p.includes('prioridad') ||
+    p.includes('que hago') ||
+    p.includes('por donde empiezo');
+
+  if (isAskingStudyPlan) {
+    let msg = `🎯 **Plan de Estudio Estratégico para Hoy (por KALI):**\n\n`;
+    msg += `He analizado tus 5 materias, tus promedios oficiales y tus pendientes de la **Semana ${currentWeek.weekNumber}**:\n\n`;
+
+    if (lowestSubj) {
+      msg += `1. ⚠️ **${lowestSubj.subject.name} (Prioridad Máxima):**\n`;
+      msg += `   • **Promedio actual:** **${lowestSubj.calc.ueesAverageFormatted}**\n`;
+      msg += `   • **Meta en Registro 3 (40%):** Necesitas sacar al menos **${lowestSubj.calc.neededInR3 || 'calificación sólida'}** para asegurar tu 6.0.\n`;
+
+      // Buscar si tiene notas de tareas
+      const subjNotes = taskNotesBySubject.find(
+        (g) => g.subjectName.toLowerCase().includes(lowestSubj.subject.name.toLowerCase().slice(0, 4))
+      );
+      if (subjNotes && subjNotes.tasksWithNotes.length > 0) {
+        msg += `   • **Tus notas de tareas:** `;
+        const notesStr = subjNotes.tasksWithNotes.map((tn) => `*«${tn.note}»* en ${tn.name}`).join(', ');
+        msg += `${notesStr}.\n`;
+      }
+      msg += `   👉 **Acción recomendada:** Dedica el primer bloque de **25 min de Pomodoro** a liquidar los pendientes y foros de esta materia.\n\n`;
+    }
+
+    if (secondLowest && secondLowest !== lowestSubj) {
+      msg += `2. ⚠️ **${secondLowest.subject.name} (Prioridad Media):**\n`;
+      msg += `   • **Promedio actual:** **${secondLowest.calc.ueesAverageFormatted}**\n`;
+      msg += `   • **Meta en Registro 3 (40%):** Requiere **${secondLowest.calc.neededInR3 || '3.0'}**.\n`;
+      msg += `   👉 **Acción recomendada:** Revisa las fórmulas o prácticas del laboratorio para mantener el ritmo.\n\n`;
+    }
+
+    if (highestSubj) {
+      msg += `3. 👍 **${highestSubj.subject.name} (Bajo Riesgo):**\n`;
+      msg += `   • Vas excelente con **${highestSubj.calc.ueesAverageFormatted}** (solo requieres ${highestSubj.calc.neededInR3 || '0.8'} en R3).\n`;
+      msg += `   👉 Solo asegúrate de subir las actividades semanales.\n\n`;
+    }
+
+    msg += `💡 **En conclusión:** Si dedicas 50 minutos hoy (2 bloques Pomodoro) a tus temas más apretados, quedarás al día y sin estrés. ¿Quieres que te tome el tiempo con el temporizador Pomodoro ahora mismo?`;
+    return { text: msg, action: null };
+  }
+
+  // ----------------------------------------------------------------------
+  // PRIORIDAD 2: Notas Rápidas / Apuntes de tareas ("esas notas", "qué dice")
+  // ----------------------------------------------------------------------
   const isAskingTaskNotes =
     p.includes('nota rapida') ||
     p.includes('notas rapidas') ||
@@ -213,8 +265,7 @@ export function generateLocalFallbackResponse(
     p.includes('notas de las tareas') ||
     p.includes('nota de la tarea') ||
     p.includes('toidavia') ||
-    p.includes('mandarla') ||
-    (p.includes('nota') && (p.includes('foro') || p.includes('entregar') || p.includes('mandar')));
+    p.includes('mandarla');
 
   if (isAskingTaskNotes) {
     if (taskNotesBySubject.length === 0) {
@@ -224,7 +275,7 @@ export function generateLocalFallbackResponse(
       };
     }
 
-    let msg = `📝 **¡Ah, te referías a las notas rápidas y apuntes de tus tareas!** 😂\n\nAquí tienes lo que dice cada una en la **Semana ${currentWeek.weekNumber}**:\n\n`;
+    let msg = `📝 **¡Aquí están las notas rápidas y apuntes de tus tareas en la Semana ${currentWeek.weekNumber}!**\n\n`;
 
     taskNotesBySubject.forEach((group) => {
       msg += `* **${group.subjectName}**:\n`;
@@ -239,7 +290,9 @@ export function generateLocalFallbackResponse(
     return { text: msg, action: null };
   }
 
-  // 1. Pregunta específica: "¿Qué materias tienen notas?" o "dime las que tienen notas" o "¿cuáles tienen notas?"
+  // ----------------------------------------------------------------------
+  // PRIORIDAD 3: Cuáles materias tienen notas
+  // ----------------------------------------------------------------------
   const isAskingWhichHaveGrades =
     (p.includes('que') || p.includes('cuales') || p.includes('dime') || p.includes('solo')) &&
     (p.includes('tienen nota') || p.includes('tiene nota') || p.includes('tienen notas') || p.includes('con nota'));
@@ -291,11 +344,16 @@ export function generateLocalFallbackResponse(
     return { text: msg, action: null };
   }
 
-  // 2. Pregunta por una materia específica (ej: "cómo voy en matemática", "notas de física", "programación", etc.)
+  // ----------------------------------------------------------------------
+  // PRIORIDAD 4: Materia específica (con coincidencia estricta de palabras completas)
+  // ----------------------------------------------------------------------
+  const ignoreWords = new Set(['materia', 'materias', 'nota', 'notas', 'tarea', 'tareas', 'para', 'como', 'cada', 'todas', 'todo', 'mis']);
+  const promptTokens = p.replace(/[^\w\sáéíóúüñ]/g, ' ').split(/\s+/).filter(Boolean);
+
   const matchedSubject = subjectsReport.find((s) => {
-    const sName = s.subject.name.toLowerCase();
-    const words = sName.split(' ');
-    return words.some((w) => w.length > 3 && p.includes(w));
+    const sNameNorm = s.subject.name.toLowerCase();
+    const subjTokens = sNameNorm.split(/\s+/).filter((t) => t.length > 2 && !ignoreWords.has(t));
+    return subjTokens.some((token) => promptTokens.includes(token));
   });
 
   if (matchedSubject && (p.includes('nota') || p.includes('como voy') || p.includes('promedio') || p.includes('docente') || p.includes('r3') || p.includes('pasar'))) {
@@ -322,7 +380,9 @@ export function generateLocalFallbackResponse(
     return { text: msg, action: null };
   }
 
-  // 3. Consulta general de notas / promedios / calificaciones
+  // ----------------------------------------------------------------------
+  // PRIORIDAD 5: Consulta general de notas / calificaciones
+  // ----------------------------------------------------------------------
   if (p.includes('nota') || p.includes('promedio') || p.includes('como voy') || p.includes('calificac') || p.includes('r3') || p.includes('cuanto necesito')) {
     let msg = `📊 **Estado Oficial de tus Calificaciones UEES:**\n\n`;
     subjectsReport.forEach((item) => {
@@ -342,9 +402,8 @@ export function generateLocalFallbackResponse(
     if (taskNotesBySubject.length > 0) {
       msg += `\n\n📝 **Notas rápidas anotadas en tus tareas de esta semana:**\n`;
       taskNotesBySubject.forEach((group) => {
-        msg += `* **${group.subjectName}**:\n`;
         group.tasksWithNotes.forEach((t) => {
-          msg += `  - ${t.name}: 📌 *«${t.note}»*\n`;
+          msg += `* **${group.subjectName}** (${t.name}): 📌 *«${t.note}»*\n`;
         });
       });
     }
@@ -352,7 +411,9 @@ export function generateLocalFallbackResponse(
     return { text: msg, action: null };
   }
 
-  // 4. Consulta de tareas pendientes de la semana
+  // ----------------------------------------------------------------------
+  // PRIORIDAD 6: Tareas pendientes
+  // ----------------------------------------------------------------------
   if (p.includes('tarea') || p.includes('pendiente') || p.includes('semana') || p.includes('falta') || p.includes('actividad')) {
     let totalPending = 0;
     let msg = `📅 **Tareas pendientes en la Semana ${currentWeek.weekNumber} (${currentWeek.dateRange}):**\n\n`;
@@ -364,7 +425,7 @@ export function generateLocalFallbackResponse(
       if (pending.length > 0) {
         msg += `* **${s.name}** (${pending.length} pendiente${pending.length > 1 ? 's' : ''}):\n`;
         pending.forEach((t) => {
-          msg += `  - ⏳ ${t.name}\n`;
+          msg += `  - ⏳ ${t.name}${t.note ? ` (Nota: «${t.note}»)` : ''}\n`;
         });
       }
     });
@@ -377,7 +438,58 @@ export function generateLocalFallbackResponse(
     return { text: msg, action: null };
   }
 
-  // 5. Crear una tarea
+  // ----------------------------------------------------------------------
+  // PRIORIDAD 7: Docentes / Catedráticos
+  // ----------------------------------------------------------------------
+  if (p.includes('profesor') || p.includes('docente') || p.includes('catedratic') || p.includes('quien da') || p.includes('quien me da')) {
+    let msg = `👨‍🏫 **Catedráticos de tus Materias (UEES):**\n\n`;
+    subjectsReport.forEach((item, idx) => {
+      const teacher = item.gradeData.teacher || 'Catedrático asignado UEES';
+      msg += `${idx + 1}. **${item.subject.name}**\n`;
+      msg += `   • Docente: **${teacher}**\n`;
+      msg += `   • Promedio actual: ${item.calc.ueesAverageFormatted}\n\n`;
+    });
+    msg += `💡 *Tip: Puedes ver el aula y horario exacto de cada docente abriendo el botón de "Horario de Clases" en la barra de herramientas.*`;
+    return { text: msg, action: null };
+  }
+
+  // ----------------------------------------------------------------------
+  // PRIORIDAD 8: Fórmula de cálculo de notas oficial de la UEES
+  // ----------------------------------------------------------------------
+  if (p.includes('formula') || p.includes('como se calcula') || p.includes('como calculan') || p.includes('porcentaj') || p.includes('cuanto vale') || p.includes('como sacar el promedio')) {
+    let msg = `🧮 **Fórmula Oficial de Calificaciones UEES:**\n\n`;
+    msg += `El sistema académico de la UEES evalúa el ciclo en 3 registros con la siguiente ponderación:\n\n`;
+    msg += `* 📌 **Registro 1 (R1):** **30%** (0.30)\n`;
+    msg += `* 📌 **Registro 2 (R2):** **30%** (0.30)\n`;
+    msg += `* 📌 **Registro 3 (R3):** **40%** (0.40)\n\n`;
+    msg += `📊 **Fórmula de Promedio Final:**\n`;
+    msg += `\`\`\`text\n`;
+    msg += `Promedio = (R1 × 0.30) + (R2 × 0.30) + (R3 × 0.40)\n`;
+    msg += `\`\`\`\n\n`;
+    msg += `* ✅ **Nota mínima de aprobación:** **6.0** (sobre 10.0).\n`;
+    msg += `* 🔍 **Regla del portal:** Los promedios oficiales se redondean a **1 decimal**.\n`;
+    msg += `* 🎯 Actualmente ya completaste R1 (30%) y R2 (30%), sumando el 60% del ciclo. El restante **40% se define en el Registro 3**.\n\n`;
+    msg += `¿Quieres calcular tu nota proyectada para alguna materia en específico?`;
+    return { text: msg, action: null };
+  }
+
+  // ----------------------------------------------------------------------
+  // PRIORIDAD 9: Técnica Pomodoro / Hábitos de estudio
+  // ----------------------------------------------------------------------
+  if (p.includes('pomodoro') || p.includes('concentra') || p.includes('tecnica') || p.includes('consejo') || p.includes('habito')) {
+    let msg = `⏱️ **Estrategia de Enfoque Académico con Pomodoro:**\n\n`;
+    msg += `Para maximizar tu retención sin agotarte, te sugiero la técnica de bloques de alta intensidad:\n\n`;
+    msg += `1. 🍅 **Bloque 1 (25 min):** Estudia la materia más retadora (${lowestSubj?.subject.name || 'Matemática II'}). Cierra redes sociales y teléfono.\n`;
+    msg += `2. ☕ **Descanso corto (5 min):** Estírate y toma agua.\n`;
+    msg += `3. 🍅 **Bloque 2 (25 min):** Resuelve los ejercicios pendientes o avanza tus reportes de laboratorio.\n`;
+    msg += `4. 🌟 **Descanso largo (15 min):** Desconecta la mente.\n\n`;
+    msg += `💡 En tu barra superior tienes el botón del **Temporizador Pomodoro** listo para usar. ¿Te gustaría activarlo ahora?`;
+    return { text: msg, action: null };
+  }
+
+  // ----------------------------------------------------------------------
+  // PRIORIDAD 10: Crear una tarea
+  // ----------------------------------------------------------------------
   if (p.includes('agrega') || p.includes('crea') || p.includes('anota') || p.includes('recordatorio')) {
     let matchedSubj = activeDashboard.subjects.find((s) =>
       p.includes(s.name.toLowerCase().slice(0, 5))
@@ -404,40 +516,25 @@ export function generateLocalFallbackResponse(
     };
   }
 
-  // 6. Qué estudiar hoy
-  if (p.includes('estudio') || p.includes('hoy') || p.includes('plan')) {
-    let msg = `🎯 **Plan de Estudio Recomendado para Hoy (por KALI):**\n\n`;
-    if (lowestSubj) {
-      msg += `1. **${lowestSubj.subject.name} (Prioridad Alta):** Es la materia con promedio de **${lowestSubj.calc.ueesAverageFormatted}**. Dedica 1 sesión de 25 min de Pomodoro a repasar ejercicios del Registro 3 para asegurar tu meta de **${lowestSubj.calc.neededInR3 || '6.0'}**.\n`;
-    }
-    const secondLowest = sortedByAvg[1] || lowestSubj;
-    if (secondLowest && secondLowest !== lowestSubj) {
-      msg += `2. **${secondLowest.subject.name} (Prioridad Media):** Promedio de **${secondLowest.calc.ueesAverageFormatted}**. Revisa tus entregas y reportes pendientes.\n`;
-    }
-    if (highestSubj) {
-      msg += `3. **${highestSubj.subject.name}:** Vas excelente con **${highestSubj.calc.ueesAverageFormatted}**. Solo mantén las tareas al día.\n\n`;
-    }
-    msg += `¿Quieres que iniciemos una sesión de Pomodoro de 25 minutos para empezar?`;
-    return { text: msg, action: null };
-  }
-
-  // 7. Saludo / Identidad
+  // ----------------------------------------------------------------------
+  // PRIORIDAD 11: Saludo / Identidad
+  // ----------------------------------------------------------------------
   if (p.includes('hola') || p.includes('quien eres') || p.includes('como te llamas') || p.includes('kali')) {
     return {
-      text: `¡Hola ${context.studentName}! Soy **KALI**, tu Copiloto Académica de la UEES. 🎓\n\nPuedo ayudarte a:\n• 📊 Consultar qué materias tienen notas y cuánto necesitas en Registro 3.\n• 📋 Revisar tus actividades y tareas de la Semana ${currentWeek.weekNumber}.\n• ✍️ Crear o marcar tareas automáticamente.\n• 🎯 Guiarte con un plan de estudio diario.\n\n¿En qué te puedo apoyar ahora mismo?`,
+      text: `¡Hola ${context.studentName}! Soy **KALI**, tu Copiloto Académica de la UEES. 🎓\n\nPuedo ayudarte a:\n• 🎯 Armar tu plan de estudio diario para no atrasarte.\n• 📊 Consultar tus notas oficiales y cuánto necesitas en Registro 3.\n• 📝 Revisar los apuntes y notas rápidas que escribes en tus tareas.\n• 📋 Organizar las actividades de la Semana ${currentWeek.weekNumber}.\n• 👨‍🏫 Ver tus docentes y horarios de materias.\n• 🧮 Explicarte la fórmula de cálculo de notas (30%/30%/40%).\n• ✍️ Crear o marcar tareas automáticamente.\n\n¿Qué revisamos hoy?`,
       action: null,
     };
   }
 
   // Respuesta general
   return {
-    text: `¡Hola ${context.studentName}! Soy **KALI**, tu Copiloto IA de la UEES.\n\nPuedes preguntarme:\n• *"¿Qué materias tienen notas?"*\n• *"¿Cuánto necesito en R3 para pasar [Materia]?"*\n• *"¿Qué tareas tengo pendientes esta semana?"*\n• *"Agrega la tarea de laboratorio de Física"*\n\n*(Nota: Si deseas razonamiento libre y explicaciones teóricas avanzadas de tus materias con red neuronal en la nube, puedes ingresar tu API Key gratuita de Google Gemini en el botón 🔑).*`,
+    text: `¡Hola ${context.studentName}! Soy **KALI**, tu Copiloto IA de la UEES.\n\nPuedes preguntarme:\n• *"Analiza mis materias y notas y dime qué debería estudiar hoy para no atrasarme"*\n• *"¿Qué dicen las notas de mis tareas?"*\n• *"¿Cómo se calcula el promedio en la UEES?"*\n• *"¿Quiénes son mis catedráticos?"*\n• *"¿Cuánto necesito en R3 para pasar Matemática II?"*\n• *"Agrega la tarea de laboratorio de Física"*\n\n*(Nota: Con tu API Key de Google Gemini conectada, también puedo resolver dudas teóricas de código, fórmulas de física o ejercicios paso a paso).*`,
     action: null,
   };
 }
 
 /**
- * Envía el mensaje al agente (usando Gemini API o fallback inteligente de KALI)
+ * Envía el mensaje al agente (usando Gemini 2.0 / 1.5 o fallback inteligente de KALI)
  */
 export async function sendAgentMessage(
   userText: string,
@@ -482,13 +579,23 @@ export async function sendAgentMessage(
       parts: [{ text: userText }],
     });
 
-    // Llamada con modelo rápido y estable (gemini-2.5-flash)
-    const response = await ai.models.generateContent({
-      model: 'gemini-2.5-flash',
-      contents,
-    });
+    // Llamada con modelo rápido y oficial (gemini-2.0-flash con fallback a gemini-1.5-flash)
+    let responseText = '';
+    try {
+      const response = await ai.models.generateContent({
+        model: 'gemini-2.0-flash',
+        contents,
+      });
+      responseText = response.text || '';
+    } catch (modelErr) {
+      console.warn('Reintentando con gemini-1.5-flash:', modelErr);
+      const fallbackResponse = await ai.models.generateContent({
+        model: 'gemini-1.5-flash',
+        contents,
+      });
+      responseText = fallbackResponse.text || '';
+    }
 
-    const responseText = response.text || '';
     if (!responseText) {
       return generateLocalFallbackResponse(userText, context);
     }

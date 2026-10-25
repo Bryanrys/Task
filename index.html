@@ -14,16 +14,13 @@
     <script>
       (function() {
         try {
-          var mode = localStorage.getItem('uees_theme_mode');
-          if (!mode) {
-            var legacy = localStorage.getItem('academic_dashboard_theme_v1');
-            mode = legacy ? legacy : 'system';
-          }
+          var mode = localStorage.getItem('uees_theme_mode') || localStorage.getItem('academic_dashboard_theme_v1') || 'system';
+          if (mode !== 'dark' && mode !== 'light' && mode !== 'system') mode = 'system';
           var isDark = false;
           if (mode === 'system') {
             isDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
           } else {
-            isDark = mode === 'dark';
+            isDark = (mode === 'dark');
           }
           if (isDark) {
             document.documentElement.classList.add('dark');
@@ -32,6 +29,22 @@
             document.documentElement.classList.remove('dark');
             document.documentElement.style.colorScheme = 'light';
           }
+
+          // Listener temprano para eventos nativos de Android
+          window.addEventListener('androidThemeChange', function(e) {
+            if (localStorage.getItem('uees_theme_mode') === 'system' || !localStorage.getItem('uees_theme_mode')) {
+              var dark = e && e.detail && e.detail.isDark;
+              if (typeof dark === 'boolean') {
+                if (dark) {
+                  document.documentElement.classList.add('dark');
+                  document.documentElement.style.colorScheme = 'dark';
+                } else {
+                  document.documentElement.classList.remove('dark');
+                  document.documentElement.style.colorScheme = 'light';
+                }
+              }
+            }
+          });
         } catch(e) {}
       })();
     </script>

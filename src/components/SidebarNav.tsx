@@ -335,14 +335,18 @@ export const SidebarNav: React.FC<SidebarNavProps> = ({
               )}
               <span>
                 {themeMode === 'system'
-                  ? `Tema: Auto (${isDark ? 'Oscuro' : 'Claro'})`
+                  ? `Tema: Automático (${isDark ? 'Oscuro' : 'Claro'})`
                   : themeMode === 'dark'
                   ? 'Tema: Modo Oscuro'
                   : 'Tema: Modo Claro'}
               </span>
             </div>
-            <span className={`text-[10px] px-1.5 py-0.5 rounded-md font-mono font-bold ${
-              isDark ? 'bg-white/15 text-white' : 'bg-zinc-200 text-black'
+            <span className={`text-[10px] px-2 py-0.5 rounded-md font-mono font-bold transition-colors ${
+              themeMode === 'system'
+                ? 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/30'
+                : isDark
+                ? 'bg-white/15 text-white'
+                : 'bg-zinc-200 text-black'
             }`}>
               {themeMode === 'system' ? 'AUTO' : themeMode === 'dark' ? 'DARK' : 'LIGHT'}
             </span>

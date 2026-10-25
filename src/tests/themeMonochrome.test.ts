@@ -102,4 +102,33 @@ describe('Pruebas Unitarias - Paleta Monocromática (Blanco y Negro)', () => {
       'La nota de la tarea debe usar el diseño humo/carbón monocromático'
     );
   });
+
+  it('App.tsx y MainActivity.java deben sincronizar el tema de sistema Android sin corromper el modo AUTO', () => {
+    const appPath = path.join(srcDir, 'App.tsx');
+    const appContent = fs.readFileSync(appPath, 'utf-8');
+
+    // 1. Debe escuchar el evento nativo androidThemeChange
+    assert.ok(
+      appContent.includes("window.addEventListener('androidThemeChange'"),
+      'App.tsx debe escuchar el evento androidThemeChange para sincronización en tiempo real con Android'
+    );
+
+    // 2. No debe sobreescribir THEME_KEY con dark/light cuando themeMode es system
+    assert.ok(
+      appContent.includes("localStorage.setItem(THEME_KEY, themeMode)"),
+      'App.tsx debe guardar estrictamente themeMode en THEME_KEY para no perder el estado AUTO'
+    );
+
+    // 3. MainActivity.java debe manejar onConfigurationChanged
+    const mainActivityPath = path.resolve(process.cwd(), 'android/app/src/main/java/com/uees/dashboard/MainActivity.java');
+    const javaContent = fs.readFileSync(mainActivityPath, 'utf-8');
+    assert.ok(
+        javaContent.includes('onConfigurationChanged'),
+        'MainActivity.java debe implementar onConfigurationChanged para cambios de tema en vivo'
+    );
+    assert.ok(
+        javaContent.includes('androidThemeChange'),
+        'MainActivity.java debe despachar el evento androidThemeChange a la WebView'
+    );
+  });
 });

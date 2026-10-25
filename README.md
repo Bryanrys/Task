@@ -12,13 +12,13 @@ Plataforma integral y moderna de organización académica universitaria (Ciclo I
 
 ## 📱 Apartado APK (Descarga para Android)
 
-> 🕒 **Última Compilación / Actualización:** Sábado, 24 de Octubre de 2026 — 10:36 PM (GMT-6)  
-> 🏷️ **Versión:** `v1.0.0-debug` | **Identidad APK:** `0` (`com.uees.dashboard`) | **Tamaño:** 29 MB — **Paleta Platino / Titanio (Linear & Vercel Style)**
+> 🕒 **Última Compilación / Actualización:** Sábado, 24 de Octubre de 2026 — 11:10 PM (GMT-6)  
+> 🏷️ **Versión:** `v1.0.0-debug` | **Identidad APK:** `0` (`com.uees.dashboard`) | **Tamaño:** 33 MB — **Sincronización Nativa de Tema (Auto/Dark/Light)**
 
 Puedes descargar e instalar la versión para Android directamente en tu teléfono móvil desde cualquiera de los siguientes enlaces:
 
 ### 📥 Enlaces de Descarga:
-- 🚀 **[Descarga Directa del APK (`app-debug.apk`)](https://github.com/Bryanrys/Task/raw/main/apk/app-debug.apk)** *(Garantizado sin 404, compilado el 24 de Octubre de 2026 a las 10:36 PM)*
+- 🚀 **[Descarga Directa del APK (`app-debug.apk`)](https://github.com/Bryanrys/Task/raw/main/apk/app-debug.apk)** *(Garantizado sin 404, compilado el 24 de Octubre de 2026 a las 11:10 PM)*
 - 📂 **[Ver carpeta de APK en el Repositorio (con fecha y hora)](./apk)**
 - 📦 **[Ver todas las versiones y Releases en GitHub](https://github.com/Bryanrys/Task/releases)**
 

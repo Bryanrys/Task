@@ -145,18 +145,18 @@ export default function App() {
     try {
       const saved = localStorage.getItem('uees_theme_mode') as ThemeMode;
       if (saved === 'system' || saved === 'dark' || saved === 'light') return saved;
-      const legacy = localStorage.getItem(THEME_KEY);
-      if (legacy === 'dark' || legacy === 'light') return legacy as ThemeMode;
+      const legacy = localStorage.getItem(THEME_KEY) as ThemeMode;
+      if (legacy === 'system' || legacy === 'dark' || legacy === 'light') return legacy;
     } catch {}
     return 'system';
   });
 
   const [isDark, setIsDark] = useState<boolean>(() => {
     try {
-      const mode = localStorage.getItem('uees_theme_mode') as ThemeMode;
+      const mode = (localStorage.getItem('uees_theme_mode') || localStorage.getItem(THEME_KEY)) as ThemeMode;
       if (mode === 'dark') return true;
       if (mode === 'light') return false;
-      return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+      return typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
     } catch {
       return true;
     }
@@ -503,9 +503,20 @@ export default function App() {
 
   // Persist theme & sincronización en tiempo real con el sistema operativo
   useEffect(() => {
-    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-    const applyMode = (mode: ThemeMode) => {
-      const activeDark = mode === 'system' ? mediaQuery.matches : mode === 'dark';
+    const mediaQuery = typeof window !== 'undefined' && window.matchMedia ? window.matchMedia('(prefers-color-scheme: dark)') : null;
+
+    const applyTheme = (forcedSystemDark?: boolean) => {
+      let activeDark = false;
+      if (themeMode === 'system') {
+        if (typeof forcedSystemDark === 'boolean') {
+          activeDark = forcedSystemDark;
+        } else if (mediaQuery) {
+          activeDark = mediaQuery.matches;
+        }
+      } else {
+        activeDark = themeMode === 'dark';
+      }
+
       setIsDark(activeDark);
       if (activeDark) {
         document.documentElement.classList.add('dark');
@@ -516,27 +527,57 @@ export default function App() {
       }
     };
 
-    applyMode(themeMode);
+    applyTheme();
+
     try {
       localStorage.setItem('uees_theme_mode', themeMode);
-      localStorage.setItem(THEME_KEY, themeMode === 'system' ? (mediaQuery.matches ? 'dark' : 'light') : themeMode);
+      localStorage.setItem(THEME_KEY, themeMode);
     } catch {}
 
-    const handleSystemChange = (e: MediaQueryListEvent) => {
+    // Listener para MediaQueryList del navegador/WebView
+    const handleMediaQueryChange = (e: MediaQueryListEvent | MediaQueryList) => {
       if (themeMode === 'system') {
-        setIsDark(e.matches);
-        if (e.matches) {
-          document.documentElement.classList.add('dark');
-          document.documentElement.style.colorScheme = 'dark';
-        } else {
-          document.documentElement.classList.remove('dark');
-          document.documentElement.style.colorScheme = 'light';
-        }
+        applyTheme(e.matches);
       }
     };
 
-    mediaQuery.addEventListener('change', handleSystemChange);
-    return () => mediaQuery.removeEventListener('change', handleSystemChange);
+    if (mediaQuery) {
+      if (mediaQuery.addEventListener) {
+        mediaQuery.addEventListener('change', handleMediaQueryChange);
+      } else if ((mediaQuery as any).addListener) {
+        (mediaQuery as any).addListener(handleMediaQueryChange);
+      }
+    }
+
+    // Listener nativo directo emitido por MainActivity.java (Android)
+    const handleAndroidThemeChange = (e: any) => {
+      if (themeMode === 'system' && e && e.detail && typeof e.detail.isDark === 'boolean') {
+        applyTheme(e.detail.isDark);
+      }
+    };
+    window.addEventListener('androidThemeChange', handleAndroidThemeChange);
+
+    // Re-evaluar tema cuando el usuario vuelve a la app desde los ajustes del sistema
+    const handleVisibilityOrFocus = () => {
+      if (themeMode === 'system') {
+        applyTheme();
+      }
+    };
+    window.addEventListener('focus', handleVisibilityOrFocus);
+    document.addEventListener('visibilitychange', handleVisibilityOrFocus);
+
+    return () => {
+      if (mediaQuery) {
+        if (mediaQuery.removeEventListener) {
+          mediaQuery.removeEventListener('change', handleMediaQueryChange);
+        } else if ((mediaQuery as any).removeListener) {
+          (mediaQuery as any).removeListener(handleMediaQueryChange);
+        }
+      }
+      window.removeEventListener('androidThemeChange', handleAndroidThemeChange);
+      window.removeEventListener('focus', handleVisibilityOrFocus);
+      document.removeEventListener('visibilitychange', handleVisibilityOrFocus);
+    };
   }, [themeMode]);
 
   // Deslizar el dedo para abrir/cerrar el panel lateral SOLO en la app nativa (APK / Capacitor)
@@ -2036,6 +2077,9 @@ export default function App() {
                 ) : (
                   <Sun className="w-3.5 h-3.5 text-zinc-600" />
                 )}
+                <span className="text-[10px] font-mono font-bold sm:hidden">
+                  {themeMode === 'system' ? 'AUTO' : themeMode === 'dark' ? 'DARK' : 'LIGHT'}
+                </span>
                 <span className="hidden sm:inline">
                   {themeMode === 'system'
                     ? `Auto (${isDark ? 'Oscuro' : 'Claro'})`

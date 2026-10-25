@@ -1,5 +1,6 @@
 package com.uees.dashboard;
 
+import android.content.res.Configuration;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
@@ -22,11 +23,50 @@ public class MainActivity extends BridgeActivity {
         configureWebViewSettings();
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (getResources() != null && getResources().getConfiguration() != null) {
+            notifyThemeChange(getResources().getConfiguration());
+        }
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        notifyThemeChange(newConfig);
+    }
+
+    private void notifyThemeChange(Configuration config) {
+        try {
+            if (getBridge() != null && getBridge().getWebView() != null && config != null) {
+                int currentNightMode = config.uiMode & Configuration.UI_MODE_NIGHT_MASK;
+                final boolean isNight = (currentNightMode == Configuration.UI_MODE_NIGHT_YES);
+                final WebView webView = getBridge().getWebView();
+                
+                webView.post(() -> {
+                    try {
+                        // Actualizar fondo de WebView dinámicamente según el tema para evitar destellos
+                        webView.setBackgroundColor(isNight ? Color.parseColor("#09090b") : Color.parseColor("#f4f4f2"));
+                        
+                        // Notificar a la capa web en tiempo real
+                        String js = "window.dispatchEvent(new CustomEvent('androidThemeChange', { detail: { isDark: " + isNight + " } }));";
+                        webView.evaluateJavascript(js, null);
+                    } catch (Exception ignored) {}
+                });
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     private void configureWebViewSettings() {
         try {
             if (getBridge() != null && getBridge().getWebView() != null) {
                 WebView webView = getBridge().getWebView();
-                webView.setBackgroundColor(Color.parseColor("#09090b"));
+                Configuration config = getResources() != null ? getResources().getConfiguration() : null;
+                boolean isNight = config != null && (config.uiMode & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES;
+                webView.setBackgroundColor(isNight ? Color.parseColor("#09090b") : Color.parseColor("#f4f4f2"));
 
                 WebSettings settings = webView.getSettings();
 
@@ -39,10 +79,12 @@ public class MainActivity extends BridgeActivity {
                     WebSettingsCompat.setAlgorithmicDarkeningAllowed(settings, false);
                 }
 
-                // Deshabilitar Force Dark para garantizar fidelidad cromática y alto contraste
+                // Habilitar FORCE_DARK_AUTO para que Chromium WebView detecte y propague prefers-color-scheme
                 if (WebViewFeature.isFeatureSupported(WebViewFeature.FORCE_DARK)) {
-                    WebSettingsCompat.setForceDark(settings, WebSettingsCompat.FORCE_DARK_OFF);
+                    WebSettingsCompat.setForceDark(settings, WebSettingsCompat.FORCE_DARK_AUTO);
                 }
+                
+                notifyThemeChange(config);
             }
         } catch (Exception e) {
             e.printStackTrace();

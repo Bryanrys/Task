@@ -308,7 +308,7 @@ export const DrawerDashboards: React.FC<DrawerDashboardsProps> = ({
                 }`}
             >
               <Plus className="w-4 h-4 text-yellow-400" />
-              <span>+ Agregar Semana</span>
+              <span>Agregar Semana</span>
             </button>
 
 

@@ -256,7 +256,7 @@ export const UniversityLinksModal: React.FC<UniversityLinksModalProps> = ({
             className="w-full py-2 mb-2 border border-dashed border-white/20 hover:border-white rounded-xl text-xs font-bold text-zinc-300 hover:text-white transition-colors flex items-center justify-center gap-1 cursor-pointer font-mono"
           >
             <Plus className="w-3.5 h-3.5" />
-            <span>+ Agregar Enlace Universitario</span>
+            <span>Agregar Enlace Universitario</span>
           </button>
         )}
 

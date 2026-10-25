@@ -299,7 +299,7 @@ export const ClassScheduleModal: React.FC<ClassScheduleModalProps> = ({
                 isDark ? 'border-white/10' : 'border-zinc-200'
               }`}>
                 <span className="text-xs font-black uppercase tracking-wider">
-                  {editingId ? '✏️ Editar Clase' : '+ Agregar Clase al ' + activeDay}
+                  {editingId ? '✏️ Editar Clase' : 'Agregar Clase al ' + activeDay}
                 </span>
                 <span className={`text-[10px] font-mono ${isDark ? 'text-zinc-400' : 'text-zinc-500'}`}>{activeDay}</span>
               </div>
@@ -543,7 +543,7 @@ export const ClassScheduleModal: React.FC<ClassScheduleModalProps> = ({
               }`}
             >
               <Plus className="w-3.5 h-3.5" />
-              <span>+ Agregar Clase al {activeDay}</span>
+              <span>Agregar Clase al {activeDay}</span>
             </button>
           )}
 

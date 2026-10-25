@@ -137,6 +137,44 @@ describe('Pruebas Unitarias Estrictas - Contraste y Legibilidad de Botones (Modo
     );
   });
 
+  // 5. Verificación de textos limpios y ausencia de signos redundantes (+ Agregar duplicado)
+  it('los botones con icono Plus no deben contener el texto redundante "+ Agregar"', () => {
+    const files = getAllTsxFiles(srcDir);
+    const redundantButtons: { file: string; line: number; text: string }[] = [];
+
+    for (const file of files) {
+      const content = fs.readFileSync(file, 'utf-8');
+      const lines = content.split('\n');
+      lines.forEach((line, index) => {
+        // Detectar si en la misma línea o bloque hay span con "+ Agregar"
+        if (/<span>\s*\+\s*Agregar/i.test(line)) {
+          redundantButtons.push({
+            file: path.relative(process.cwd(), file),
+            line: index + 1,
+            text: line.trim(),
+          });
+        }
+      });
+    }
+
+    assert.equal(
+      redundantButtons.length,
+      0,
+      `Se encontraron botones con texto redundante "+ Agregar":\n${JSON.stringify(redundantButtons, null, 2)}`
+    );
+  });
+
+  // 6. Verificación de aislamiento del botón lápiz de notas frente a completitud de tareas
+  it('App.tsx debe aislar el evento onClick del lápiz de notas con stopPropagation', () => {
+    const appPath = path.join(srcDir, 'App.tsx');
+    const content = fs.readFileSync(appPath, 'utf-8');
+
+    assert.ok(
+      content.includes('setActiveNoteTarget({') && content.includes('e.stopPropagation()'),
+      'El botón de notas de la tarea debe aislar el evento con stopPropagation para evitar completar la tarea accidentalmente'
+    );
+  });
+
   // 5. Verificación Matemática de Contraste WCAG 2.1 AA (Relación >= 4.5:1 para texto normal y >= 3.0:1 para componentes)
   describe('Cálculo Matemático WCAG de Luminancia y Contraste', () => {
     function hexToRgb(hex: string): [number, number, number] {

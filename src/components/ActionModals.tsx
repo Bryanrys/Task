@@ -44,6 +44,12 @@ export const PromptModal: React.FC<PromptModalProps> = ({
           value={value}
           onChange={(e) => setValue(e.target.value)}
           placeholder={placeholder}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') {
+              e.preventDefault();
+              onConfirm(value);
+            }
+          }}
           className={`w-full rounded-2xl px-4 py-2.5 text-sm outline-none mb-6 border transition-all ${
             isDark
               ? 'bg-white/5 border-white/10 text-white placeholder-zinc-500 focus:border-white/30'

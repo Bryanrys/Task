@@ -270,7 +270,7 @@ export const ToolsAndLinksView: React.FC<ToolsAndLinksViewProps> = ({
                         {item.timeRange}
                       </span>
                       {displayLoc && (
-                        <span className="flex items-center gap-1 truncate max-w-[220px]">
+                        <span className="flex items-center gap-1 truncate max-w-[150px] sm:max-w-[220px]">
                           <MapPin className="w-3 h-3 text-zinc-400 shrink-0" />
                           <span>{displayLoc}</span>
                         </span>

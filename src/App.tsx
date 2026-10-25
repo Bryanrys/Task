@@ -2284,7 +2284,7 @@ export default function App() {
                               ? 'bg-amber-500/15 text-amber-300 border-amber-500/30'
                               : 'bg-amber-50 text-amber-800 border-amber-300'
                         }`}>
-                          {parseFloat(overallUeesAvg) >= 6.0 ? '+ Aprobado' : 'En Curso'}
+                          {parseFloat(overallUeesAvg) >= 6.0 ? 'Aprobado' : 'En Curso'}
                         </span>
                       </div>
 
@@ -2352,7 +2352,7 @@ export default function App() {
                         }`}
                       >
                         <Plus className="w-3.5 h-3.5" />
-                        <span>+ Agregar nota rápida...</span>
+                        <span>Agregar nota rápida...</span>
                       </button>
                     </div>
 
@@ -2453,17 +2453,17 @@ export default function App() {
                       } ${isSingleView ? 'max-w-2xl mx-auto w-full' : ''}`}
                     >
                       {/* Header de Materia */}
-                      <div className="flex items-center justify-between mb-3">
-                        <div className="flex items-center gap-2 min-w-0">
+                      <div className="flex items-center justify-between mb-3 gap-2">
+                        <div className="flex items-center gap-2 min-w-0 flex-1 pr-1">
                           <div
                             onClick={() => {
                               setSelectedSubjectId(subject.id);
                               window.scrollTo({ top: 0, behavior: 'smooth' });
                             }}
-                            className="flex items-center gap-2 min-w-0 cursor-pointer group/title"
+                            className="flex items-center gap-2 min-w-0 flex-1 cursor-pointer group/title"
                             title={`Enfocar materia ${subject.name}`}
                           >
-                            <span className={`w-2 h-2 rounded-full ${isSubjectAllDone ? 'bg-emerald-500' : 'bg-amber-500'}`} />
+                            <span className={`w-2 h-2 rounded-full shrink-0 ${isSubjectAllDone ? 'bg-emerald-500' : 'bg-amber-500'}`} />
                             <h3 className={`font-black text-sm tracking-wide uppercase truncate transition-colors ${
                               isDark ? 'text-white group-hover/title:text-zinc-300' : 'text-zinc-900 group-hover/title:text-zinc-600'
                             }`}>
@@ -2481,7 +2481,7 @@ export default function App() {
                           </button>
                         </div>
 
-                        <span className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full border ${badgeColor}`}>
+                        <span className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full border shrink-0 ${badgeColor}`}>
                           {statusLabel}
                         </span>
                       </div>
@@ -2667,7 +2667,7 @@ export default function App() {
                         }`}
                       >
                         <Plus className="w-3.5 h-3.5" />
-                        <span>+ Agregar Tarea {subject.name}</span>
+                        <span>Agregar Tarea {subject.name}</span>
                       </button>
                     </div>
                   );
@@ -3040,61 +3040,64 @@ export default function App() {
                 </button>
               </div>
 
-              <div className="space-y-3 mb-5">
-                <div>
-                  <label className={`text-xs font-semibold block mb-1 ${
-                    isDark ? 'text-zinc-300' : 'text-zinc-700'
-                  }`}>
-                    Título de la Actividad *
-                  </label>
-                  <input
-                    type="text"
-                    value={newTaskTitle}
-                    onChange={(e) => setNewTaskTitle(e.target.value)}
-                    placeholder="Ej: Foro 15, Laboratorio 4, Tarea..."
-                    className={`w-full px-3.5 py-2.5 rounded-2xl border text-xs focus:outline-none transition-all ${
-                      isDark ? 'bg-white/5 border-white/10 text-white focus:border-white/30' : 'bg-zinc-50 border-zinc-200 text-zinc-900 focus:border-zinc-400'
-                    }`}
-                    autoFocus
-                  />
+              <form onSubmit={(e) => { e.preventDefault(); handleSaveNewTask(); }} className="space-y-4">
+                <div className="space-y-3 mb-5">
+                  <div>
+                    <label className={`text-xs font-semibold block mb-1 ${
+                      isDark ? 'text-zinc-300' : 'text-zinc-700'
+                    }`}>
+                      Título de la Actividad *
+                    </label>
+                    <input
+                      type="text"
+                      value={newTaskTitle}
+                      onChange={(e) => setNewTaskTitle(e.target.value)}
+                      placeholder="Ej: Foro 15, Laboratorio 4, Tarea..."
+                      className={`w-full px-3.5 py-2.5 rounded-2xl border text-xs focus:outline-none transition-all ${
+                        isDark ? 'bg-white/5 border-white/10 text-white focus:border-white/30' : 'bg-zinc-50 border-zinc-200 text-zinc-900 focus:border-zinc-400'
+                      }`}
+                      autoFocus
+                    />
+                  </div>
+
+                  <div>
+                    <label className={`text-xs font-semibold block mb-1 ${
+                      isDark ? 'text-zinc-300' : 'text-zinc-700'
+                    }`}>
+                      Descripción / Nota (Opcional)
+                    </label>
+                    <input
+                      type="text"
+                      value={newTaskDesc}
+                      onChange={(e) => setNewTaskDesc(e.target.value)}
+                      placeholder="Ej: Módulo de Algoritmos, Entrega en aula..."
+                      className={`w-full px-3.5 py-2.5 rounded-2xl border text-xs focus:outline-none transition-all ${
+                        isDark ? 'bg-white/5 border-white/10 text-white focus:border-white/30' : 'bg-zinc-50 border-zinc-200 text-zinc-900 focus:border-zinc-400'
+                      }`}
+                    />
+                  </div>
                 </div>
 
-                <div>
-                  <label className={`text-xs font-semibold block mb-1 ${
-                    isDark ? 'text-zinc-300' : 'text-zinc-700'
-                  }`}>
-                    Descripción / Nota (Opcional)
-                  </label>
-                  <input
-                    type="text"
-                    value={newTaskDesc}
-                    onChange={(e) => setNewTaskDesc(e.target.value)}
-                    placeholder="Ej: Módulo de Algoritmos, Entrega en aula..."
-                    className={`w-full px-3.5 py-2.5 rounded-2xl border text-xs focus:outline-none transition-all ${
-                      isDark ? 'bg-white/5 border-white/10 text-white focus:border-white/30' : 'bg-zinc-50 border-zinc-200 text-zinc-900 focus:border-zinc-400'
+                <div className="flex justify-end gap-2.5">
+                  <button
+                    type="button"
+                    onClick={() => setTargetSubjectForNewTask(null)}
+                    className={`px-4 py-2 rounded-full text-xs font-semibold transition-all cursor-pointer ${
+                      isDark ? 'text-zinc-400 hover:text-white' : 'text-zinc-600 hover:text-zinc-900'
                     }`}
-                  />
+                  >
+                    Cancelar
+                  </button>
+                  <button
+                    type="submit"
+                    className={`px-4 py-2 rounded-full text-xs font-bold transition-all shadow-xs active:scale-95 cursor-pointer ${
+                      isDark ? 'bg-white !text-black text-black hover:bg-zinc-200' : 'bg-black !text-white text-white hover:bg-zinc-800'
+                    }`}
+                  >
+                    Guardar Tarea
+                  </button>
                 </div>
-              </div>
-
-              <div className="flex justify-end gap-2.5">
-                <button
-                  onClick={() => setTargetSubjectForNewTask(null)}
-                  className={`px-4 py-2 rounded-full text-xs font-semibold transition-all cursor-pointer ${
-                    isDark ? 'text-zinc-400 hover:text-white' : 'text-zinc-600 hover:text-zinc-900'
-                  }`}
-                >
-                  Cancelar
-                </button>
-                <button
-                  onClick={handleSaveNewTask}
-                  className={`px-4 py-2 rounded-full text-xs font-bold transition-all shadow-xs active:scale-95 cursor-pointer ${
-                    isDark ? 'bg-white !text-black text-black hover:bg-zinc-200' : 'bg-black !text-white text-white hover:bg-zinc-800'
-                  }`}
-                >
-                  Guardar Tarea
-                </button>
-              </div>
+              </form>
             </motion.div>
           </motion.div>
         )}

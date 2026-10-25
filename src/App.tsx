@@ -1432,12 +1432,18 @@ export default function App() {
       const backup = localStorage.getItem(backupKey);
 
       if (backup) {
-        const loaded = JSON.parse(backup);
-        setDashboards((prev) => [loaded, ...prev.filter((d) => d.id !== loaded.id)]);
-        setActiveDashId(loaded.id);
-        setIsSyncing(false);
-        setToastMessage('¡Información descargada con éxito!');
-        return;
+        try {
+          const loaded = JSON.parse(backup);
+          if (loaded && loaded.id && Array.isArray(loaded.weeks)) {
+            setDashboards((prev) => [loaded, ...prev.filter((d) => d.id !== loaded.id)]);
+            setActiveDashId(loaded.id);
+            setIsSyncing(false);
+            setToastMessage('¡Información descargada con éxito!');
+            return;
+          }
+        } catch {
+          // Si el respaldo local está corrupto, usar INITIAL_DASHBOARDS como fallback seguro
+        }
       }
 
       const uees = INITIAL_DASHBOARDS[0];

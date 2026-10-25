@@ -59,7 +59,7 @@ export const PomodoroTimerModal: React.FC<PomodoroTimerModalProps> = ({
   const seconds = timeLeft % 60;
   const totalTime = mode === 'study' ? STUDY_TIME : BREAK_TIME;
   const formattedTime = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
-  const progressPercent = ((totalTime - timeLeft) / totalTime) * 100;
+  const progressPercent = totalTime > 0 ? Math.min(100, Math.max(0, ((totalTime - timeLeft) / totalTime) * 100)) : 0;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-xs animate-fadeIn">

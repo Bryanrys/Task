@@ -61,7 +61,7 @@ function buildLegacyFormat(dashboards: Dashboard[]) {
 export function convertLegacyToDashboards(legacyData: any): Dashboard[] {
   const ueesRaw = legacyData?.['[ UEES ]'] || legacyData?.['UEES'] || legacyData;
   if (!ueesRaw || !ueesRaw.semanas) {
-    return JSON.parse(JSON.stringify(INITIAL_DASHBOARDS)) as Dashboard[];
+    return structuredClone(INITIAL_DASHBOARDS);
   }
 
   const materiasNames: string[] = Array.isArray(ueesRaw.materias) && ueesRaw.materias.length > 0

@@ -2574,9 +2574,19 @@ export default function App() {
                                   >
                                     {task.name}
                                   </span>
-                                  <span className={`text-[10px] truncate ${isDark ? 'text-zinc-300' : 'text-zinc-600'}`}>
-                                    {task.note || (isForo ? 'Módulo semanal' : isLab ? 'Práctica técnica' : 'Evaluación')}
+                                  <span className={`text-[10px] truncate ${isDark ? 'text-zinc-400' : 'text-zinc-500'}`}>
+                                    {isForo ? 'Módulo semanal' : isLab ? 'Práctica técnica' : 'Evaluación'}
                                   </span>
+                                  {task.note && (
+                                    <div className={`mt-1 text-[10px] px-2 py-0.5 rounded-md inline-flex items-center gap-1.5 border max-w-full ${
+                                      isDark 
+                                        ? 'bg-amber-500/10 text-amber-300 border-amber-500/20' 
+                                        : 'bg-amber-50 text-amber-800 border-amber-200'
+                                    }`}>
+                                      <span className="text-[10px] shrink-0">📝</span>
+                                      <span className="truncate font-mono">{task.note}</span>
+                                    </div>
+                                  )}
                                   {deadlineInfo && (
                                     <span className={`text-[9px] font-mono mt-0.5 ${
                                       deadlineInfo.isPast
@@ -2591,7 +2601,8 @@ export default function App() {
                                 </div>
                               </div>
 
-                              <div className="flex items-center gap-1.5 shrink-0 ml-2">
+                              <div className="flex items-center gap-2 shrink-0 ml-2">
+                                {/* Botón Lápiz para Añadir/Editar Nota de la Tarea (Siempre accesible, sin sobreposición) */}
                                 <button
                                   onClick={(e) => {
                                     e.stopPropagation();
@@ -2603,22 +2614,32 @@ export default function App() {
                                       deadlineISO: task.deadlineISO || '',
                                     });
                                   }}
-                                  className={`p-1 rounded opacity-60 hover:opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity cursor-pointer ${
-                                    isDark ? 'text-zinc-400 hover:text-white' : 'text-zinc-500 hover:text-zinc-900'
+                                  className={`w-7 h-7 rounded-xl border flex items-center justify-center transition-all cursor-pointer ${
+                                    task.note
+                                      ? isDark
+                                        ? 'bg-amber-500/20 border-amber-500/40 text-amber-300 hover:bg-amber-500/30'
+                                        : 'bg-amber-100 border-amber-300 text-amber-800 hover:bg-amber-200'
+                                      : isDark
+                                      ? 'bg-white/5 hover:bg-white/10 border-white/10 text-zinc-400 hover:text-white'
+                                      : 'bg-white hover:bg-zinc-100 border-zinc-200 text-zinc-600 hover:text-black shadow-2xs'
                                   }`}
-                                  title="Añadir o editar nota y fecha límite"
+                                  title={task.note ? 'Editar nota de la tarea' : 'Añadir nota o fecha límite a esta tarea'}
                                 >
-                                  <Edit3 className="w-3.5 h-3.5" />
+                                  <Edit3 className="w-3.5 h-3.5 shrink-0" />
                                 </button>
 
+                                {/* Botón Check de Entrega */}
                                 <button
-                                  onClick={() => handleToggleTask(subject.id, task.id)}
-                                  className={`w-6 h-6 rounded-full flex items-center justify-center transition-all cursor-pointer ${
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleToggleTask(subject.id, task.id);
+                                  }}
+                                  className={`w-7 h-7 rounded-full flex items-center justify-center transition-all cursor-pointer ${
                                     task.completed
                                       ? 'bg-emerald-500 text-white shadow-xs'
                                       : isDark
-                                      ? 'border-2 border-zinc-700 text-transparent hover:border-zinc-500'
-                                      : 'border-2 border-zinc-300 text-transparent hover:border-zinc-500'
+                                      ? 'border-2 border-zinc-700 text-transparent hover:border-zinc-500 bg-white/5'
+                                      : 'border-2 border-zinc-300 text-transparent hover:border-zinc-500 bg-white'
                                   }`}
                                   title={task.completed ? 'Marcar como pendiente' : 'Marcar como entregado'}
                                 >

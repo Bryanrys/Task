@@ -12,8 +12,8 @@ Plataforma integral y moderna de organización académica universitaria (Ciclo I
 
 ## 📱 Apartado APK (Descarga para Android)
 
-> 🕒 **Última Compilación / Actualización:** Sábado, 24 de Octubre de 2026 — 09:50 PM (GMT-6)  
-> 🏷️ **Versión:** `v1.0.0-debug` | **Identidad APK:** `0` (`com.uees.dashboard`) | **Tamaño:** 13 MB
+> 🕒 **Última Compilación / Actualización:** Sábado, 24 de Octubre de 2026 — 10:03 PM (GMT-6)  
+> 🏷️ **Versión:** `v1.0.0-debug` | **Identidad APK:** `0` (`com.uees.dashboard`) | **Tamaño:** 21 MB
 
 Puedes descargar e instalar la versión para Android directamente en tu teléfono móvil desde cualquiera de los siguientes enlaces:
 

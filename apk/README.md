@@ -1,8 +1,8 @@
 # 📱 Apartado APK - Descarga Oficial para Android
 
-> 🕒 **Última Compilación / Actualización:** Sábado, 24 de Octubre de 2026 — 09:50 PM (GMT-6)  
+> 🕒 **Última Compilación / Actualización:** Sábado, 24 de Octubre de 2026 — 10:03 PM (GMT-6)  
 > 🏷️ **Versión:** `v1.0.0-debug` | **Identidad APK:** `0` (`com.uees.dashboard`)  
-> 📦 **Archivo:** [`apk/app-debug.apk`](./app-debug.apk) (13 MB)
+> 📦 **Archivo:** [`apk/app-debug.apk`](./app-debug.apk) (21 MB)
 
 En este apartado puedes acceder a las descargas directas del instalador APK para dispositivos Android de la aplicación **Dashboard Académico UEES**.
 
@@ -12,7 +12,7 @@ En este apartado puedes acceder a las descargas directas del instalador APK para
 
 | Versión | Archivo Físico en Repositorio | Plataforma | Última Actualización | Enlace de Descarga Inmediata |
 | :--- | :--- | :--- | :--- | :--- |
-| **Última Versión (Debug)** | [`app-debug.apk`](./app-debug.apk) | Android 7.0+ (Universal) | **24 Oct 2026 - 09:50 PM** | 📥 **[Descargar APK Directo (Sin 404)](https://github.com/Bryanrys/Task/raw/main/apk/app-debug.apk)** |
+| **Última Versión (Debug)** | [`app-debug.apk`](./app-debug.apk) | Android 7.0+ (Universal) | **24 Oct 2026 - 10:03 PM** | 📥 **[Descargar APK Directo (Sin 404)](https://github.com/Bryanrys/Task/raw/main/apk/app-debug.apk)** |
 | **Página de Releases** | Releases y tags | Android | Ver historial | 📦 **[Ver Releases en GitHub](https://github.com/Bryanrys/Task/releases)** |
 
 ---

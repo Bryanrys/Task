@@ -328,7 +328,7 @@ export const ShareAppModal: React.FC<ShareAppModalProps> = ({
             </button>
             <div className="flex items-center justify-center gap-1.5 text-[10px] font-mono text-zinc-400">
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-              <span>Actualizado: 24 Oct 2026 • 09:50 PM (GMT-6)</span>
+              <span>Actualizado: 24 Oct 2026 • 10:03 PM (GMT-6)</span>
             </div>
           </div>
 

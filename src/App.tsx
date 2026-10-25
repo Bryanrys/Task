@@ -2028,7 +2028,7 @@ export default function App() {
                 ) : isDark ? (
                   <Moon className="w-3.5 h-3.5 text-blue-400" />
                 ) : (
-                  <Sun className="w-3.5 h-3.5 text-amber-500" />
+                  <Sun className="w-3.5 h-3.5 text-zinc-600" />
                 )}
                 <span className="hidden sm:inline">
                   {themeMode === 'system'
@@ -2136,11 +2136,11 @@ export default function App() {
                         <span
                           className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${
                             weekStats.pendingTasks > 0
-                              ? 'bg-amber-500/15 text-amber-300 border-amber-500/30'
+                              ? 'bg-white/10 text-zinc-100 border-white/20'
                               : 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30'
                           }`}
                         >
-                          {weekStats.pendingTasks > 0 ? `+ ${weekStats.pendingTasks} Urgentes` : 'Al Día'}
+                          {weekStats.pendingTasks > 0 ? `${weekStats.pendingTasks} Por entregar` : 'Al Día'}
                         </span>
                       </div>
                       
@@ -2150,10 +2150,10 @@ export default function App() {
                         </div>
                         {/* Mini vertical sparkline bars from reference image */}
                         <div className="flex items-end gap-1 h-7">
-                          <span className={`w-1.5 rounded-full transition-all ${weekStats.pendingTasks >= 1 ? 'bg-amber-400 h-4' : 'bg-zinc-700 h-2'}`} />
-                          <span className={`w-1.5 rounded-full transition-all ${weekStats.pendingTasks >= 2 ? 'bg-amber-400 h-6' : 'bg-zinc-700 h-2'}`} />
-                          <span className={`w-1.5 rounded-full transition-all ${weekStats.pendingTasks >= 3 ? 'bg-amber-400 h-7' : 'bg-zinc-700 h-2'}`} />
-                          <span className={`w-1.5 rounded-full transition-all ${weekStats.pendingTasks === 0 ? 'bg-emerald-400 h-5' : 'bg-zinc-700 h-2'}`} />
+                          <span className={`w-1.5 rounded-full transition-all ${weekStats.pendingTasks >= 1 ? 'bg-white h-4' : 'bg-white/20 h-2'}`} />
+                          <span className={`w-1.5 rounded-full transition-all ${weekStats.pendingTasks >= 2 ? 'bg-zinc-200 h-6' : 'bg-white/20 h-2'}`} />
+                          <span className={`w-1.5 rounded-full transition-all ${weekStats.pendingTasks >= 3 ? 'bg-zinc-300 h-7' : 'bg-white/20 h-2'}`} />
+                          <span className={`w-1.5 rounded-full transition-all ${weekStats.pendingTasks === 0 ? 'bg-emerald-400 h-5' : 'bg-white/20 h-2'}`} />
                         </div>
                       </div>
 
@@ -2281,8 +2281,8 @@ export default function App() {
                               ? 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30'
                               : 'bg-emerald-50 text-emerald-800 border-emerald-300'
                             : isDark
-                              ? 'bg-amber-500/15 text-amber-300 border-amber-500/30'
-                              : 'bg-amber-50 text-amber-800 border-amber-300'
+                              ? 'bg-white/10 text-zinc-200 border-white/20'
+                              : 'bg-zinc-100 text-zinc-800 border-zinc-200'
                         }`}>
                           {parseFloat(overallUeesAvg) >= 6.0 ? 'Aprobado' : 'En Curso'}
                         </span>
@@ -2439,8 +2439,8 @@ export default function App() {
                       ? 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30 font-bold'
                       : 'bg-emerald-50 text-emerald-800 border-emerald-300 font-bold'
                     : isDark
-                    ? 'bg-amber-500/15 text-amber-300 border-amber-500/30 font-bold'
-                    : 'bg-amber-50 text-amber-800 border-amber-300 font-bold';
+                    ? 'bg-white/[0.06] text-zinc-300 border-white/10 font-bold'
+                    : 'bg-zinc-100 text-zinc-700 border-zinc-200 font-bold';
 
                   return (
                     <div
@@ -2463,7 +2463,7 @@ export default function App() {
                             className="flex items-center gap-2 min-w-0 flex-1 cursor-pointer group/title"
                             title={`Enfocar materia ${subject.name}`}
                           >
-                            <span className={`w-2 h-2 rounded-full shrink-0 ${isSubjectAllDone ? 'bg-emerald-500' : 'bg-amber-500'}`} />
+                            <span className={`w-2 h-2 rounded-full shrink-0 ${isSubjectAllDone ? 'bg-emerald-500' : 'bg-zinc-400'}`} />
                             <h3 className={`font-black text-sm tracking-wide uppercase truncate transition-colors ${
                               isDark ? 'text-white group-hover/title:text-zinc-300' : 'text-zinc-900 group-hover/title:text-zinc-600'
                             }`}>
@@ -2486,17 +2486,21 @@ export default function App() {
                         </span>
                       </div>
 
-                      {/* Mini-Panel de Calificación Oficial UEES (Sin sobreposición) */}
+                      {/* Mini-Panel de Calificación Oficial UEES (Sin sobreposición, Estilo Platino / Titanio) */}
                       <div className={`mb-3.5 p-2.5 rounded-2xl border transition-all ${
                         isDark ? 'bg-[#18191e] border-white/5' : 'bg-zinc-50 border-zinc-200/60'
                       }`}>
                         <div className="flex items-center justify-between gap-2">
                           <div className="flex items-center gap-1.5 min-w-0">
-                            <div className={`w-2 h-2 rounded-full shrink-0 ${ueesCalc.isPassed ? 'bg-emerald-500' : 'bg-amber-500 animate-pulse'}`} />
+                            <div className={`w-2 h-2 rounded-full shrink-0 ${ueesCalc.isPassed ? 'bg-emerald-500' : 'bg-zinc-400'}`} />
                             <span className={`text-[10px] font-mono font-bold uppercase tracking-wide ${isDark ? 'text-zinc-400' : 'text-zinc-500'}`}>
                               Prom. UEES:
                             </span>
-                            <span className={`text-xs font-mono font-black ${ueesCalc.isPassed ? 'text-emerald-500' : 'text-amber-500'}`}>
+                            <span className={`text-xs font-mono font-black ${
+                              ueesCalc.isPassed 
+                                ? 'text-emerald-400' 
+                                : isDark ? 'text-zinc-100' : 'text-zinc-900'
+                            }`}>
                               {ueesCalc.ueesAverageFormatted}
                             </span>
                           </div>
@@ -2519,13 +2523,17 @@ export default function App() {
                           </button>
                         </div>
 
-                        {/* Meta R3 en fila propia independiente: evita 100% cualquier sobreposición */}
+                        {/* Meta R3 en fila propia independiente: Estilo Platino / Titanio Minimalista */}
                         {ueesCalc.neededInR3 && !ueesCalc.isPassed && (
                           <div className={`mt-2 pt-1.5 border-t flex items-center justify-between text-[10px] font-mono ${
-                            isDark ? 'border-white/5 text-amber-300' : 'border-zinc-200/80 text-amber-800'
+                            isDark ? 'border-white/5 text-zinc-400' : 'border-zinc-200/80 text-zinc-600'
                           }`}>
                             <span className="font-semibold text-[9px] uppercase tracking-wider">Meta en R3:</span>
-                            <span className="font-black px-1.5 py-0.5 rounded-md bg-amber-500/10 border border-amber-500/20 text-[10px]">
+                            <span className={`font-black px-2 py-0.5 rounded-md border text-[10px] ${
+                              isDark 
+                                ? 'bg-white/[0.06] border-white/15 text-white' 
+                                : 'bg-zinc-100 border-zinc-200 text-zinc-900'
+                            }`}>
                               {ueesCalc.neededInR3} pts
                             </span>
                           </div>
@@ -2578,13 +2586,11 @@ export default function App() {
                                     {isForo ? 'Módulo semanal' : isLab ? 'Práctica técnica' : 'Evaluación'}
                                   </span>
                                   {task.note && (
-                                    <div className={`mt-1 text-[10px] px-2 py-0.5 rounded-md inline-flex items-center gap-1.5 border max-w-full ${
-                                      isDark 
-                                        ? 'bg-amber-500/10 text-amber-300 border-amber-500/20' 
-                                        : 'bg-amber-50 text-amber-800 border-amber-200'
+                                    <div className={`mt-1 text-[10px] px-2 py-0.5 rounded-md inline-flex items-center gap-1.5 border max-w-full font-mono ${
+                                      isDark ? 'bg-white/[0.05] text-zinc-200 border-white/10' : 'bg-zinc-100 text-zinc-800 border-zinc-200/90'
                                     }`}>
-                                      <span className="text-[10px] shrink-0">📝</span>
-                                      <span className="truncate font-mono">{task.note}</span>
+                                      <span className="text-[10px] shrink-0 text-zinc-400">📝</span>
+                                      <span className="truncate">{task.note}</span>
                                     </div>
                                   )}
                                   {deadlineInfo && (
@@ -2592,8 +2598,8 @@ export default function App() {
                                       deadlineInfo.isPast
                                         ? 'text-rose-400 font-semibold'
                                         : deadlineInfo.isUrgent
-                                        ? 'text-amber-400 font-semibold'
-                                        : isDark ? 'text-zinc-300' : 'text-zinc-600'
+                                        ? (isDark ? 'text-zinc-200 font-semibold' : 'text-zinc-800 font-semibold')
+                                        : isDark ? 'text-zinc-400' : 'text-zinc-500'
                                     }`}>
                                       {deadlineInfo.text}
                                     </span>
@@ -2602,7 +2608,7 @@ export default function App() {
                               </div>
 
                               <div className="flex items-center gap-2 shrink-0 ml-2">
-                                {/* Botón Lápiz para Añadir/Editar Nota de la Tarea (Siempre accesible, sin sobreposición) */}
+                                {/* Botón Lápiz / Nota de Tarea */}
                                 <button
                                   onClick={(e) => {
                                     e.stopPropagation();
@@ -2617,10 +2623,10 @@ export default function App() {
                                   className={`w-7 h-7 rounded-xl border flex items-center justify-center transition-all cursor-pointer ${
                                     task.note
                                       ? isDark
-                                        ? 'bg-amber-500/20 border-amber-500/40 text-amber-300 hover:bg-amber-500/30'
-                                        : 'bg-amber-100 border-amber-300 text-amber-800 hover:bg-amber-200'
+                                        ? 'bg-white/15 border-white/30 text-white shadow-xs'
+                                        : 'bg-zinc-900 border-zinc-900 text-white shadow-xs'
                                       : isDark
-                                      ? 'bg-white/5 hover:bg-white/10 border-white/10 text-zinc-400 hover:text-white'
+                                      ? 'bg-white/[0.04] hover:bg-white/10 border-white/10 text-zinc-400 hover:text-white'
                                       : 'bg-white hover:bg-zinc-100 border-zinc-200 text-zinc-600 hover:text-black shadow-2xs'
                                   }`}
                                   title={task.note ? 'Editar nota de la tarea' : 'Añadir nota o fecha límite a esta tarea'}

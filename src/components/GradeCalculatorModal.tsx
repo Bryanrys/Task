@@ -362,7 +362,9 @@ export const GradeCalculatorModal: React.FC<GradeCalculatorModalProps> = ({
                                 isDark ? 'bg-white/5 border-white/10 text-zinc-300' : 'bg-zinc-50 border-zinc-200 text-zinc-700'
                               }`}>
                                 🎯 Necesitas en R3 (40%):{' '}
-                                <strong className="font-extrabold text-amber-500">{sCalc.neededInR3}</strong>
+                                <strong className={`font-black px-1.5 py-0.5 rounded ${
+                                  isDark ? 'bg-white/10 text-white' : 'bg-zinc-900 text-white'
+                                }`}>{sCalc.neededInR3}</strong>
                               </div>
                             )}
                           </div>

@@ -78,12 +78,12 @@ export const UnifiedDashboardHeader: React.FC<UnifiedDashboardHeaderProps> = ({
             onClick={onOpenStartDate}
             title="Haz clic para cambiar la fecha de inicio"
             className={`flex items-center gap-1.5 font-bold transition-colors cursor-pointer shrink-0 ${
-              isDark ? 'text-stone-300 hover:text-yellow-400' : 'text-stone-600 hover:text-amber-600'
+              isDark ? 'text-zinc-300 hover:text-white' : 'text-zinc-600 hover:text-zinc-950'
             }`}
           >
-            <Calendar className="w-3.5 h-3.5 text-yellow-500 shrink-0" />
+            <Calendar className={`w-3.5 h-3.5 shrink-0 ${isDark ? 'text-zinc-400' : 'text-zinc-500'}`} />
             <span className="uppercase">INICIO: {startDate}</span>
-            <span className="text-[9px] text-yellow-500 underline decoration-dashed">
+            <span className={`text-[9px] underline decoration-dashed ${isDark ? 'text-zinc-400' : 'text-zinc-500'}`}>
               (editar)
             </span>
           </button>
@@ -174,14 +174,14 @@ export const UnifiedDashboardHeader: React.FC<UnifiedDashboardHeaderProps> = ({
             title="Copiar clave de acceso (oo)"
             className={`flex items-center gap-1 px-2 py-1 rounded-xl border text-[10px] font-mono font-bold transition-all cursor-pointer active:scale-95 ${
               isDark
-                ? 'bg-white/[0.04] border-white/10 text-stone-300 hover:border-yellow-400/50 hover:text-yellow-300'
-                : 'bg-stone-50 border-stone-200 text-stone-700 hover:border-amber-400 hover:text-amber-800'
+                ? 'bg-white/[0.04] border-white/10 text-zinc-300 hover:border-white/30 hover:text-white'
+                : 'bg-zinc-50 border-zinc-200 text-zinc-700 hover:border-zinc-400 hover:text-zinc-950'
             }`}
           >
             {copied ? (
               <Check className="w-3 h-3 text-emerald-400" />
             ) : (
-              <LinkIcon className="w-3 h-3 text-yellow-400" />
+              <LinkIcon className={`w-3 h-3 ${isDark ? 'text-zinc-400' : 'text-zinc-500'}`} />
             )}
             <span>{accessCode}</span>
           </button>
@@ -250,11 +250,11 @@ export const UnifiedDashboardHeader: React.FC<UnifiedDashboardHeaderProps> = ({
                 onClick={onImportJSONClick}
                 className={`p-2 rounded-xl border flex items-center justify-center gap-1.5 text-xs font-bold transition-all cursor-pointer active:scale-95 ${
                   isDark
-                    ? 'bg-amber-500/10 border-amber-500/25 text-amber-300 hover:bg-amber-500/20'
-                    : 'bg-amber-50 border-amber-200 text-amber-800 hover:bg-amber-100'
+                    ? 'bg-white/[0.06] border-white/15 text-zinc-200 hover:bg-white/10'
+                    : 'bg-zinc-100 border-zinc-200 text-zinc-800 hover:bg-zinc-200'
                 }`}
               >
-                <FileUp className="w-3.5 h-3.5 text-amber-400" />
+                <FileUp className={`w-3.5 h-3.5 ${isDark ? 'text-zinc-300' : 'text-zinc-700'}`} />
                 <span className="text-[10px] font-mono">Cargar .JSON</span>
               </button>
             </div>

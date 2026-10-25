@@ -329,9 +329,9 @@ export const SidebarNav: React.FC<SidebarNavProps> = ({
               {themeMode === 'system' ? (
                 <Laptop className="w-3.5 h-3.5 text-emerald-500" />
               ) : isDark ? (
-                <Moon className="w-3.5 h-3.5 text-blue-400" />
+                <Moon className="w-3.5 h-3.5 text-zinc-300" />
               ) : (
-                <Sun className="w-3.5 h-3.5 text-amber-500" />
+                <Sun className="w-3.5 h-3.5 text-zinc-700" />
               )}
               <span>
                 {themeMode === 'system'

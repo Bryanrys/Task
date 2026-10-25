@@ -167,16 +167,16 @@ export const NotificationSettingsModal: React.FC<NotificationSettingsModalProps>
 
         {/* Permission status card */}
         {permission !== 'granted' && (
-          <div className="p-3 rounded-2xl bg-amber-500/10 border border-amber-500/20 text-amber-300 text-xs mb-4 flex items-start gap-2.5 font-mono">
-            <AlertCircle className="w-4 h-4 shrink-0 mt-0.5 text-amber-400" />
+          <div className="p-3 rounded-2xl bg-white/[0.06] border border-white/15 text-zinc-200 text-xs mb-4 flex items-start gap-2.5 font-mono">
+            <AlertCircle className="w-4 h-4 shrink-0 mt-0.5 text-zinc-300" />
             <div className="flex-1">
-              <span className="font-bold block">Permisos requeridos</span>
-              <span className="text-[11px] text-amber-200/80 leading-tight block mb-2">
+              <span className="font-bold block text-white">Permisos requeridos</span>
+              <span className="text-[11px] text-zinc-400 leading-tight block mb-2">
                 Permite notificaciones para que suenen en segundo plano y pantalla bloqueada.
               </span>
               <button
                 onClick={handleRequestPermission}
-                className="px-3 py-1.5 bg-amber-400 hover:bg-amber-300 text-black font-extrabold text-[11px] rounded-xl transition-all shadow-sm cursor-pointer"
+                className="px-3 py-1.5 bg-white hover:bg-zinc-200 text-black font-extrabold text-[11px] rounded-xl transition-all shadow-xs cursor-pointer"
               >
                 Habilitar permisos ahora
               </button>

@@ -132,8 +132,8 @@ export const DrawerDashboards: React.FC<DrawerDashboardsProps> = ({
                   value={activeDashboard.id}
                   onChange={(e) => onSelectDashboard(e.target.value)}
                   className={`w-full font-bold text-sm rounded-xl px-3.5 py-2.5 outline-none cursor-pointer border transition-colors ${isDark
-                      ? 'bg-[#1c1c22] border-[#2e2e38] text-yellow-400 focus:border-yellow-400'
-                      : 'bg-stone-50 border-stone-300 text-stone-900 focus:border-amber-500'
+                      ? 'bg-[#1c1c22] border-[#2e2e38] text-zinc-100 focus:border-white/30'
+                      : 'bg-stone-50 border-stone-300 text-stone-900 focus:border-zinc-500'
                     }`}
                 >
                   {dashboards.map((d) => (
@@ -147,11 +147,11 @@ export const DrawerDashboards: React.FC<DrawerDashboardsProps> = ({
                   <button
                     onClick={onNewDashboard}
                     className={`flex-1 py-2 px-3 border text-xs font-bold rounded-xl transition-all flex items-center justify-center gap-1.5 cursor-pointer ${isDark
-                        ? 'border-[#33333f] hover:border-yellow-400/50 hover:bg-yellow-400/5 text-slate-300'
-                        : 'border-stone-300 hover:border-amber-500 hover:bg-amber-50 text-stone-700'
+                        ? 'border-[#33333f] hover:border-white/30 hover:bg-white/5 text-zinc-200'
+                        : 'border-stone-300 hover:border-zinc-400 hover:bg-zinc-100 text-stone-700'
                       }`}
                   >
-                    <Plus className="w-3.5 h-3.5 text-yellow-500" />
+                    <Plus className={`w-3.5 h-3.5 ${isDark ? 'text-zinc-300' : 'text-zinc-600'}`} />
                     <span>Nuevo Dashboard</span>
                   </button>
 
@@ -230,8 +230,8 @@ export const DrawerDashboards: React.FC<DrawerDashboardsProps> = ({
                               isActive
                                 ? 'bg-white/20 text-white border-white/30'
                                 : isDark
-                                ? 'bg-amber-500/15 text-amber-300 border-amber-500/30'
-                                : 'bg-amber-50 text-amber-800 border-amber-200'
+                                ? 'bg-white/10 text-zinc-200 border-white/20'
+                                : 'bg-zinc-100 text-zinc-800 border-zinc-200'
                             }`}>
                               🎯 PARCIAL
                             </span>
@@ -307,7 +307,7 @@ export const DrawerDashboards: React.FC<DrawerDashboardsProps> = ({
                   : 'bg-stone-900 hover:bg-stone-800 border-stone-900 text-white shadow-sm'
                 }`}
             >
-              <Plus className="w-4 h-4 text-yellow-400" />
+              <Plus className="w-4 h-4 text-white" />
               <span>Agregar Semana</span>
             </button>
 

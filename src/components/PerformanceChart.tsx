@@ -60,12 +60,12 @@ export const PerformanceChart: React.FC<PerformanceChartProps> = ({
         <div className="flex items-center gap-1.5">
           <span
             className={`inline-block w-2 h-2 rounded-full animate-ping ${
-              isDark ? 'bg-yellow-400' : 'bg-amber-500'
+              isDark ? 'bg-zinc-200' : 'bg-zinc-800'
             }`}
           />
           <span
             className={`text-[10px] font-semibold ${
-              isDark ? 'text-yellow-400' : 'text-amber-600'
+              isDark ? 'text-zinc-200' : 'text-zinc-800'
             }`}
           >
             Semana Activa
@@ -98,13 +98,13 @@ export const PerformanceChart: React.FC<PerformanceChartProps> = ({
           <motion.path
             d={pathD}
             fill="none"
-            stroke={isDark ? '#c084fc' : '#7c3aed'}
+            stroke={isDark ? '#e4e4e7' : '#27272a'}
             strokeWidth="2.5"
             strokeLinecap="round"
             className={
               isDark
-                ? 'filter drop-shadow-[0_0_6px_rgba(192,132,252,0.6)]'
-                : 'filter drop-shadow-[0_0_4px_rgba(124,58,237,0.3)]'
+                ? 'filter drop-shadow-[0_0_6px_rgba(255,255,255,0.2)]'
+                : 'filter drop-shadow-[0_0_4px_rgba(0,0,0,0.1)]'
             }
             initial={{ pathLength: 0 }}
             animate={{ pathLength: 1 }}
@@ -121,11 +121,11 @@ export const PerformanceChart: React.FC<PerformanceChartProps> = ({
               fill={
                 p.week === activeWeekNumber
                   ? isDark
-                    ? '#facc15'
-                    : '#ea580c'
+                    ? '#ffffff'
+                    : '#18181b'
                   : isDark
-                  ? '#c084fc'
-                  : '#7c3aed'
+                  ? '#71717a'
+                  : '#a1a1aa'
               }
               stroke={
                 p.week === activeWeekNumber

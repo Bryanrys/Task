@@ -59,4 +59,47 @@ describe('Pruebas Unitarias - Paleta Monocromática (Blanco y Negro)', () => {
     assert.equal(content.includes('cyberpunk'), false, 'App.tsx contiene referencias a tema cyberpunk');
     assert.ok(content.includes('zinc-') || content.includes('neutral-'), 'App.tsx debe usar escala de grises zinc/neutral');
   });
+
+  it('no debe contener clases de colores ámbar o amarillo chillón en el código fuente de componentes', () => {
+    const files = getAllFiles(srcDir, /\.(tsx|ts)$/);
+    const yellowRegex = /\b(amber|yellow)-[0-9]{2,3}\b/g;
+    const forbiddenYellows: { file: string; line: number; match: string }[] = [];
+
+    for (const file of files) {
+      const content = fs.readFileSync(file, 'utf-8');
+      const lines = content.split('\n');
+      lines.forEach((line, index) => {
+        const matches = line.match(yellowRegex);
+        if (matches) {
+          forbiddenYellows.push({
+            file: path.relative(process.cwd(), file),
+            line: index + 1,
+            match: matches.join(', '),
+          });
+        }
+      });
+    }
+
+    assert.equal(
+      forbiddenYellows.length,
+      0,
+      `Se encontraron clases amarillas/ámbar chillón no minimalistas en:\n${JSON.stringify(forbiddenYellows, null, 2)}`
+    );
+  });
+
+  it('el botón del lápiz de notas y las insignias de notas deben usar la paleta Platino / Titanio', () => {
+    const appPath = path.join(srcDir, 'App.tsx');
+    const content = fs.readFileSync(appPath, 'utf-8');
+
+    // Comprobar que el botón del lápiz usa iluminación de plata/platino cuando tiene nota
+    assert.ok(
+      content.includes('bg-white/15 border-white/30 text-white shadow-xs'),
+      'El botón de nota debe iluminarse en platino/plata cuando tiene nota activa'
+    );
+    // Comprobar que el badge de nota usa fondo humo/carbón con borde fino
+    assert.ok(
+      content.includes('bg-white/[0.05] text-zinc-200 border-white/10'),
+      'La nota de la tarea debe usar el diseño humo/carbón monocromático'
+    );
+  });
 });

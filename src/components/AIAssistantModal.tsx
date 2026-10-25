@@ -296,7 +296,7 @@ export const AIAssistantModal: React.FC<AIAssistantModalProps> = ({
               className={`p-2 rounded-xl transition-all cursor-pointer ${
                 hasApiKey
                   ? isDark ? 'text-zinc-400 hover:text-white bg-white/5' : 'text-zinc-500 hover:text-zinc-900 bg-zinc-100'
-                  : 'text-amber-400 bg-amber-500/15 border border-amber-500/30'
+                  : isDark ? 'text-zinc-100 bg-white/10 border border-white/20' : 'text-zinc-900 bg-zinc-200 border border-zinc-300'
               }`}
             >
               <Key className="w-4 h-4" />
@@ -390,7 +390,7 @@ export const AIAssistantModal: React.FC<AIAssistantModalProps> = ({
                     ? 'bg-emerald-500/15 border border-emerald-500/30 text-emerald-300'
                     : keyValidationFeedback.valid === false
                     ? 'bg-rose-500/15 border border-rose-500/30 text-rose-300'
-                    : 'bg-amber-500/15 border border-amber-500/30 text-amber-200'
+                    : isDark ? 'bg-white/10 border border-white/20 text-zinc-200' : 'bg-zinc-100 border border-zinc-300 text-zinc-800'
                 }`}
               >
                 <span>{keyValidationFeedback.message}</span>

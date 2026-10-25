@@ -2,6 +2,10 @@
 
 :root {
   color-scheme: dark light;
+  --sat: env(safe-area-inset-top, 0px);
+  --sab: env(safe-area-inset-bottom, 0px);
+  --sal: env(safe-area-inset-left, 0px);
+  --sar: env(safe-area-inset-right, 0px);
   --color-zinc-950: #09090b;
   --color-zinc-900: #18181b;
   --color-zinc-800: #27272a;
@@ -9,6 +13,11 @@
   --color-zinc-200: #e4e4e7;
   --color-zinc-300: #d4d4d8;
   --color-zinc-400: #a1a1aa;
+}
+
+html, body {
+  background-color: transparent;
+  min-height: 100%;
 }
 
 /* Fallback hexadecimal universal para navegadores móviles y Android WebViews */

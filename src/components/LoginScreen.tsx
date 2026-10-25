@@ -39,7 +39,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLoginSuccess }) => {
   };
 
   return (
-    <div className="fixed inset-0 z-[9999] bg-[#09090b] flex items-center justify-center p-4 overflow-y-auto min-h-screen select-none">
+    <div className="fixed inset-0 z-[9999] bg-[#09090b] flex items-center justify-center p-4 pt-[max(env(safe-area-inset-top),1rem)] pb-[max(env(safe-area-inset-bottom),1rem)] overflow-y-auto min-h-screen select-none">
       {/* Tarjeta de Vidrio Minimalista Negro y Blanco */}
       <motion.div
         initial={{ opacity: 0, scale: 0.95, y: 15 }}

@@ -1885,7 +1885,7 @@ export default function App() {
                 animate={{ x: 0 }}
                 exit={{ x: -280 }}
                 transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-                className={`w-72 h-full ${isDark ? 'bg-[#0c0d10] border-r border-white/10' : 'bg-white border-r border-zinc-200'} flex flex-col`}
+                className={`w-72 h-full ${isDark ? 'bg-[#0c0d10] border-r border-white/10' : 'bg-white border-r border-zinc-200'} flex flex-col pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)]`}
                 onClick={(e) => e.stopPropagation()}
               >
                 <div className="flex-1 overflow-y-auto">
@@ -1939,8 +1939,8 @@ export default function App() {
           )}
         </AnimatePresence>
 
-        {/* Main Content Area (Right side, scrollable) */}
-        <main className="flex-1 flex flex-col min-w-0 overflow-y-auto min-h-screen px-4 md:px-8 py-5">
+        {/* Main Content Area (Right side, scrollable) con soporte Edge-to-Edge puro */}
+        <main className="flex-1 flex flex-col min-w-0 overflow-y-auto min-h-screen px-4 md:px-8 py-5 pt-[max(env(safe-area-inset-top),1.25rem)] pb-[max(env(safe-area-inset-bottom),1.25rem)]">
           {/* Top Header Bar matching Neo-Fintech / Carbal Minimalist Style */}
           <header className={`flex flex-wrap items-center justify-between gap-3 mb-6 pb-4 border-b transition-colors ${
             isDark ? 'border-white/5' : 'border-zinc-200/80'

@@ -229,4 +229,24 @@ describe('Pruebas Unitarias Estrictas - Contraste y Legibilidad de Botones (Modo
       assert.ok(ratio >= 4.5, `Ratio obtenido: ${ratio.toFixed(2)}:1 (requerido >= 4.5:1)`);
     });
   });
+
+  // 7. Verificación de visualización Edge-to-Edge (Barra de estado transparente y cutout sin muesca cortada)
+  it('la app debe configurar Edge-to-Edge y viewport-fit=cover para extender el fondo detrás de la muesca', () => {
+    // 1. index.html debe tener viewport-fit=cover
+    const indexPath = path.resolve(process.cwd(), 'index.html');
+    const indexContent = fs.readFileSync(indexPath, 'utf-8');
+    assert.ok(indexContent.includes('viewport-fit=cover'), 'index.html debe incluir viewport-fit=cover');
+
+    // 2. styles.xml debe declarar transparencia y shortEdges para cutout
+    const stylesPath = path.resolve(process.cwd(), 'android/app/src/main/res/values/styles.xml');
+    const stylesContent = fs.readFileSync(stylesPath, 'utf-8');
+    assert.ok(stylesContent.includes('android:windowLayoutInDisplayCutoutMode'), 'styles.xml debe configurar windowLayoutInDisplayCutoutMode');
+    assert.ok(stylesContent.includes('@android:color/transparent'), 'styles.xml debe tener barra de estado transparente');
+
+    // 3. MainActivity.java debe activar setDecorFitsSystemWindows(window, false)
+    const mainActivityPath = path.resolve(process.cwd(), 'android/app/src/main/java/com/uees/dashboard/MainActivity.java');
+    const javaContent = fs.readFileSync(mainActivityPath, 'utf-8');
+    assert.ok(javaContent.includes('setDecorFitsSystemWindows'), 'MainActivity.java debe habilitar setDecorFitsSystemWindows(window, false)');
+    assert.ok(javaContent.includes('LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES'), 'MainActivity.java debe activar shortEdges en runtime');
+  });
 });

@@ -314,17 +314,23 @@ export const ShareAppModal: React.FC<ShareAppModalProps> = ({
           </button>
 
           {/* Download APK from GitHub */}
-          <button
-            onClick={() => window.open('https://github.com/Bryanrys/Task/raw/main/apk/app-debug.apk', '_blank')}
-            className={`w-full py-2.5 px-3 rounded-2xl border font-bold text-xs flex items-center justify-center gap-2 transition-all cursor-pointer active:scale-98 ${
-              isDark
-                ? 'bg-white/10 border-white/15 text-white hover:bg-white/15'
-                : 'bg-zinc-100 border-zinc-200 text-zinc-800 hover:bg-zinc-200'
-            }`}
-          >
-            <Smartphone className="w-4 h-4 text-zinc-400" />
-            <span>Descargar APK (GitHub)</span>
-          </button>
+          <div className="flex flex-col gap-1 w-full">
+            <button
+              onClick={() => window.open('https://github.com/Bryanrys/Task/raw/main/apk/app-debug.apk', '_blank')}
+              className={`w-full py-2.5 px-3 rounded-2xl border font-bold text-xs flex items-center justify-center gap-2 transition-all cursor-pointer active:scale-98 ${
+                isDark
+                  ? 'bg-white/10 border-white/15 text-white hover:bg-white/15'
+                  : 'bg-zinc-100 border-zinc-200 text-zinc-800 hover:bg-zinc-200'
+              }`}
+            >
+              <Smartphone className="w-4 h-4 text-zinc-400" />
+              <span>Descargar APK (GitHub)</span>
+            </button>
+            <div className="flex items-center justify-center gap-1.5 text-[10px] font-mono text-zinc-400">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+              <span>Actualizado: 24 Oct 2026 • 09:50 PM (GMT-6)</span>
+            </div>
+          </div>
 
           {/* WhatsApp Button */}
           <button

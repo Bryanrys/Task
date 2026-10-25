@@ -46,15 +46,17 @@ cd android
 ./gradlew assembleDebug --no-daemon
 cd "$PROJECT_ROOT"
 
-# 5. Copiar APK a la carpeta pública apk/
-echo "📁 4/4 Actualizando apk/app-debug.apk..."
+# 5. Copiar APK a la carpeta pública apk/ y public/
+echo "📁 4/4 Actualizando apk/app-debug.apk y public/app-debug.apk..."
 mkdir -p apk public
 cp android/app/build/outputs/apk/debug/app-debug.apk apk/app-debug.apk
 cp android/app/build/outputs/apk/debug/app-debug.apk public/app-debug.apk
 
 APK_SIZE=$(du -h apk/app-debug.apk | cut -f1)
+FECHA_HORA=$(date "+%d de %B de %Y — %I:%M %p")
 
 echo "=========================================================="
 echo "🎉 ¡Compilación completada exitosamente!"
 echo "📍 APK generado en: apk/app-debug.apk ($APK_SIZE)"
+echo "🕒 Fecha y hora de compilación: $FECHA_HORA"
 echo "=========================================================="

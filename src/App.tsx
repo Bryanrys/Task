@@ -2486,41 +2486,50 @@ export default function App() {
                         </span>
                       </div>
 
-                      {/* Mini-Panel de Calificación Oficial UEES */}
-                      <div className={`flex items-center justify-between mb-3.5 px-3 py-1.5 rounded-2xl border ${
+                      {/* Mini-Panel de Calificación Oficial UEES (Sin sobreposición) */}
+                      <div className={`mb-3.5 p-2.5 rounded-2xl border transition-all ${
                         isDark ? 'bg-[#18191e] border-white/5' : 'bg-zinc-50 border-zinc-200/60'
                       }`}>
-                        <div className="flex items-center gap-2 min-w-0">
-                          <div className={`w-2 h-2 rounded-full shrink-0 ${ueesCalc.isPassed ? 'bg-emerald-500' : 'bg-amber-500 animate-pulse'}`} />
-                          <span className={`text-[10px] font-mono font-bold uppercase ${isDark ? 'text-zinc-400' : 'text-zinc-500'}`}>
-                            Prom. UEES:
-                          </span>
-                          <span className={`text-xs font-mono font-black ${ueesCalc.isPassed ? 'text-emerald-500' : 'text-amber-500'}`}>
-                            {ueesCalc.ueesAverageFormatted}
-                          </span>
-                          {ueesCalc.neededInR3 && !ueesCalc.isPassed && (
-                            <span className={`text-[9px] font-mono truncate hidden sm:inline ${isDark ? 'text-amber-300' : 'text-amber-700'}`}>
-                              • Meta R3: {ueesCalc.neededInR3}
+                        <div className="flex items-center justify-between gap-2">
+                          <div className="flex items-center gap-1.5 min-w-0">
+                            <div className={`w-2 h-2 rounded-full shrink-0 ${ueesCalc.isPassed ? 'bg-emerald-500' : 'bg-amber-500 animate-pulse'}`} />
+                            <span className={`text-[10px] font-mono font-bold uppercase tracking-wide ${isDark ? 'text-zinc-400' : 'text-zinc-500'}`}>
+                              Prom. UEES:
                             </span>
-                          )}
+                            <span className={`text-xs font-mono font-black ${ueesCalc.isPassed ? 'text-emerald-500' : 'text-amber-500'}`}>
+                              {ueesCalc.ueesAverageFormatted}
+                            </span>
+                          </div>
+
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setSelectedGradeSubjectId(subject.id);
+                              setShowGradesModal(true);
+                            }}
+                            className={`text-[10px] font-mono font-bold px-2.5 py-1 rounded-lg border transition-all cursor-pointer flex items-center gap-1.5 shrink-0 ${
+                              isDark
+                                ? 'bg-white/10 hover:bg-white/15 text-white border-white/20'
+                                : 'bg-white hover:bg-zinc-100 text-black border-zinc-300 shadow-xs'
+                            }`}
+                            title={`Añadir o consultar notas de ${subject.name}`}
+                          >
+                            <Calculator className="w-3 h-3 shrink-0" />
+                            <span>Notas</span>
+                          </button>
                         </div>
 
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setSelectedGradeSubjectId(subject.id);
-                            setShowGradesModal(true);
-                          }}
-                          className={`text-[10px] font-mono font-bold px-2 py-0.5 rounded-lg border transition-all cursor-pointer flex items-center gap-1 shrink-0 ${
-                            isDark
-                              ? 'bg-white/10 hover:bg-white/15 text-white border-white/20'
-                              : 'bg-white hover:bg-zinc-50 text-black border-zinc-300 shadow-xs'
-                          }`}
-                          title={`Ver cálculo oficial UEES y registros de ${subject.name}`}
-                        >
-                          <Calculator className="w-3 h-3" />
-                          <span>Notas</span>
-                        </button>
+                        {/* Meta R3 en fila propia independiente: evita 100% cualquier sobreposición */}
+                        {ueesCalc.neededInR3 && !ueesCalc.isPassed && (
+                          <div className={`mt-2 pt-1.5 border-t flex items-center justify-between text-[10px] font-mono ${
+                            isDark ? 'border-white/5 text-amber-300' : 'border-zinc-200/80 text-amber-800'
+                          }`}>
+                            <span className="font-semibold text-[9px] uppercase tracking-wider">Meta en R3:</span>
+                            <span className="font-black px-1.5 py-0.5 rounded-md bg-amber-500/10 border border-amber-500/20 text-[10px]">
+                              {ueesCalc.neededInR3} pts
+                            </span>
+                          </div>
+                        )}
                       </div>
 
                       {/* Lista de Tareas de la Materia */}
@@ -2594,10 +2603,10 @@ export default function App() {
                                       deadlineISO: task.deadlineISO || '',
                                     });
                                   }}
-                                  className={`p-1 rounded opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer ${
-                                    isDark ? 'text-zinc-500 hover:text-white' : 'text-zinc-400 hover:text-zinc-900'
+                                  className={`p-1 rounded opacity-60 hover:opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity cursor-pointer ${
+                                    isDark ? 'text-zinc-400 hover:text-white' : 'text-zinc-500 hover:text-zinc-900'
                                   }`}
-                                  title="Editar nota o fecha límite"
+                                  title="Añadir o editar nota y fecha límite"
                                 >
                                   <Edit3 className="w-3.5 h-3.5" />
                                 </button>
@@ -2663,6 +2672,22 @@ export default function App() {
                         >
                           <ArrowLeft className="w-3.5 h-3.5" />
                           <span>Volver a todas las materias ({currentDashboard.subjects.length})</span>
+                        </button>
+
+                        <button
+                          onClick={() => {
+                            setSelectedGradeSubjectId(selectedSubjectId);
+                            setShowGradesModal(true);
+                          }}
+                          className={`inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                            isDark
+                              ? 'bg-white !text-black text-black hover:bg-zinc-200 shadow-xs'
+                              : 'bg-black !text-white text-white hover:bg-zinc-800 shadow-xs'
+                          }`}
+                          title="Añadir o editar notas oficiales UEES de esta materia"
+                        >
+                          <Calculator className="w-3.5 h-3.5" />
+                          <span>Añadir / Gestionar Notas UEES</span>
                         </button>
                       </div>
 

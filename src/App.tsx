@@ -16,6 +16,7 @@ import {
   Check,
   Sun,
   Moon,
+  Laptop,
   RotateCcw,
   ChevronRight,
   Sparkles,
@@ -136,12 +137,38 @@ export function calculateDaysElapsed(startDateStr?: string, startDateISO?: strin
   return Math.max(0, diffDays);
 }
 
+export type ThemeMode = 'system' | 'dark' | 'light';
+
 export default function App() {
-  // Theme state
-  const [isDark, setIsDark] = useState<boolean>(() => {
-    const saved = localStorage.getItem(THEME_KEY);
-    return saved !== null ? saved === 'dark' : true;
+  // Theme state con detección automática del sistema (Sistema / Oscuro / Claro)
+  const [themeMode, setThemeMode] = useState<ThemeMode>(() => {
+    try {
+      const saved = localStorage.getItem('uees_theme_mode') as ThemeMode;
+      if (saved === 'system' || saved === 'dark' || saved === 'light') return saved;
+      const legacy = localStorage.getItem(THEME_KEY);
+      if (legacy === 'dark' || legacy === 'light') return legacy as ThemeMode;
+    } catch {}
+    return 'system';
   });
+
+  const [isDark, setIsDark] = useState<boolean>(() => {
+    try {
+      const mode = localStorage.getItem('uees_theme_mode') as ThemeMode;
+      if (mode === 'dark') return true;
+      if (mode === 'light') return false;
+      return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    } catch {
+      return true;
+    }
+  });
+
+  const cycleThemeMode = () => {
+    setThemeMode((prev) => {
+      if (prev === 'system') return 'dark';
+      if (prev === 'dark') return 'light';
+      return 'system';
+    });
+  };
 
   // Authentication & Session state (Login Screen Pro UEES)
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => {
@@ -359,8 +386,8 @@ export default function App() {
       const el = document.getElementById(`subject-${subjectId}`);
       if (el) {
         el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        el.classList.add('ring-2', 'ring-pink-500');
-        setTimeout(() => el.classList.remove('ring-2', 'ring-pink-500'), 2000);
+        el.classList.add('ring-2', 'ring-zinc-400');
+        setTimeout(() => el.classList.remove('ring-2', 'ring-zinc-400'), 2000);
       }
     }, 120);
   };
@@ -474,15 +501,43 @@ export default function App() {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(dashboards));
   }, [dashboards]);
 
-  // Persist theme
+  // Persist theme & sincronización en tiempo real con el sistema operativo
   useEffect(() => {
-    localStorage.setItem(THEME_KEY, isDark ? 'dark' : 'light');
-    if (isDark) {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
-  }, [isDark]);
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    const applyMode = (mode: ThemeMode) => {
+      const activeDark = mode === 'system' ? mediaQuery.matches : mode === 'dark';
+      setIsDark(activeDark);
+      if (activeDark) {
+        document.documentElement.classList.add('dark');
+        document.documentElement.style.colorScheme = 'dark';
+      } else {
+        document.documentElement.classList.remove('dark');
+        document.documentElement.style.colorScheme = 'light';
+      }
+    };
+
+    applyMode(themeMode);
+    try {
+      localStorage.setItem('uees_theme_mode', themeMode);
+      localStorage.setItem(THEME_KEY, themeMode === 'system' ? (mediaQuery.matches ? 'dark' : 'light') : themeMode);
+    } catch {}
+
+    const handleSystemChange = (e: MediaQueryListEvent) => {
+      if (themeMode === 'system') {
+        setIsDark(e.matches);
+        if (e.matches) {
+          document.documentElement.classList.add('dark');
+          document.documentElement.style.colorScheme = 'dark';
+        } else {
+          document.documentElement.classList.remove('dark');
+          document.documentElement.style.colorScheme = 'light';
+        }
+      }
+    };
+
+    mediaQuery.addEventListener('change', handleSystemChange);
+    return () => mediaQuery.removeEventListener('change', handleSystemChange);
+  }, [themeMode]);
 
   // Deslizar el dedo para abrir/cerrar el panel lateral SOLO en la app nativa (APK / Capacitor)
   useEffect(() => {
@@ -1584,107 +1639,7 @@ export default function App() {
     return <div className="p-8 text-center text-white">Cargando dashboard...</div>;
   }
 
-  // 7 Curated Cyber-Luxe Prismatic Themes with Vibrant Chromatic Accents (Incluye UEES Cyber-Cosmic)
-  const THEMES = [
-    {
-      name: 'uees-cyber-cosmic',
-      cardDark: 'card-theme-cosmic',
-      cardLight: 'border-pink-200 shadow-pink-500/10 hover:border-pink-300',
-      titleDark: 'bg-gradient-to-r from-pink-400 via-purple-300 to-cyan-300 bg-clip-text text-transparent drop-shadow-[0_2px_8px_rgba(236,72,153,0.35)]',
-      titleLight: 'text-pink-800 font-extrabold',
-      checkDark: 'bg-gradient-to-r from-pink-500 to-purple-600 border-pink-400 text-white shadow-[0_0_12px_rgba(236,72,153,0.5)]',
-      checkLight: 'bg-pink-600 border-pink-600 text-white shadow-xs',
-      badgeDark: 'bg-pink-500/15 border-pink-500/30 text-pink-300',
-      badgeLight: 'bg-pink-50 border-pink-200 text-pink-700',
-      accentDark: 'text-pink-400',
-      accentLight: 'text-pink-600',
-      icon: '🎓',
-    },
-    {
-      name: 'cyber-violet',
-      cardDark: 'card-theme-violet',
-      cardLight: 'border-violet-200 shadow-violet-500/10 hover:border-violet-300',
-      titleDark: 'bg-gradient-to-r from-violet-300 via-fuchsia-200 to-indigo-300 bg-clip-text text-transparent drop-shadow-[0_2px_8px_rgba(168,85,247,0.35)]',
-      titleLight: 'text-violet-800 font-extrabold',
-      checkDark: 'bg-violet-500 border-violet-400 text-white shadow-[0_0_12px_rgba(168,85,247,0.5)]',
-      checkLight: 'bg-violet-600 border-violet-600 text-white shadow-xs',
-      badgeDark: 'bg-violet-500/15 border-violet-500/30 text-violet-300',
-      badgeLight: 'bg-violet-50 border-violet-200 text-violet-700',
-      accentDark: 'text-violet-400',
-      accentLight: 'text-violet-600',
-      icon: '🔮',
-    },
-    {
-      name: 'glacier-cyan',
-      cardDark: 'card-theme-cyan',
-      cardLight: 'border-cyan-200 shadow-cyan-500/10 hover:border-cyan-300',
-      titleDark: 'bg-gradient-to-r from-cyan-300 via-teal-200 to-sky-300 bg-clip-text text-transparent drop-shadow-[0_2px_8px_rgba(6,182,212,0.35)]',
-      titleLight: 'text-cyan-800 font-extrabold',
-      checkDark: 'bg-cyan-400 border-cyan-300 text-black shadow-[0_0_12px_rgba(6,182,212,0.5)]',
-      checkLight: 'bg-cyan-600 border-cyan-600 text-white shadow-xs',
-      badgeDark: 'bg-cyan-500/15 border-cyan-500/30 text-cyan-300',
-      badgeLight: 'bg-cyan-50 border-cyan-200 text-cyan-700',
-      accentDark: 'text-cyan-400',
-      accentLight: 'text-cyan-600',
-      icon: '❄️',
-    },
-    {
-      name: 'sunset-peach',
-      cardDark: 'card-theme-rose',
-      cardLight: 'border-rose-200 shadow-rose-500/10 hover:border-rose-300',
-      titleDark: 'bg-gradient-to-r from-rose-300 via-pink-200 to-amber-200 bg-clip-text text-transparent drop-shadow-[0_2px_8px_rgba(244,63,94,0.35)]',
-      titleLight: 'text-rose-800 font-extrabold',
-      checkDark: 'bg-rose-500 border-rose-400 text-white shadow-[0_0_12px_rgba(244,63,94,0.5)]',
-      checkLight: 'bg-rose-600 border-rose-600 text-white shadow-xs',
-      badgeDark: 'bg-rose-500/15 border-rose-500/30 text-rose-300',
-      badgeLight: 'bg-rose-50 border-rose-200 text-rose-700',
-      accentDark: 'text-rose-400',
-      accentLight: 'text-rose-600',
-      icon: '🍑',
-    },
-    {
-      name: 'aurora-emerald',
-      cardDark: 'card-theme-emerald',
-      cardLight: 'border-emerald-200 shadow-emerald-500/10 hover:border-emerald-300',
-      titleDark: 'bg-gradient-to-r from-emerald-300 via-teal-200 to-green-300 bg-clip-text text-transparent drop-shadow-[0_2px_8px_rgba(16,185,129,0.35)]',
-      titleLight: 'text-emerald-800 font-extrabold',
-      checkDark: 'bg-emerald-400 border-emerald-300 text-black shadow-[0_0_12px_rgba(16,185,129,0.5)]',
-      checkLight: 'bg-emerald-600 border-emerald-600 text-white shadow-xs',
-      badgeDark: 'bg-emerald-500/15 border-emerald-500/30 text-emerald-300',
-      badgeLight: 'bg-emerald-50 border-emerald-200 text-emerald-700',
-      accentDark: 'text-emerald-400',
-      accentLight: 'text-emerald-600',
-      icon: '🌿',
-    },
-    {
-      name: 'solar-amber',
-      cardDark: 'card-theme-amber',
-      cardLight: 'border-amber-200 shadow-amber-500/10 hover:border-amber-300',
-      titleDark: 'bg-gradient-to-r from-amber-300 via-yellow-200 to-orange-300 bg-clip-text text-transparent drop-shadow-[0_2px_8px_rgba(245,158,11,0.35)]',
-      titleLight: 'text-amber-800 font-extrabold',
-      checkDark: 'bg-amber-400 border-amber-300 text-black shadow-[0_0_12px_rgba(245,158,11,0.5)]',
-      checkLight: 'bg-amber-600 border-amber-600 text-white shadow-xs',
-      badgeDark: 'bg-amber-500/15 border-amber-500/30 text-amber-300',
-      badgeLight: 'bg-amber-50 border-amber-200 text-amber-700',
-      accentDark: 'text-amber-400',
-      accentLight: 'text-amber-600',
-      icon: '⚡',
-    },
-    {
-      name: 'prismatic-fuchsia',
-      cardDark: 'card-theme-fuchsia',
-      cardLight: 'border-fuchsia-200 shadow-fuchsia-500/10 hover:border-fuchsia-300',
-      titleDark: 'bg-gradient-to-r from-fuchsia-300 via-pink-200 to-purple-300 bg-clip-text text-transparent drop-shadow-[0_2px_8px_rgba(217,70,239,0.35)]',
-      titleLight: 'text-fuchsia-800 font-extrabold',
-      checkDark: 'bg-fuchsia-500 border-fuchsia-400 text-white shadow-[0_0_12px_rgba(217,70,239,0.5)]',
-      checkLight: 'bg-fuchsia-600 border-fuchsia-600 text-white shadow-xs',
-      badgeDark: 'bg-fuchsia-500/15 border-fuchsia-500/30 text-fuchsia-300',
-      badgeLight: 'bg-fuchsia-50 border-fuchsia-200 text-fuchsia-700',
-      accentDark: 'text-fuchsia-400',
-      accentLight: 'text-fuchsia-600',
-      icon: '✨',
-    },
-  ];
+
 
   const displayDateRange = formatOrResolveWeekDateRange(
     currentWeek.weekNumber,
@@ -1693,8 +1648,27 @@ export default function App() {
   );
   const semesterProgressPct = Math.min(100, Math.round((daysTranscurridos / (16 * 7)) * 100));
 
+  // Promedio General de todas las materias del ciclo (para Speedometer Gauge)
+  const overallUeesAvg = useMemo(() => {
+    if (!currentDashboard.subjects.length) return '0.0';
+    let sum = 0;
+    let count = 0;
+    for (const s of currentDashboard.subjects) {
+      const data = findGradeDataForSubject(s.id, s.name, gradesTracker);
+      const calc = calculateUeesGrade(data);
+      const avg = parseFloat(calc.ueesAverageFormatted);
+      if (!isNaN(avg)) {
+        sum += avg;
+        count++;
+      }
+    }
+    return count > 0 ? (sum / count).toFixed(1) : '0.0';
+  }, [currentDashboard.subjects, gradesTracker]);
+
   return (
-    <div className="min-h-screen flex flex-col md:flex-row relative bg-[#000000] text-gray-100 font-sans select-none overflow-x-hidden">
+    <div className={`min-h-screen flex flex-col md:flex-row relative transition-colors duration-200 font-sans select-none overflow-x-hidden ${
+      isDark ? 'bg-canvas-dark text-zinc-100' : 'bg-canvas-light text-zinc-900'
+    }`}>
       {/* Toast Alert */}
       <Toast message={toastMessage} onClose={() => setToastMessage(null)} />
 
@@ -1712,28 +1686,40 @@ export default function App() {
               initial={{ scale: 0.95, y: 15 }}
               animate={{ scale: 1, y: 0 }}
               exit={{ scale: 0.95, y: 15 }}
-              className="w-full max-w-md rounded-2xl bg-[#05070e] border border-white/10 p-5 shadow-2xl space-y-4"
+              className={`w-full max-w-md rounded-3xl border p-6 shadow-2xl space-y-4 transition-all ${
+                isDark ? 'bg-[#131417] border-white/10 text-white' : 'bg-white border-zinc-200 text-zinc-900'
+              }`}
               onClick={(e) => e.stopPropagation()}
             >
-              <div className="flex items-center justify-between pb-3 border-b border-white/10">
+              <div className={`flex items-center justify-between pb-3 border-b ${
+                isDark ? 'border-white/10' : 'border-zinc-200/80'
+              }`}>
                 <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-lg bg-pink-500/20 text-pink-400 flex items-center justify-center">
+                  <div className={`w-8 h-8 rounded-xl flex items-center justify-center ${
+                    isDark ? 'bg-white/10 text-zinc-200' : 'bg-zinc-100 text-zinc-800'
+                  }`}>
                     <Edit3 className="w-4 h-4" />
                   </div>
-                  <h3 className="text-sm font-black text-white uppercase tracking-wider">
+                  <h3 className={`text-sm font-bold uppercase tracking-wider ${
+                    isDark ? 'text-white' : 'text-zinc-900'
+                  }`}>
                     Nota Rápida del Ciclo
                   </h3>
                 </div>
                 <button
                   onClick={() => setShowQuickNoteModal(false)}
-                  className="p-1 rounded-lg text-gray-400 hover:text-white cursor-pointer"
+                  className={`p-1 rounded-lg transition-colors cursor-pointer ${
+                    isDark ? 'text-zinc-400 hover:text-white' : 'text-zinc-500 hover:text-zinc-900'
+                  }`}
                 >
                   <X className="w-4 h-4" />
                 </button>
               </div>
 
               <div>
-                <label className="text-xs text-gray-400 block mb-1.5">
+                <label className={`text-xs block mb-1.5 ${
+                  isDark ? 'text-zinc-300' : 'text-zinc-600'
+                }`}>
                   Escribe una nota, apunte importante o recordatorio para tener a la mano:
                 </label>
                 <textarea
@@ -1741,7 +1727,9 @@ export default function App() {
                   onChange={(e) => setQuickNoteDraft(e.target.value)}
                   placeholder="Ej: Recordar entregar el proyecto final el 24 de oct..."
                   rows={4}
-                  className="w-full p-3 rounded-xl bg-black/40 border border-white/10 text-white text-xs focus:border-pink-500 focus:outline-none resize-none leading-relaxed"
+                  className={`w-full p-3.5 rounded-2xl border text-xs focus:outline-none resize-none leading-relaxed transition-all ${
+                    isDark ? 'bg-white/5 border-white/10 text-white focus:border-white/30' : 'bg-zinc-50 border-zinc-200 text-zinc-900 focus:border-zinc-400'
+                  }`}
                   autoFocus
                 />
               </div>
@@ -1749,7 +1737,9 @@ export default function App() {
               <div className="flex justify-end gap-2 pt-2">
                 <button
                   onClick={() => setShowQuickNoteModal(false)}
-                  className="px-4 py-2 rounded-xl text-xs font-semibold text-gray-400 hover:text-white cursor-pointer"
+                  className={`px-4 py-2 rounded-full text-xs font-semibold transition-all cursor-pointer ${
+                    isDark ? 'text-zinc-400 hover:text-white' : 'text-zinc-600 hover:text-zinc-900'
+                  }`}
                 >
                   Cancelar
                 </button>
@@ -1762,7 +1752,9 @@ export default function App() {
                     setShowQuickNoteModal(false);
                     setToastMessage('Nota rápida actualizada con éxito ✨');
                   }}
-                  className="px-4 py-2 rounded-xl text-xs font-bold bg-gradient-to-r from-pink-500 to-purple-600 text-white shadow-md hover:opacity-95 cursor-pointer"
+                  className={`px-4 py-2 rounded-full text-xs font-bold transition-all shadow-xs active:scale-95 cursor-pointer ${
+                    isDark ? 'bg-white text-zinc-950 hover:bg-zinc-200' : 'bg-zinc-900 text-white hover:bg-zinc-800'
+                  }`}
                 >
                   Guardar Nota
                 </button>
@@ -1790,8 +1782,8 @@ export default function App() {
             className="fixed inset-0 z-50 pointer-events-none flex flex-col items-center justify-center bg-black/40 backdrop-blur-xs"
           >
             <div className="relative flex flex-col items-center">
-              <div className="w-12 h-12 rounded-full border-3 border-transparent border-t-yellow-400 border-r-pink-500 animate-spin shadow-lg shadow-yellow-500/20" />
-              <span className="mt-4 text-xs font-bold tracking-widest text-yellow-400 uppercase animate-pulse font-mono">
+              <div className="w-10 h-10 rounded-full border-2 border-white/20 border-t-white animate-spin" />
+              <span className="mt-4 text-xs font-bold tracking-widest text-white uppercase font-mono">
                 SINCRONIZANDO...
               </span>
             </div>
@@ -1826,6 +1818,9 @@ export default function App() {
           onOpenAIAssistant={() => setShowAIAssistant(true)}
           onTriggerCelebration={handleTriggerCelebration}
           onLogout={handleLogout}
+          isDark={isDark}
+          themeMode={themeMode}
+          onCycleTheme={cycleThemeMode}
         />
 
         {/* Mobile Sidebar Overlay Drawer */}
@@ -1843,7 +1838,7 @@ export default function App() {
                 animate={{ x: 0 }}
                 exit={{ x: -280 }}
                 transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-                className="w-72 h-full bg-[#000000] border-r border-white/10 flex flex-col"
+                className={`w-72 h-full ${isDark ? 'bg-[#0c0d10] border-r border-white/10' : 'bg-white border-r border-zinc-200'} flex flex-col`}
                 onClick={(e) => e.stopPropagation()}
               >
                 <div className="flex-1 overflow-y-auto">
@@ -1887,6 +1882,9 @@ export default function App() {
                     onLogout={handleLogout}
                     isMobileDrawer={true}
                     onCloseMobileDrawer={() => setShowMobileSidebar(false)}
+                    isDark={isDark}
+                    themeMode={themeMode}
+                    onCycleTheme={cycleThemeMode}
                   />
                 </div>
               </motion.div>
@@ -1896,62 +1894,174 @@ export default function App() {
 
         {/* Main Content Area (Right side, scrollable) */}
         <main className="flex-1 flex flex-col min-w-0 overflow-y-auto min-h-screen px-4 md:px-8 py-5">
-          {/* Top Header Bar matching Image 2 */}
-          <header className="flex flex-wrap items-center justify-between gap-3 mb-6 pb-4 border-b border-white/5">
-            {/* Left: Mobile Menu + Dashboard Title + Week Badge */}
+          {/* Top Header Bar matching Neo-Fintech / Carbal Minimalist Style */}
+          <header className={`flex flex-wrap items-center justify-between gap-3 mb-6 pb-4 border-b transition-colors ${
+            isDark ? 'border-white/5' : 'border-zinc-200/80'
+          }`}>
+            {/* Left: Mobile Menu + Dashboard Brand */}
             <div className="flex items-center gap-3">
               <button
                 onClick={() => setShowMobileSidebar(true)}
-                className="md:hidden p-2 rounded-xl bg-white/5 border border-white/10 text-gray-300 hover:text-white cursor-pointer"
+                className={`md:hidden p-2 rounded-2xl border transition-all cursor-pointer ${
+                  isDark
+                    ? 'bg-white/5 border-white/10 text-zinc-300 hover:text-white'
+                    : 'bg-white border-zinc-200 text-zinc-700 hover:text-zinc-900 shadow-2xs'
+                }`}
                 title="Abrir menú de navegación"
               >
                 <Menu className="w-5 h-5" />
               </button>
 
-              <div className="flex items-center gap-2">
-                <span className="w-2.5 h-2.5 rounded-full bg-pink-500 animate-pulse shadow-[0_0_8px_rgba(236,72,153,0.8)]" />
-                <h1 className="text-sm sm:text-base md:text-lg font-black tracking-wider uppercase text-white">
-                  + DASHBOARD ACADÉMICO +
-                </h1>
+              <div className="flex items-center gap-2.5">
+                <div className={`w-8 h-8 rounded-xl flex items-center justify-center font-black text-xs shadow-xs ${
+                  isDark ? 'bg-white text-zinc-950' : 'bg-zinc-900 text-white'
+                }`}>
+                  <GraduationCap className="w-4 h-4" />
+                </div>
+                <div>
+                  <h1 className={`text-sm sm:text-base font-extrabold tracking-tight ${
+                    isDark ? 'text-white' : 'text-zinc-900'
+                  }`}>
+                    Dashboard Académico
+                  </h1>
+                  <p className={`text-[10px] font-mono -mt-0.5 ${
+                    isDark ? 'text-zinc-500' : 'text-zinc-400'
+                  }`}>
+                    UEES • Ciclo {currentDashboard.startDate || '2026'}
+                  </p>
+                </div>
               </div>
-
-              {/* Week Pill - Visible en Móvil y Desktop */}
-              {(() => {
-                const displayDateRange = formatOrResolveWeekDateRange(
-                  currentWeek.weekNumber,
-                  currentDashboard?.startDateISO,
-                  currentWeek.dateRange
-                );
-                return (
-                  <button
-                    onClick={() => setShowDrawer(true)}
-                    className="inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-1 rounded-full text-xs font-bold bg-[#0d1222] border border-pink-500/40 text-pink-300 shadow-[0_0_10px_rgba(236,72,153,0.18)] hover:border-pink-500/70 transition-all cursor-pointer"
-                    title="Toca para seleccionar semana"
-                  >
-                    <span className="w-2 h-2 rounded-full bg-pink-400 animate-pulse" />
-                    <span>Semana {currentWeek.weekNumber}</span>
-                    {displayDateRange && (
-                      <span className="opacity-75 font-mono text-[10px] hidden sm:inline">({displayDateRange})</span>
-                    )}
-                  </button>
-                );
-              })()}
             </div>
 
-            {/* Right: Pending Activities Badge + Weeks Selector Button */}
-            <div className="flex items-center gap-2.5">
+            {/* Center: Desktop Pill Navigation (matching reference image tabs) */}
+            <div className="hidden lg:flex items-center">
+              <div className={`p-1 rounded-full border flex items-center gap-1 ${
+                isDark ? 'neo-pill-container-dark' : 'neo-pill-container-light'
+              }`}>
+                <button
+                  onClick={() => {
+                    setCurrentView('dashboard');
+                    setSelectedSubjectId(null);
+                  }}
+                  className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer ${
+                    currentView === 'dashboard' && !selectedSubjectId
+                      ? isDark
+                        ? 'bg-white text-zinc-950 shadow-xs'
+                        : 'bg-zinc-900 text-white shadow-xs'
+                      : isDark
+                      ? 'text-zinc-400 hover:text-white'
+                      : 'text-zinc-600 hover:text-zinc-900'
+                  }`}
+                >
+                  Dashboard
+                </button>
+                <button
+                  onClick={() => setCurrentView('schedule')}
+                  className={`px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all cursor-pointer ${
+                    currentView === 'schedule'
+                      ? isDark
+                        ? 'bg-white text-zinc-950 shadow-xs'
+                        : 'bg-zinc-900 text-white shadow-xs'
+                      : isDark
+                      ? 'text-zinc-400 hover:text-white'
+                      : 'text-zinc-600 hover:text-zinc-900'
+                  }`}
+                >
+                  Horario
+                </button>
+                <button
+                  onClick={() => setCurrentView('cloud')}
+                  className={`px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all cursor-pointer ${
+                    currentView === 'cloud'
+                      ? isDark
+                        ? 'bg-white text-zinc-950 shadow-xs'
+                        : 'bg-zinc-900 text-white shadow-xs'
+                      : isDark
+                      ? 'text-zinc-400 hover:text-white'
+                      : 'text-zinc-600 hover:text-zinc-900'
+                  }`}
+                >
+                  Nube Sync
+                </button>
+                <button
+                  onClick={() => setShowGradesModal(true)}
+                  className={`px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all cursor-pointer ${
+                    isDark ? 'text-zinc-400 hover:text-white' : 'text-zinc-600 hover:text-zinc-900'
+                  }`}
+                >
+                  Calculadora
+                </button>
+                <button
+                  onClick={() => setShowPomodoroModal(true)}
+                  className={`px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all cursor-pointer ${
+                    isDark ? 'text-zinc-400 hover:text-white' : 'text-zinc-600 hover:text-zinc-900'
+                  }`}
+                >
+                  Pomodoro
+                </button>
+                <button
+                  onClick={() => setShowAIAssistant(true)}
+                  className={`px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all cursor-pointer flex items-center gap-1 ${
+                    isDark ? 'text-emerald-400 hover:text-emerald-300' : 'text-emerald-600 hover:text-emerald-700'
+                  }`}
+                >
+                  <Sparkles className="w-3 h-3" />
+                  <span>KALI IA</span>
+                </button>
+              </div>
+            </div>
+
+            {/* Right: Theme Mode Toggle + Notifications + Semanas */}
+            <div className="flex items-center gap-2">
+              {/* Theme Mode Toggle Pill Button with System Auto detection */}
               <button
-                onClick={() => setShowNotificationModal(true)}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-pink-500/15 border border-pink-500/30 text-pink-300 hover:bg-pink-500/25 transition-all cursor-pointer"
-                title="Ver recordatorios de materias pendientes"
+                onClick={cycleThemeMode}
+                className={`px-3 py-1.5 rounded-full border text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer active:scale-95 ${
+                  isDark
+                    ? 'bg-white/5 hover:bg-white/10 border-white/10 text-zinc-200'
+                    : 'bg-white hover:bg-zinc-100 border-zinc-200 text-zinc-700 shadow-2xs'
+                }`}
+                title={`Tema actual: ${themeMode === 'system' ? 'Auto (Sistema)' : themeMode === 'dark' ? 'Modo Oscuro' : 'Modo Claro'}. Clic para cambiar.`}
               >
-                <Bell className="w-3.5 h-3.5 text-pink-400" />
-                <span>{weekStats.pendingTasks} Pendientes</span>
+                {themeMode === 'system' ? (
+                  <Laptop className="w-3.5 h-3.5 text-emerald-500" />
+                ) : isDark ? (
+                  <Moon className="w-3.5 h-3.5 text-blue-400" />
+                ) : (
+                  <Sun className="w-3.5 h-3.5 text-amber-500" />
+                )}
+                <span className="hidden sm:inline">
+                  {themeMode === 'system'
+                    ? `Auto (${isDark ? 'Oscuro' : 'Claro'})`
+                    : themeMode === 'dark'
+                    ? 'Oscuro'
+                    : 'Claro'}
+                </span>
               </button>
 
+              {/* Pending Activities Badge */}
+              <button
+                onClick={() => setShowNotificationModal(true)}
+                className={`px-3 py-1.5 rounded-full border text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer ${
+                  isDark
+                    ? 'bg-white/5 hover:bg-white/10 border-white/10 text-zinc-300'
+                    : 'bg-white hover:bg-zinc-100 border-zinc-200 text-zinc-700 shadow-2xs'
+                }`}
+                title="Ver recordatorios de materias pendientes"
+              >
+                <Bell className="w-3.5 h-3.5 text-zinc-400" />
+                <span>{weekStats.pendingTasks}</span>
+                <span className="hidden sm:inline">Pendientes</span>
+              </button>
+
+              {/* Weeks Selector Button */}
               <button
                 onClick={() => setShowDrawer(true)}
-                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold bg-gradient-to-r from-pink-500 to-purple-600 text-white shadow-[0_0_12px_rgba(236,72,153,0.35)] hover:opacity-95 transition-all cursor-pointer active:scale-95"
+                className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 shadow-xs active:scale-95 ${
+                  isDark
+                    ? 'bg-white text-zinc-950 hover:bg-zinc-200'
+                    : 'bg-zinc-900 text-white hover:bg-zinc-800'
+                }`}
                 title="Seleccionar semana o dashboard"
               >
                 <CalendarDays className="w-3.5 h-3.5" />
@@ -1975,58 +2085,83 @@ export default function App() {
               {/* Contenido Superior General (Semana activa, 4 Métricas, Barra de Acciones y Notas) - Solo visible cuando NO hay una materia enfocada */}
               {!selectedSubjectId && (
                 <>
-                  {/* Banner sutil destacado de Semana de trabajo para APK/Móvil */}
-                  <div className="flex items-center justify-between px-3.5 py-2.5 mb-5 rounded-2xl bg-gradient-to-r from-pink-500/10 via-[#0a0d1a] to-[#05070e] border border-pink-500/25 shadow-sm">
-                    <div className="flex items-center gap-2.5 min-w-0">
-                      <div className="relative flex items-center justify-center shrink-0">
-                        <span className="w-2.5 h-2.5 rounded-full bg-pink-500" />
-                        <span className="w-2.5 h-2.5 rounded-full bg-pink-500 animate-ping absolute" />
-                      </div>
-                      <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5 min-w-0">
-                        <span className="text-xs font-black tracking-wide text-white">
-                          Semana {currentWeek.weekNumber}
+                  {/* Dashboard Subheader & Week Indicator */}
+                  <div className="flex flex-wrap items-center justify-between gap-3 mb-6">
+                    <div>
+                      <h2 className={`text-2xl sm:text-3xl font-extrabold tracking-tight ${
+                        isDark ? 'text-white' : 'text-zinc-900'
+                      }`}>
+                        Dashboard
+                      </h2>
+                      <div className="flex items-center gap-2 mt-1">
+                        <span className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold border ${
+                          isDark
+                            ? 'bg-white/5 border-white/10 text-zinc-300'
+                            : 'bg-zinc-100 border-zinc-200 text-zinc-700'
+                        }`}>
+                          <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                          <span>Semana {currentWeek.weekNumber} en curso</span>
                         </span>
-                        <span className="text-[10px] uppercase font-bold tracking-wider px-1.5 py-0.5 rounded-md bg-pink-500/20 text-pink-300 border border-pink-500/30 font-mono">
-                          En Curso
-                        </span>
-                        {formatOrResolveWeekDateRange(currentWeek.weekNumber, currentDashboard?.startDateISO, currentWeek.dateRange) && (
-                          <span className="text-[11px] text-gray-400 font-mono hidden xs:inline truncate">
-                            • {formatOrResolveWeekDateRange(currentWeek.weekNumber, currentDashboard?.startDateISO, currentWeek.dateRange)}
+                        {displayDateRange && (
+                          <span className={`text-xs font-mono hidden sm:inline ${
+                            isDark ? 'text-zinc-400' : 'text-zinc-500'
+                          }`}>
+                            • {displayDateRange}
                           </span>
                         )}
                       </div>
                     </div>
-                    <button
-                      onClick={() => setShowDrawer(true)}
-                      className="px-2.5 py-1 rounded-lg text-xs font-bold text-pink-300 hover:text-white bg-pink-500/15 hover:bg-pink-500/30 border border-pink-500/30 transition-all flex items-center gap-1 cursor-pointer shrink-0 ml-2"
-                    >
-                      <CalendarDays className="w-3 h-3 text-pink-400" />
-                      <span>Semanas</span>
-                      <ChevronRight className="w-3.5 h-3.5" />
-                    </button>
+
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={() => setShowDrawer(true)}
+                        className={`px-3.5 py-1.5 rounded-full border text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer ${
+                          isDark
+                            ? 'bg-white/5 hover:bg-white/10 border-white/10 text-zinc-300'
+                            : 'bg-white hover:bg-zinc-100 border-zinc-200 text-zinc-700 shadow-2xs'
+                        }`}
+                      >
+                        <CalendarDays className="w-3.5 h-3.5 text-zinc-400" />
+                        <span>Ver Semanas ({currentDashboard.weeks.length})</span>
+                      </button>
+                    </div>
                   </div>
 
-                  {/* 3 Métricas Principales (Grid 3 columnas AMOLED) */}
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-                    {/* 1. Actividades Pendientes */}
-                    <div className="p-4 rounded-2xl bg-[#05070e] border border-white/5 flex flex-col justify-between relative overflow-hidden">
+                  {/* 4 Métricas Principales (Grid 4 columnas matching Reference Image) */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+                    {/* 1. Actividades Pendientes (Hero Obsidian Card from image) */}
+                    <div className="p-5 rounded-3xl neo-card-hero flex flex-col justify-between relative overflow-hidden group">
                       <div className="flex items-center justify-between mb-2">
-                        <span className="text-xs font-medium text-gray-400">Actividades Pendientes</span>
+                        <span className="text-xs font-semibold text-zinc-200">Actividades Pendientes</span>
                         <span
-                          className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${weekStats.pendingTasks > 0
-                            ? 'bg-pink-500/20 text-pink-300 border border-pink-500/30'
-                            : 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
-                            }`}
+                          className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${
+                            weekStats.pendingTasks > 0
+                              ? 'bg-amber-500/15 text-amber-300 border-amber-500/30'
+                              : 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30'
+                          }`}
                         >
-                          {weekStats.pendingTasks > 0 ? 'Urgente' : 'Al Día'}
+                          {weekStats.pendingTasks > 0 ? `+ ${weekStats.pendingTasks} Urgentes` : 'Al Día'}
                         </span>
                       </div>
-                      <div className="text-3xl font-black text-white my-1">{weekStats.pendingTasks}</div>
-                      <div className="flex items-center justify-between text-xs text-gray-400 mt-2">
+                      
+                      <div className="my-2 flex items-baseline justify-between">
+                        <div className="text-4xl font-extrabold text-white tracking-tight">
+                          {weekStats.pendingTasks}
+                        </div>
+                        {/* Mini vertical sparkline bars from reference image */}
+                        <div className="flex items-end gap-1 h-7">
+                          <span className={`w-1.5 rounded-full transition-all ${weekStats.pendingTasks >= 1 ? 'bg-amber-400 h-4' : 'bg-zinc-700 h-2'}`} />
+                          <span className={`w-1.5 rounded-full transition-all ${weekStats.pendingTasks >= 2 ? 'bg-amber-400 h-6' : 'bg-zinc-700 h-2'}`} />
+                          <span className={`w-1.5 rounded-full transition-all ${weekStats.pendingTasks >= 3 ? 'bg-amber-400 h-7' : 'bg-zinc-700 h-2'}`} />
+                          <span className={`w-1.5 rounded-full transition-all ${weekStats.pendingTasks === 0 ? 'bg-emerald-400 h-5' : 'bg-zinc-700 h-2'}`} />
+                        </div>
+                      </div>
+
+                      <div className="flex items-center justify-between text-xs text-zinc-300 mt-2 pt-2 border-t border-white/10">
                         <span>Tareas activas</span>
                         <button
                           onClick={() => setShowDrawer(true)}
-                          className="text-pink-400 hover:text-pink-300 font-semibold flex items-center gap-1 cursor-pointer"
+                          className="text-white hover:text-zinc-200 font-bold flex items-center gap-1 cursor-pointer transition-colors"
                         >
                           Ver todas →
                         </button>
@@ -2034,64 +2169,185 @@ export default function App() {
                     </div>
 
                     {/* 2. Inicio de Ciclo */}
-                    <div className="p-4 rounded-2xl bg-[#05070e] border border-white/5 flex flex-col justify-between">
+                    <div className={`p-5 rounded-3xl border flex flex-col justify-between transition-all ${
+                      isDark ? 'neo-card-dark' : 'neo-card-light'
+                    }`}>
                       <div className="flex items-center justify-between mb-2">
-                        <span className="text-xs font-medium text-gray-400">Inicio de Ciclo</span>
+                        <span className={`text-xs font-semibold ${isDark ? 'text-zinc-200' : 'text-zinc-700'}`}>Inicio de Ciclo</span>
                         <button
                           onClick={() => setShowStartDateModal(true)}
-                          className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-cyan-500/15 text-cyan-300 border border-cyan-500/30 hover:bg-cyan-500/25 transition-colors cursor-pointer"
+                          className={`text-[10px] font-bold px-2 py-0.5 rounded-full border transition-colors cursor-pointer ${
+                            isDark
+                              ? 'bg-white/10 text-zinc-200 border-white/15 hover:bg-white/20'
+                              : 'bg-zinc-100 text-zinc-700 border-zinc-200 hover:bg-zinc-200'
+                          }`}
                           title="Cambiar fecha de inicio"
                         >
                           {currentDashboard.startDate || '06 Jul 2026'}
                         </button>
                       </div>
-                      <div className="text-3xl font-black text-white my-1 flex items-baseline gap-1.5">
-                        <span>{daysTranscurridos}</span>
-                        <span className="text-sm font-semibold text-cyan-400">Días</span>
+                      
+                      <div className="my-2 flex items-baseline gap-2">
+                        <span className={`text-4xl font-extrabold tracking-tight ${isDark ? 'text-white' : 'text-zinc-900'}`}>
+                          {daysTranscurridos}
+                        </span>
+                        <span className={`text-sm font-semibold ${isDark ? 'text-zinc-300' : 'text-zinc-600'}`}>
+                          Días
+                        </span>
                       </div>
-                      <div className="flex items-center justify-between text-xs text-gray-400 mt-2">
-                        <span>Progreso del ciclo</span>
-                        <span className="text-cyan-400 font-semibold font-mono">
-                          {Math.min(100, Math.round((daysTranscurridos / (16 * 7)) * 100))}% Completado
+
+                      <div className={`text-xs mt-2 pt-2 border-t flex items-center justify-between ${
+                        isDark ? 'border-white/10 text-zinc-300' : 'border-zinc-200 text-zinc-600'
+                      }`}>
+                        <span>Progreso ciclo</span>
+                        <span className={`font-mono font-bold ${isDark ? 'text-white' : 'text-zinc-900'}`}>
+                          {semesterProgressPct}%
                         </span>
                       </div>
                     </div>
 
-                    {/* 3. Material de Estudio */}
-                    <div className="p-4 rounded-2xl bg-[#05070e] border border-white/5 flex flex-col justify-between">
+                    {/* 3. Material de Estudio (with Circular Progress Ring from reference image) */}
+                    <div className={`p-5 rounded-3xl border flex flex-col justify-between transition-all ${
+                      isDark ? 'neo-card-dark' : 'neo-card-light'
+                    }`}>
                       <div className="flex items-center justify-between mb-2">
-                        <span className="text-xs font-medium text-gray-400">Material de Estudio</span>
-                        <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-purple-500/20 text-purple-300 border border-purple-500/30">
+                        <span className={`text-xs font-semibold ${isDark ? 'text-zinc-200' : 'text-zinc-700'}`}>Material de Estudio</span>
+                        <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${
+                          isDark
+                            ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
+                            : 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                        }`}>
                           Listas
                         </span>
                       </div>
-                      <div className="text-3xl font-black text-white my-1">
-                        {weekStats.completedSubjects} / {currentDashboard.subjects.length}
+                      
+                      <div className="my-2 flex items-center justify-between">
+                        <div className={`text-4xl font-extrabold tracking-tight ${isDark ? 'text-white' : 'text-zinc-900'}`}>
+                          {weekStats.completedSubjects} / {currentDashboard.subjects.length}
+                        </div>
+                        {/* Circular Progress Ring matching the 75% ring from image */}
+                        <div className="relative w-10 h-10 shrink-0">
+                          <svg className="w-full h-full -rotate-90" viewBox="0 0 36 36">
+                            <path
+                              className={isDark ? "text-zinc-800" : "text-zinc-200"}
+                              strokeWidth="3.5"
+                              stroke="currentColor"
+                              fill="none"
+                              d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                            />
+                            <path
+                              className="text-emerald-500 transition-all duration-700"
+                              strokeDasharray={`${Math.round((weekStats.completedSubjects / Math.max(1, currentDashboard.subjects.length)) * 100)}, 100`}
+                              strokeWidth="3.5"
+                              strokeLinecap="round"
+                              stroke="currentColor"
+                              fill="none"
+                              d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                            />
+                          </svg>
+                          <span className={`absolute inset-0 flex items-center justify-center text-[10px] font-bold font-mono ${
+                            isDark ? 'text-white' : 'text-zinc-900'
+                          }`}>
+                            {Math.round((weekStats.completedSubjects / Math.max(1, currentDashboard.subjects.length)) * 100)}%
+                          </span>
+                        </div>
                       </div>
-                      <div className="flex items-center justify-between text-xs text-gray-400 mt-2">
+
+                      <div className={`text-xs mt-2 pt-2 border-t flex items-center justify-between ${
+                        isDark ? 'border-white/10 text-zinc-300' : 'border-zinc-200 text-zinc-600'
+                      }`}>
                         <span>Actualizado hoy</span>
                         <button
                           onClick={() => setShowUploadConfirm(true)}
-                          className="text-purple-400 hover:text-purple-300 font-semibold flex items-center gap-1 cursor-pointer"
+                          className={`font-semibold flex items-center gap-1 cursor-pointer transition-colors ${
+                            isDark ? 'text-emerald-400 hover:text-emerald-300' : 'text-emerald-600 hover:text-emerald-700'
+                          }`}
                           title="Sincronizar a la nube"
                         >
                           <Cloud className="w-3 h-3" /> Sinc
                         </button>
                       </div>
                     </div>
+
+                    {/* 4. Rendimiento & Promedio UEES (Speedometer Arc Gauge from Reference Image) */}
+                    <div className={`p-5 rounded-3xl border flex flex-col justify-between transition-all ${
+                      isDark ? 'neo-card-dark' : 'neo-card-light'
+                    }`}>
+                      <div className="flex items-center justify-between mb-2">
+                        <span className={`text-xs font-semibold ${isDark ? 'text-zinc-200' : 'text-zinc-700'}`}>Rendimiento UEES</span>
+                        <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${
+                          parseFloat(overallUeesAvg) >= 6.0
+                            ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
+                            : 'bg-amber-500/10 text-amber-400 border-amber-500/20'
+                        }`}>
+                          {parseFloat(overallUeesAvg) >= 6.0 ? '+ Aprobado' : 'En Curso'}
+                        </span>
+                      </div>
+
+                      {/* Semicircular Speedometer Arc Gauge matching image */}
+                      <div className="relative flex flex-col items-center justify-center my-1">
+                        <svg className="w-28 h-14" viewBox="0 0 100 55">
+                          <path
+                            d="M 15 50 A 35 35 0 0 1 85 50"
+                            fill="none"
+                            stroke={isDark ? "#27272a" : "#e4e4e7"}
+                            strokeWidth="7"
+                            strokeLinecap="round"
+                          />
+                          <path
+                            d="M 15 50 A 35 35 0 0 1 85 50"
+                            fill="none"
+                            stroke="#10b981"
+                            strokeWidth="7"
+                            strokeLinecap="round"
+                            strokeDasharray="110"
+                            strokeDashoffset={Math.max(0, 110 - (Math.min(10, parseFloat(overallUeesAvg)) / 10) * 110)}
+                            className="transition-all duration-1000 ease-out"
+                          />
+                        </svg>
+                        <div className="absolute bottom-0 text-center">
+                          <span className={`text-xl font-extrabold font-mono ${isDark ? 'text-white' : 'text-zinc-900'}`}>
+                            {overallUeesAvg}
+                          </span>
+                          <span className={`text-[9px] block -mt-1 font-mono ${isDark ? 'text-zinc-300' : 'text-zinc-600'}`}>
+                            / 10.0 pts
+                          </span>
+                        </div>
+                      </div>
+
+                      <div className={`text-xs mt-2 pt-2 border-t flex items-center justify-between ${
+                        isDark ? 'border-white/10 text-zinc-300' : 'border-zinc-200 text-zinc-600'
+                      }`}>
+                        <span>Prom. General</span>
+                        <button
+                          onClick={() => setShowGradesModal(true)}
+                          className={`font-semibold flex items-center gap-1 cursor-pointer transition-colors ${
+                            isDark ? 'text-white hover:text-zinc-200' : 'text-zinc-900 hover:text-zinc-700'
+                          }`}
+                        >
+                          Ver notas →
+                        </button>
+                      </div>
+                    </div>
                   </div>
 
-                  {/* Quick Actions Bar (Sin botones de JSON) */}
-                  <div className="p-3 rounded-2xl bg-[#05070e] border border-white/5 flex flex-wrap items-center justify-between gap-3 mb-6 shadow-md">
+                  {/* Quick Actions Bar */}
+                  <div className={`p-3 rounded-2xl border flex flex-wrap items-center justify-between gap-3 mb-6 transition-all ${
+                    isDark ? 'bg-[#131417] border-white/5 shadow-md' : 'bg-white border-zinc-200/80 shadow-2xs'
+                  }`}>
                     <div className="flex flex-wrap items-center gap-2">
                       <button
                         onClick={() => {
                           setQuickNoteDraft(currentDashboard.quickNote || '');
                           setShowQuickNoteModal(true);
                         }}
-                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-white/5 border border-white/10 text-gray-300 hover:text-white hover:bg-white/10 transition-all cursor-pointer"
+                        className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold border transition-all cursor-pointer ${
+                          isDark
+                            ? 'bg-white/5 hover:bg-white/10 border-white/10 text-zinc-300'
+                            : 'bg-zinc-100 hover:bg-zinc-200/80 border-zinc-200 text-zinc-700'
+                        }`}
                       >
-                        <Plus className="w-3.5 h-3.5 text-pink-400" />
+                        <Plus className="w-3.5 h-3.5" />
                         <span>+ Agregar nota rápida...</span>
                       </button>
                     </div>
@@ -2099,7 +2355,11 @@ export default function App() {
                     <div className="flex items-center gap-2">
                       <button
                         onClick={() => setShowUploadConfirm(true)}
-                        className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold bg-pink-500/20 text-pink-300 border border-pink-500/30 hover:bg-pink-500/30 transition-all cursor-pointer shadow-xs"
+                        className={`inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer shadow-xs active:scale-95 ${
+                          isDark
+                            ? 'bg-white text-zinc-950 hover:bg-zinc-200'
+                            : 'bg-zinc-900 text-white hover:bg-zinc-800'
+                        }`}
                       >
                         <Upload className="w-3.5 h-3.5" />
                         <span>Subir Nube</span>
@@ -2107,7 +2367,11 @@ export default function App() {
 
                       <button
                         onClick={handleTriggerCloudDownload}
-                        className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 hover:bg-cyan-500/30 transition-all cursor-pointer shadow-xs"
+                        className={`inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-bold border transition-all cursor-pointer shadow-xs active:scale-95 ${
+                          isDark
+                            ? 'bg-zinc-900 hover:bg-zinc-800 border-white/10 text-zinc-200'
+                            : 'bg-zinc-100 hover:bg-zinc-200 border-zinc-200 text-zinc-800'
+                        }`}
                         title="Descargar de la nube directamente"
                       >
                         <Download className="w-3.5 h-3.5" />
@@ -2118,7 +2382,9 @@ export default function App() {
 
                   {/* Banner de Nota Rápida si existe */}
                   {currentDashboard.quickNote && (
-                    <div className="p-3 mb-6 rounded-2xl bg-[#05070e] border border-pink-500/30 flex items-center justify-between text-xs text-pink-200 shadow-md">
+                    <div className={`p-3.5 mb-6 rounded-2xl border flex items-center justify-between text-xs transition-all ${
+                      isDark ? 'bg-[#131417] border-white/10 text-zinc-300 shadow-md' : 'bg-white border-zinc-200 text-zinc-800 shadow-2xs'
+                    }`}>
                       <div className="flex items-center gap-2.5 min-w-0">
                         <span className="text-base select-none shrink-0">📌</span>
                         <span className="font-semibold truncate">{currentDashboard.quickNote}</span>
@@ -2129,7 +2395,9 @@ export default function App() {
                             setQuickNoteDraft(currentDashboard.quickNote || '');
                             setShowQuickNoteModal(true);
                           }}
-                          className="px-2.5 py-1 rounded-lg text-xs font-bold bg-pink-500/20 text-pink-300 hover:bg-pink-500/30 transition-colors cursor-pointer"
+                          className={`px-3 py-1 rounded-full text-xs font-semibold border transition-colors cursor-pointer ${
+                            isDark ? 'bg-white/5 border-white/10 text-zinc-300 hover:bg-white/10' : 'bg-zinc-100 border-zinc-200 text-zinc-700 hover:bg-zinc-200'
+                          }`}
                         >
                           Editar
                         </button>
@@ -2140,7 +2408,9 @@ export default function App() {
                             );
                             setToastMessage('Nota rápida eliminada');
                           }}
-                          className="p-1 rounded text-gray-500 hover:text-white transition-colors cursor-pointer"
+                          className={`p-1 rounded transition-colors cursor-pointer ${
+                            isDark ? 'text-zinc-500 hover:text-white' : 'text-zinc-400 hover:text-zinc-900'
+                          }`}
                           title="Eliminar nota"
                         >
                           <X className="w-3.5 h-3.5" />
@@ -2151,7 +2421,7 @@ export default function App() {
                 </>
               )}
 
-              {/* Función para renderizar tarjeta de materia (modular para vista individual y grilla completa) */}
+              {/* Función para renderizar tarjeta de materia */}
               {(() => {
                 const renderSubjectCard = (subject: SubjectItem, sIdx: number, isSingleView: boolean = false) => {
                   const tasks = currentWeek.subjectTasks[subject.id] || [];
@@ -2159,27 +2429,24 @@ export default function App() {
                   const subjectGradeData = findGradeDataForSubject(subject.id, subject.name, gradesTracker);
                   const ueesCalc = calculateUeesGrade(subjectGradeData);
 
-                  const borderTopColor =
-                    sIdx % 3 === 0
-                      ? 'border-t-pink-500'
-                      : sIdx % 3 === 1
-                        ? 'border-t-purple-500'
-                        : 'border-t-cyan-400';
-
-                  const subjectIcon =
-                    sIdx % 3 === 0 ? '</>' : sIdx % 3 === 1 ? '√x' : '⚙';
-
                   const statusLabel = isSubjectAllDone ? 'Lista ✓' : 'Pendiente';
                   const badgeColor = isSubjectAllDone
-                    ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30'
-                    : 'bg-pink-500/15 text-pink-300 border-pink-500/25';
+                    ? isDark
+                      ? 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30'
+                      : 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                    : isDark
+                    ? 'bg-amber-500/15 text-amber-400 border-amber-500/30'
+                    : 'bg-amber-50 text-amber-700 border-amber-200';
 
                   return (
                     <div
                       key={subject.id}
                       id={`subject-${subject.id}`}
-                      className={`rounded-2xl bg-[#05070e] border border-white/5 border-t-2 ${borderTopColor} p-4.5 flex flex-col justify-between transition-all hover:bg-[#080b16] shadow-md ${isSingleView ? 'max-w-2xl mx-auto w-full' : ''
-                        }`}
+                      className={`rounded-3xl border p-5 flex flex-col justify-between transition-all ${
+                        isDark
+                          ? 'bg-[#131417] border-white/[0.08] hover:border-white/15 shadow-md'
+                          : 'bg-white border-zinc-200/80 hover:border-zinc-300 shadow-[0_2px_12px_rgba(0,0,0,0.03)]'
+                      } ${isSingleView ? 'max-w-2xl mx-auto w-full' : ''}`}
                     >
                       {/* Header de Materia */}
                       <div className="flex items-center justify-between mb-3">
@@ -2192,39 +2459,43 @@ export default function App() {
                             className="flex items-center gap-2 min-w-0 cursor-pointer group/title"
                             title={`Enfocar materia ${subject.name}`}
                           >
-                            <span className="font-mono text-xs font-black text-pink-400 select-none">
-                              {subjectIcon}
-                            </span>
-                            <h3 className="font-black text-sm tracking-wide uppercase text-white truncate group-hover/title:text-pink-300 transition-colors">
+                            <span className={`w-2 h-2 rounded-full ${isSubjectAllDone ? 'bg-emerald-500' : 'bg-amber-500'}`} />
+                            <h3 className={`font-black text-sm tracking-wide uppercase truncate transition-colors ${
+                              isDark ? 'text-white group-hover/title:text-zinc-300' : 'text-zinc-900 group-hover/title:text-zinc-600'
+                            }`}>
                               {subject.name}
                             </h3>
                           </div>
                           <button
                             onClick={() => setEditingSubject(subject)}
                             title={`Editar nombre de "${subject.name}"`}
-                            className="p-1 rounded text-gray-500 hover:text-white transition-colors cursor-pointer shrink-0"
+                            className={`p-1 rounded transition-colors cursor-pointer shrink-0 ${
+                              isDark ? 'text-zinc-500 hover:text-white' : 'text-zinc-400 hover:text-zinc-900'
+                            }`}
                           >
                             <Edit2 className="w-3 h-3" />
                           </button>
                         </div>
 
-                        <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${badgeColor}`}>
+                        <span className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full border ${badgeColor}`}>
                           {statusLabel}
                         </span>
                       </div>
 
                       {/* Mini-Panel de Calificación Oficial UEES */}
-                      <div className="flex items-center justify-between mb-3.5 px-3 py-1.5 rounded-xl bg-[#080b16] border border-white/5 shadow-xs">
+                      <div className={`flex items-center justify-between mb-3.5 px-3 py-1.5 rounded-2xl border ${
+                        isDark ? 'bg-[#18191e] border-white/5' : 'bg-zinc-50 border-zinc-200/60'
+                      }`}>
                         <div className="flex items-center gap-2 min-w-0">
-                          <div className={`w-2 h-2 rounded-full shrink-0 ${ueesCalc.isPassed ? 'bg-emerald-400' : 'bg-purple-400 animate-pulse'}`} />
-                          <span className="text-[10px] font-mono font-bold text-stone-400 uppercase">
+                          <div className={`w-2 h-2 rounded-full shrink-0 ${ueesCalc.isPassed ? 'bg-emerald-500' : 'bg-amber-500 animate-pulse'}`} />
+                          <span className={`text-[10px] font-mono font-bold uppercase ${isDark ? 'text-zinc-400' : 'text-zinc-500'}`}>
                             Prom. UEES:
                           </span>
-                          <span className="text-xs font-mono font-black text-emerald-400">
+                          <span className={`text-xs font-mono font-black ${ueesCalc.isPassed ? 'text-emerald-500' : 'text-amber-500'}`}>
                             {ueesCalc.ueesAverageFormatted}
                           </span>
                           {ueesCalc.neededInR3 && !ueesCalc.isPassed && (
-                            <span className="text-[9px] font-mono text-pink-300 truncate hidden sm:inline">
+                            <span className={`text-[9px] font-mono truncate hidden sm:inline ${isDark ? 'text-amber-300' : 'text-amber-700'}`}>
                               • Meta R3: {ueesCalc.neededInR3}
                             </span>
                           )}
@@ -2236,16 +2507,20 @@ export default function App() {
                             setSelectedGradeSubjectId(subject.id);
                             setShowGradesModal(true);
                           }}
-                          className="text-[10px] font-mono font-bold text-purple-300 hover:text-white px-2 py-0.5 rounded-lg bg-purple-500/15 hover:bg-purple-500/30 border border-purple-500/25 transition-all cursor-pointer flex items-center gap-1 shrink-0"
+                          className={`text-[10px] font-mono font-bold px-2 py-0.5 rounded-lg border transition-all cursor-pointer flex items-center gap-1 shrink-0 ${
+                            isDark
+                              ? 'bg-white/5 hover:bg-white/10 text-zinc-300 border-white/10'
+                              : 'bg-white hover:bg-zinc-100 text-zinc-700 border-zinc-200 shadow-2xs'
+                          }`}
                           title={`Ver cálculo oficial UEES y registros de ${subject.name}`}
                         >
-                          <Calculator className="w-3 h-3 text-purple-400" />
+                          <Calculator className="w-3 h-3" />
                           <span>Notas</span>
                         </button>
                       </div>
 
                       {/* Lista de Tareas de la Materia */}
-                      <div className="space-y-2.5 mb-4">
+                      <div className="space-y-2 mb-4">
                         {tasks.map((task) => {
                           const deadlineInfo = getDeadlineStatus(task.deadlineISO);
                           const isForo = task.name.toLowerCase().includes('foro');
@@ -2254,34 +2529,49 @@ export default function App() {
                           return (
                             <div
                               key={task.id}
-                              className="flex items-center justify-between p-3 rounded-xl bg-[#0a0d17] hover:bg-[#0f1424] border border-white/5 transition-all group"
+                              className={`flex items-center justify-between p-3 rounded-2xl border transition-all group ${
+                                isDark
+                                  ? 'bg-[#18191e] hover:bg-[#1f2026] border-white/5'
+                                  : 'bg-zinc-50/70 hover:bg-zinc-100/90 border-zinc-200/50'
+                              }`}
                             >
                               <div
                                 onClick={() => handleToggleTask(subject.id, task.id)}
                                 className="flex items-center gap-3 flex-1 cursor-pointer min-w-0"
                               >
-                                <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center shrink-0">
+                                <div className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 ${
+                                  isDark ? 'bg-white/5 text-zinc-300' : 'bg-white border border-zinc-200 text-zinc-700'
+                                }`}>
                                   {isForo ? (
-                                    <MessageSquare className="w-4 h-4 text-pink-400" />
+                                    <MessageSquare className="w-4 h-4 text-emerald-500" />
                                   ) : isLab ? (
-                                    <Atom className="w-4 h-4 text-cyan-400" />
+                                    <Atom className="w-4 h-4 text-blue-500" />
                                   ) : (
-                                    <FileText className="w-4 h-4 text-purple-400" />
+                                    <FileText className="w-4 h-4 text-zinc-400" />
                                   )}
                                 </div>
 
                                 <div className="flex flex-col min-w-0">
                                   <span
-                                    className={`text-xs font-semibold text-gray-200 truncate ${task.completed ? 'line-through opacity-60 text-gray-400' : ''
-                                      }`}
+                                    className={`text-xs font-semibold truncate ${
+                                      task.completed
+                                        ? 'line-through text-zinc-400'
+                                        : isDark ? 'text-white' : 'text-zinc-950'
+                                    }`}
                                   >
                                     {task.name}
                                   </span>
-                                  <span className="text-[10px] text-gray-400 truncate">
+                                  <span className={`text-[10px] truncate ${isDark ? 'text-zinc-300' : 'text-zinc-600'}`}>
                                     {task.note || (isForo ? 'Módulo semanal' : isLab ? 'Práctica técnica' : 'Evaluación')}
                                   </span>
                                   {deadlineInfo && (
-                                    <span className="text-[9px] font-mono text-pink-300 mt-0.5">
+                                    <span className={`text-[9px] font-mono mt-0.5 ${
+                                      deadlineInfo.isPast
+                                        ? 'text-rose-400 font-semibold'
+                                        : deadlineInfo.isUrgent
+                                        ? 'text-amber-400 font-semibold'
+                                        : isDark ? 'text-zinc-300' : 'text-zinc-600'
+                                    }`}>
                                       {deadlineInfo.text}
                                     </span>
                                   )}
@@ -2300,7 +2590,9 @@ export default function App() {
                                       deadlineISO: task.deadlineISO || '',
                                     });
                                   }}
-                                  className="p-1 rounded text-gray-500 hover:text-pink-300 opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer"
+                                  className={`p-1 rounded opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer ${
+                                    isDark ? 'text-zinc-500 hover:text-white' : 'text-zinc-400 hover:text-zinc-900'
+                                  }`}
                                   title="Editar nota o fecha límite"
                                 >
                                   <Edit3 className="w-3.5 h-3.5" />
@@ -2308,10 +2600,13 @@ export default function App() {
 
                                 <button
                                   onClick={() => handleToggleTask(subject.id, task.id)}
-                                  className={`w-6 h-6 rounded-full flex items-center justify-center transition-all cursor-pointer ${task.completed
-                                    ? 'bg-emerald-500 text-white shadow-[0_0_8px_rgba(16,185,129,0.5)]'
-                                    : 'border-2 border-white/20 text-transparent hover:border-pink-500'
-                                    }`}
+                                  className={`w-6 h-6 rounded-full flex items-center justify-center transition-all cursor-pointer ${
+                                    task.completed
+                                      ? 'bg-emerald-500 text-white shadow-xs'
+                                      : isDark
+                                      ? 'border-2 border-zinc-700 text-transparent hover:border-zinc-500'
+                                      : 'border-2 border-zinc-300 text-transparent hover:border-zinc-500'
+                                  }`}
                                   title={task.completed ? 'Marcar como pendiente' : 'Marcar como entregado'}
                                 >
                                   {task.completed && <Check className="w-3.5 h-3.5 stroke-[3]" />}
@@ -2322,7 +2617,7 @@ export default function App() {
                         })}
 
                         {tasks.length === 0 && (
-                          <div className="text-center py-4 text-xs text-gray-500 italic">
+                          <div className="text-center py-4 text-xs text-zinc-500 italic">
                             Sin tareas en esta semana.
                           </div>
                         )}
@@ -2331,7 +2626,11 @@ export default function App() {
                       {/* Botón inferior + Agregar Tarea [Nombre Materia] */}
                       <button
                         onClick={() => handleOpenNewTaskModal(subject)}
-                        className="w-full py-2 px-3 rounded-xl bg-white/[0.03] hover:bg-white/[0.08] border border-dashed border-white/10 hover:border-pink-500/40 text-xs font-semibold text-gray-300 hover:text-pink-300 transition-all flex items-center justify-center gap-1.5 cursor-pointer"
+                        className={`w-full py-2 px-3 rounded-2xl border text-xs font-semibold transition-all flex items-center justify-center gap-1.5 cursor-pointer active:scale-98 ${
+                          isDark
+                            ? 'bg-white/5 hover:bg-white/10 text-zinc-300 border-white/10'
+                            : 'bg-zinc-100 hover:bg-zinc-200/80 text-zinc-700 border-zinc-200'
+                        }`}
                       >
                         <Plus className="w-3.5 h-3.5" />
                         <span>+ Agregar Tarea {subject.name}</span>
@@ -2344,18 +2643,23 @@ export default function App() {
                   /* Vista con Materia Seleccionada + Ajustes (Foto 2) */
                   <div className="space-y-6 mb-8">
                     {/* Barra de Navegación de Materia Seleccionada */}
-                    <div className="p-4 rounded-2xl bg-[#080b16] border border-pink-500/25 flex flex-col gap-3 shadow-lg">
+                    <div className={`p-4 rounded-3xl border flex flex-col gap-3 transition-all ${
+                      isDark 
+                        ? 'bg-[#131417] border-white/10 shadow-xl' 
+                        : 'bg-white border-zinc-200/80 shadow-xs'
+                    }`}>
                       <div className="flex flex-wrap items-center justify-between gap-2">
                         <button
                           onClick={() => setSelectedSubjectId(null)}
-                          className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs font-bold bg-pink-500/15 hover:bg-pink-500/25 border border-pink-500/30 text-pink-300 transition-all cursor-pointer"
+                          className={`inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                            isDark
+                              ? 'bg-white/10 hover:bg-white/15 border border-white/15 text-white'
+                              : 'bg-zinc-100 hover:bg-zinc-200 border border-zinc-200 text-zinc-800'
+                          }`}
                         >
                           <ArrowLeft className="w-3.5 h-3.5" />
-                          <span> ({currentDashboard.subjects.length})</span>
+                          <span>Volver a todas las materias ({currentDashboard.subjects.length})</span>
                         </button>
-                        <span className="text-[11px] font-mono text-gray-400">
-
-                        </span>
                       </div>
 
                       {/* Selector rápido tipo chips */}
@@ -2366,12 +2670,17 @@ export default function App() {
                             <button
                               key={s.id}
                               onClick={() => setSelectedSubjectId(s.id)}
-                              className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer shrink-0 flex items-center gap-2 border ${isCurrent
-                                ? 'bg-gradient-to-r from-pink-500/25 to-purple-500/25 border-pink-500 text-white shadow-[0_0_10px_rgba(236,72,153,0.3)]'
-                                : 'bg-white/5 border-white/10 text-gray-300 hover:text-white hover:bg-white/10'
-                                }`}
+                              className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer shrink-0 flex items-center gap-2 border ${
+                                isCurrent
+                                  ? (isDark 
+                                      ? 'bg-white border-white text-zinc-950 shadow-md font-black' 
+                                      : 'bg-zinc-900 border-zinc-900 text-white shadow-md font-black')
+                                  : (isDark
+                                      ? 'bg-white/5 border-white/10 text-zinc-400 hover:text-white hover:bg-white/10'
+                                      : 'bg-zinc-50 border-zinc-200 text-zinc-600 hover:text-zinc-900 hover:bg-zinc-100')
+                              }`}
                             >
-                              <span className="font-mono text-pink-400 text-[10px]">
+                              <span className={`font-mono text-[10px] ${isCurrent ? (isDark ? 'text-zinc-900' : 'text-zinc-200') : (isDark ? 'text-zinc-400' : 'text-zinc-500')}`}>
                                 {idx % 3 === 0 ? '</>' : idx % 3 === 1 ? '√x' : '⚙'}
                               </span>
                               <span>{s.name}</span>
@@ -2395,12 +2704,15 @@ export default function App() {
 
                     {/* Separador de Herramientas y Ajustes */}
                     <div className="pt-4 flex items-center gap-3">
-                      <div className="h-px bg-white/10 flex-1" />
-                      <span className="text-xs font-black uppercase tracking-wider text-pink-300 font-mono flex items-center gap-2 px-3 py-1 rounded-full bg-[#080b16] border border-pink-500/30 shadow-[0_0_12px_rgba(236,72,153,0.15)]">
-                        <span></span>
-                        <span></span>
+                      <div className={`h-px flex-1 ${isDark ? 'bg-white/10' : 'bg-zinc-200'}`} />
+                      <span className={`text-xs font-bold uppercase tracking-wider font-mono flex items-center gap-2 px-3.5 py-1 rounded-full border ${
+                        isDark 
+                          ? 'bg-[#131417] border-white/10 text-zinc-300' 
+                          : 'bg-white border-zinc-200 text-zinc-700 shadow-xs'
+                      }`}>
+                        <span>Herramientas y Recursos</span>
                       </span>
-                      <div className="h-px bg-white/10 flex-1" />
+                      <div className={`h-px flex-1 ${isDark ? 'bg-white/10' : 'bg-zinc-200'}`} />
                     </div>
 
                     {/* Herramientas y Ajustes (Foto 2) */}
@@ -2437,13 +2749,17 @@ export default function App() {
                       <>
                         {/* Control de materias completadas */}
                         <div className="flex items-center justify-between mb-4 px-1">
-                          <span className="text-xs font-mono font-bold text-gray-400">
+                          <span className={`text-xs font-mono font-bold ${isDark ? 'text-zinc-400' : 'text-zinc-500'}`}>
                             Materias ({visibleSubjects.length} pendientes{completedSubjectsCount > 0 ? ` • ${completedSubjectsCount} completada${completedSubjectsCount > 1 ? 's' : ''}` : ''})
                           </span>
                           {completedSubjectsCount > 0 && (
                             <button
                               onClick={() => setShowCompletedSubjects(!showCompletedSubjects)}
-                              className="text-xs font-bold text-pink-300 hover:text-white flex items-center gap-1.5 px-3 py-1 rounded-xl bg-pink-500/10 hover:bg-pink-500/20 border border-pink-500/25 transition-all cursor-pointer"
+                              className={`text-xs font-bold flex items-center gap-1.5 px-3 py-1.5 rounded-xl border transition-all cursor-pointer ${
+                                isDark
+                                  ? 'text-zinc-300 hover:text-white bg-white/5 hover:bg-white/10 border-white/10'
+                                  : 'text-zinc-700 hover:text-zinc-900 bg-zinc-100 hover:bg-zinc-200 border-zinc-200'
+                              }`}
                             >
                               {showCompletedSubjects ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
                               <span>{showCompletedSubjects ? 'Ocultar completadas' : `Mostrar completadas (${completedSubjectsCount})`}</span>
@@ -2455,20 +2771,28 @@ export default function App() {
                           <motion.div
                             initial={{ opacity: 0, scale: 0.95 }}
                             animate={{ opacity: 1, scale: 1 }}
-                            className="p-8 text-center rounded-3xl bg-[#080b16] border border-emerald-500/30 mb-8 shadow-xl"
+                            className={`p-8 text-center rounded-3xl border mb-8 ${
+                              isDark
+                                ? 'bg-[#131417] border-white/10 shadow-xl'
+                                : 'bg-white border-zinc-200/80 shadow-xs'
+                            }`}
                           >
-                            <div className="w-16 h-16 mx-auto mb-3 rounded-full bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center text-3xl">
+                            <div className="w-16 h-16 mx-auto mb-3 rounded-full bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-3xl">
                               🎉
                             </div>
-                            <h3 className="text-base font-black text-white uppercase tracking-wider mb-1">
+                            <h3 className={`text-base font-black uppercase tracking-wider mb-1 ${isDark ? 'text-white' : 'text-zinc-900'}`}>
                               ¡Todas las materias completadas en la Semana {currentWeek.weekNumber}!
                             </h3>
-                            <p className="text-xs text-gray-400 mb-4 max-w-md mx-auto">
+                            <p className={`text-xs mb-4 max-w-md mx-auto ${isDark ? 'text-zinc-400' : 'text-zinc-500'}`}>
                               Has entregado todas tus actividades. Las materias se esfumaron del panel para mantener tu enfoque al 100%.
                             </p>
                             <button
                               onClick={() => setShowCompletedSubjects(true)}
-                              className="px-4 py-2 rounded-xl text-xs font-bold bg-white/10 hover:bg-white/20 text-white transition-all cursor-pointer"
+                              className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                                isDark
+                                  ? 'bg-white/10 hover:bg-white/20 text-white border border-white/10'
+                                  : 'bg-zinc-900 hover:bg-zinc-800 text-white'
+                              }`}
                             >
                               Ver materias completadas
                             </button>
@@ -2515,7 +2839,9 @@ export default function App() {
 
           {/* Schedule View */}
           {currentView === 'schedule' && (
-            <div className="p-4 rounded-2xl bg-[#05070e] border border-white/5">
+            <div className={`p-5 rounded-3xl border transition-all ${
+              isDark ? 'bg-[#131417] border-white/5 shadow-md' : 'bg-white border-zinc-200/80 shadow-2xs'
+            }`}>
               <ToolsAndLinksView
                 isDark={isDark}
                 cloudStatus={cloudStatus}
@@ -2542,18 +2868,26 @@ export default function App() {
 
           {/* Cloud Database View */}
           {currentView === 'cloud' && (
-            <div className="max-w-3xl mx-auto p-6 rounded-2xl bg-[#05070e] border border-white/5 space-y-6">
-              <div className="flex items-center justify-between pb-4 border-b border-white/5">
+            <div className={`max-w-3xl mx-auto p-6 rounded-3xl border transition-all space-y-6 ${
+              isDark ? 'bg-[#131417] border-white/5 shadow-md' : 'bg-white border-zinc-200/80 shadow-2xs'
+            }`}>
+              <div className={`flex items-center justify-between pb-4 border-b ${
+                isDark ? 'border-white/5' : 'border-zinc-200/80'
+              }`}>
                 <div>
-                  <h2 className="text-lg font-black text-white flex items-center gap-2">
-                    <Cloud className="w-5 h-5 text-cyan-400" />
+                  <h2 className={`text-lg font-bold flex items-center gap-2 ${
+                    isDark ? 'text-white' : 'text-zinc-900'
+                  }`}>
+                    <Cloud className="w-5 h-5 text-emerald-500" />
                     <span>Base de Datos Nube (Supabase)</span>
                   </h2>
-                  <p className="text-xs text-gray-400 mt-1">
+                  <p className={`text-xs mt-1 ${isDark ? 'text-zinc-400' : 'text-zinc-500'}`}>
                     Sincroniza tus materias, tareas y progresos en la nube.
                   </p>
                 </div>
-                <span className="text-xs font-mono font-bold px-2.5 py-1 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                <span className={`text-xs font-mono font-bold px-3 py-1 rounded-full border ${
+                  isDark ? 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30' : 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                }`}>
                   {cloudStatus}
                 </span>
               </div>
@@ -2561,42 +2895,58 @@ export default function App() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <button
                   onClick={() => setShowUploadConfirm(true)}
-                  className="p-5 rounded-2xl bg-gradient-to-br from-pink-500/20 to-purple-600/20 border border-pink-500/30 hover:border-pink-500 text-left transition-all cursor-pointer group"
+                  className={`p-5 rounded-3xl border text-left transition-all cursor-pointer group ${
+                    isDark
+                      ? 'bg-white/5 hover:bg-white/10 border-white/10'
+                      : 'bg-zinc-50 hover:bg-zinc-100 border-zinc-200 shadow-2xs'
+                  }`}
                 >
-                  <div className="w-10 h-10 rounded-xl bg-pink-500/20 flex items-center justify-center text-pink-300 mb-3 group-hover:scale-110 transition-transform">
+                  <div className={`w-10 h-10 rounded-2xl flex items-center justify-center mb-3 group-hover:scale-105 transition-transform ${
+                    isDark ? 'bg-white text-zinc-950 font-bold' : 'bg-zinc-900 text-white font-bold'
+                  }`}>
                     <Upload className="w-5 h-5" />
                   </div>
-                  <h3 className="text-sm font-bold text-white mb-1">Subir a la Nube</h3>
-                  <p className="text-xs text-gray-400">
+                  <h3 className={`text-sm font-bold mb-1 ${isDark ? 'text-white' : 'text-zinc-900'}`}>Subir a la Nube</h3>
+                  <p className={`text-xs ${isDark ? 'text-zinc-400' : 'text-zinc-500'}`}>
                     Guarda el estado actual del dashboard en la base de datos central.
                   </p>
                 </button>
 
                 <button
                   onClick={handleTriggerCloudDownload}
-                  className="p-5 rounded-2xl bg-gradient-to-br from-cyan-500/20 to-blue-600/20 border border-cyan-500/30 hover:border-cyan-500 text-left transition-all cursor-pointer group"
+                  className={`p-5 rounded-3xl border text-left transition-all cursor-pointer group ${
+                    isDark
+                      ? 'bg-white/5 hover:bg-white/10 border-white/10'
+                      : 'bg-zinc-50 hover:bg-zinc-100 border-zinc-200 shadow-2xs'
+                  }`}
                   title="Descargar de la nube directamente"
                 >
-                  <div className="w-10 h-10 rounded-xl bg-cyan-500/20 flex items-center justify-center text-cyan-300 mb-3 group-hover:scale-110 transition-transform">
+                  <div className={`w-10 h-10 rounded-2xl flex items-center justify-center mb-3 group-hover:scale-105 transition-transform ${
+                    isDark ? 'bg-emerald-500 text-white font-bold' : 'bg-emerald-600 text-white font-bold'
+                  }`}>
                     <Download className="w-5 h-5" />
                   </div>
-                  <h3 className="text-sm font-bold text-white mb-1">Descargar de la Nube</h3>
-                  <p className="text-xs text-gray-400">
+                  <h3 className={`text-sm font-bold mb-1 ${isDark ? 'text-white' : 'text-zinc-900'}`}>Descargar de la Nube</h3>
+                  <p className={`text-xs ${isDark ? 'text-zinc-400' : 'text-zinc-500'}`}>
                     Sincroniza directamente tus materias y tareas con la base de datos central.
                   </p>
                 </button>
               </div>
 
-              <div className="p-4 rounded-xl bg-white/[0.02] border border-white/5 flex items-center justify-between">
+              <div className={`p-4 rounded-2xl border flex items-center justify-between ${
+                isDark ? 'bg-white/5 border-white/10' : 'bg-zinc-50 border-zinc-200/80'
+              }`}>
                 <div>
-                  <span className="text-xs text-gray-400 block">Enlace público / compartir</span>
-                  <span className="text-xs font-mono text-cyan-300">
+                  <span className={`text-xs block ${isDark ? 'text-zinc-400' : 'text-zinc-500'}`}>Enlace público / compartir</span>
+                  <span className={`text-xs font-mono font-semibold ${isDark ? 'text-zinc-300' : 'text-zinc-700'}`}>
                     {window.location.origin}
                   </span>
                 </div>
                 <button
                   onClick={handleCopyLink}
-                  className="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-white/5 border border-white/10 text-white hover:bg-white/10 transition-colors cursor-pointer"
+                  className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition-colors cursor-pointer shadow-xs ${
+                    isDark ? 'bg-white text-zinc-950 hover:bg-zinc-200' : 'bg-zinc-900 text-white hover:bg-zinc-800'
+                  }`}
                 >
                   Copiar Enlace
                 </button>
@@ -2619,16 +2969,22 @@ export default function App() {
               initial={{ scale: 0.95, y: 15 }}
               animate={{ scale: 1, y: 0 }}
               exit={{ scale: 0.95, y: 15 }}
-              className="w-full max-w-md rounded-2xl bg-[#05070e] border border-white/10 p-5 shadow-2xl"
+              className={`w-full max-w-md rounded-3xl border p-6 shadow-2xl transition-all ${
+                isDark ? 'bg-[#131417] border-white/10 text-white' : 'bg-white border-zinc-200 text-zinc-900'
+              }`}
             >
               <div className="flex items-center justify-between mb-4">
-                <h3 className="text-base font-bold text-white flex items-center gap-2">
-                  <Plus className="w-4 h-4 text-pink-400" />
+                <h3 className={`text-base font-bold flex items-center gap-2 ${
+                  isDark ? 'text-white' : 'text-zinc-900'
+                }`}>
+                  <Plus className="w-4 h-4 text-emerald-500" />
                   <span>Nueva Tarea para {targetSubjectForNewTask.name}</span>
                 </h3>
                 <button
                   onClick={() => setTargetSubjectForNewTask(null)}
-                  className="p-1 rounded-lg text-gray-400 hover:text-white cursor-pointer"
+                  className={`p-1 rounded-lg transition-colors cursor-pointer ${
+                    isDark ? 'text-zinc-400 hover:text-white' : 'text-zinc-500 hover:text-zinc-900'
+                  }`}
                 >
                   <X className="w-4 h-4" />
                 </button>
@@ -2636,7 +2992,9 @@ export default function App() {
 
               <div className="space-y-3 mb-5">
                 <div>
-                  <label className="text-xs font-semibold text-gray-300 block mb-1">
+                  <label className={`text-xs font-semibold block mb-1 ${
+                    isDark ? 'text-zinc-300' : 'text-zinc-700'
+                  }`}>
                     Título de la Actividad *
                   </label>
                   <input
@@ -2644,13 +3002,17 @@ export default function App() {
                     value={newTaskTitle}
                     onChange={(e) => setNewTaskTitle(e.target.value)}
                     placeholder="Ej: Foro 15, Laboratorio 4, Tarea..."
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-black/40 border border-white/10 text-white text-xs focus:border-pink-500 focus:outline-none"
+                    className={`w-full px-3.5 py-2.5 rounded-2xl border text-xs focus:outline-none transition-all ${
+                      isDark ? 'bg-white/5 border-white/10 text-white focus:border-white/30' : 'bg-zinc-50 border-zinc-200 text-zinc-900 focus:border-zinc-400'
+                    }`}
                     autoFocus
                   />
                 </div>
 
                 <div>
-                  <label className="text-xs font-semibold text-gray-300 block mb-1">
+                  <label className={`text-xs font-semibold block mb-1 ${
+                    isDark ? 'text-zinc-300' : 'text-zinc-700'
+                  }`}>
                     Descripción / Nota (Opcional)
                   </label>
                   <input
@@ -2658,7 +3020,9 @@ export default function App() {
                     value={newTaskDesc}
                     onChange={(e) => setNewTaskDesc(e.target.value)}
                     placeholder="Ej: Módulo de Algoritmos, Entrega en aula..."
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-black/40 border border-white/10 text-white text-xs focus:border-purple-500 focus:outline-none"
+                    className={`w-full px-3.5 py-2.5 rounded-2xl border text-xs focus:outline-none transition-all ${
+                      isDark ? 'bg-white/5 border-white/10 text-white focus:border-white/30' : 'bg-zinc-50 border-zinc-200 text-zinc-900 focus:border-zinc-400'
+                    }`}
                   />
                 </div>
               </div>
@@ -2666,13 +3030,17 @@ export default function App() {
               <div className="flex justify-end gap-2.5">
                 <button
                   onClick={() => setTargetSubjectForNewTask(null)}
-                  className="px-4 py-2 rounded-xl text-xs font-semibold text-gray-400 hover:text-white hover:bg-white/5 cursor-pointer"
+                  className={`px-4 py-2 rounded-full text-xs font-semibold transition-all cursor-pointer ${
+                    isDark ? 'text-zinc-400 hover:text-white' : 'text-zinc-600 hover:text-zinc-900'
+                  }`}
                 >
                   Cancelar
                 </button>
                 <button
                   onClick={handleSaveNewTask}
-                  className="px-4 py-2 rounded-xl text-xs font-bold bg-gradient-to-r from-pink-500 to-purple-600 text-white shadow-md hover:opacity-95 cursor-pointer"
+                  className={`px-4 py-2 rounded-full text-xs font-bold transition-all shadow-xs active:scale-95 cursor-pointer ${
+                    isDark ? 'bg-white text-zinc-950 hover:bg-zinc-200' : 'bg-zinc-900 text-white hover:bg-zinc-800'
+                  }`}
                 >
                   Guardar Tarea
                 </button>
@@ -2756,6 +3124,7 @@ export default function App() {
         confirmText="Eliminar Dashboard"
         cancelText="Cancelar"
         isDanger={true}
+        isDark={isDark}
         onConfirm={confirmDeleteDashboard}
         onCancel={() => setPendingDeleteDashId(null)}
       />
@@ -2768,6 +3137,7 @@ export default function App() {
         confirmText="Eliminar Semana"
         cancelText="Cancelar"
         isDanger={true}
+        isDark={isDark}
         onConfirm={confirmDeleteWeek}
         onCancel={() => setPendingDeleteWeekId(null)}
       />
@@ -2779,6 +3149,7 @@ export default function App() {
         subtitle="¿VAS A SUBIR A SUPABASE / NUBE?"
         confirmText="Confirmar"
         cancelText="Cancelar"
+        isDark={isDark}
         onConfirm={handleConfirmUpload}
         onCancel={() => setShowUploadConfirm(false)}
       />
@@ -2790,6 +3161,7 @@ export default function App() {
         message="Ingresa la clave de acceso:"
         placeholder="Ingresa tu clave"
         defaultValue=""
+        isDark={isDark}
         onConfirm={handlePromptDownload}
         onCancel={() => setShowDownloadPrompt(false)}
       />
@@ -2801,6 +3173,7 @@ export default function App() {
         subtitle="¿VAS A DESCARGAR?"
         confirmText="Confirmar"
         cancelText="Cancelar"
+        isDark={isDark}
         onConfirm={handleConfirmDownload}
         onCancel={() => setShowDownloadConfirm(false)}
       />
@@ -2813,6 +3186,7 @@ export default function App() {
         confirmText="Confirmar"
         cancelText="Cancelar"
         isDanger={true}
+        isDark={isDark}
         onConfirm={handleResetAll}
         onCancel={() => setShowResetConfirm(false)}
       />
@@ -2824,6 +3198,7 @@ export default function App() {
         message="Ingresa una nota breve o descripción:"
         placeholder="Ej. Semestre 2026-II"
         defaultValue={currentDashboard.quickNote || ''}
+        isDark={isDark}
         onConfirm={handleUpdateNote}
         onCancel={() => setShowEditNotePrompt(false)}
       />
@@ -2899,14 +3274,18 @@ export default function App() {
       {/* Floating Action Button (FAB) para KALI IA */}
       <button
         onClick={() => setShowAIAssistant(true)}
-        className="fixed bottom-5 right-5 sm:bottom-6 sm:right-6 z-40 p-3 sm:px-4 sm:py-3 rounded-2xl sm:rounded-full bg-gradient-to-r from-pink-500 via-purple-600 to-cyan-400 text-white shadow-[0_0_25px_rgba(236,72,153,0.4)] hover:shadow-[0_0_35px_rgba(236,72,153,0.6)] hover:scale-105 active:scale-95 transition-all flex items-center gap-2 cursor-pointer group"
+        className={`fixed bottom-5 right-5 sm:bottom-6 sm:right-6 z-40 p-3 sm:px-4 sm:py-2.5 rounded-full shadow-lg hover:scale-105 active:scale-95 transition-all flex items-center gap-2 cursor-pointer border ${
+          isDark
+            ? 'bg-white text-zinc-950 border-white hover:bg-zinc-200'
+            : 'bg-zinc-900 text-white border-zinc-900 hover:bg-zinc-800'
+        }`}
         title="Abrir KALI • Copiloto IA UEES"
       >
         <div className="relative">
-          <Bot className="w-5 h-5 text-white" />
-          <span className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-cyan-300 animate-ping" />
+          <Bot className="w-4 h-4" />
+          <span className="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-emerald-500 animate-ping" />
         </div>
-        <span className="hidden sm:inline font-mono font-black text-xs uppercase tracking-wider drop-shadow-md">
+        <span className="hidden sm:inline font-mono font-bold text-xs uppercase tracking-wider">
           KALI IA
         </span>
       </button>

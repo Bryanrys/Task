@@ -75,17 +75,21 @@ export const AnalyticsSection: React.FC<AnalyticsSectionProps> = ({
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
       {/* CURVA DE RENDIMIENTO ACADÉMICO */}
-      <div className="bg-[#05070e] p-6 rounded-2xl lg:col-span-2 space-y-4 shadow-xl border border-white/5">
+      <div className={`p-6 rounded-3xl lg:col-span-2 space-y-4 border transition-all ${
+        isDark ? 'bg-[#131417] border-white/10 shadow-xl' : 'bg-white border-zinc-200/80 shadow-xs'
+      }`}>
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
           <div>
-            <h4 className="text-sm font-extrabold text-white tracking-wide">
+            <h4 className={`text-sm font-extrabold tracking-wide ${isDark ? 'text-white' : 'text-zinc-900'}`}>
               Curva de Rendimiento Académico
             </h4>
-            <p className="text-xs text-gray-400">
+            <p className={`text-xs ${isDark ? 'text-zinc-400' : 'text-zinc-500'}`}>
               Comparativa semanal de tareas entregadas vs notas obtenidas
             </p>
           </div>
-          <span className="self-start sm:self-auto text-xs font-semibold text-pink-400 bg-pink-500/10 px-3 py-1 rounded-xl border border-pink-500/25 shrink-0">
+          <span className={`self-start sm:self-auto text-xs font-semibold px-3 py-1 rounded-xl border shrink-0 ${
+            isDark ? 'text-zinc-300 bg-white/5 border-white/10' : 'text-zinc-700 bg-zinc-100 border-zinc-200'
+          }`}>
             Semana Activa
           </span>
         </div>
@@ -94,8 +98,8 @@ export const AnalyticsSection: React.FC<AnalyticsSectionProps> = ({
           <svg viewBox={`0 0 ${svgWidth} ${svgHeight}`} className="w-full h-full overflow-visible">
             <defs>
               <linearGradient id="curveGradient" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#ec4899" stopOpacity="0.25" />
-                <stop offset="100%" stopColor="#ec4899" stopOpacity="0.0" />
+                <stop offset="0%" stopColor="#10b981" stopOpacity={isDark ? "0.2" : "0.12"} />
+                <stop offset="100%" stopColor="#10b981" stopOpacity="0.0" />
               </linearGradient>
             </defs>
 
@@ -110,7 +114,7 @@ export const AnalyticsSection: React.FC<AnalyticsSectionProps> = ({
                     y1={y}
                     x2={svgWidth - padX}
                     y2={y}
-                    stroke="rgba(255, 255, 255, 0.06)"
+                    stroke={isDark ? "rgba(255, 255, 255, 0.08)" : "rgba(0, 0, 0, 0.06)"}
                     strokeWidth="1"
                     strokeDasharray="4 4"
                   />
@@ -118,7 +122,7 @@ export const AnalyticsSection: React.FC<AnalyticsSectionProps> = ({
                     x={padX - 10}
                     y={y + 4}
                     textAnchor="end"
-                    fill="#6b7280"
+                    fill={isDark ? "#71717a" : "#a1a1aa"}
                     fontSize="10"
                     fontFamily="monospace"
                   >
@@ -136,8 +140,8 @@ export const AnalyticsSection: React.FC<AnalyticsSectionProps> = ({
               <motion.path
                 d={curveD}
                 fill="none"
-                stroke="#ec4899"
-                strokeWidth="3.5"
+                stroke="#10b981"
+                strokeWidth="3"
                 strokeLinecap="round"
                 initial={{ pathLength: 0 }}
                 animate={{ pathLength: 1 }}
@@ -152,16 +156,16 @@ export const AnalyticsSection: React.FC<AnalyticsSectionProps> = ({
                   cx={pt.x}
                   cy={pt.y}
                   r="5"
-                  fill="#06b6d4"
-                  stroke="#ffffff"
+                  fill="#10b981"
+                  stroke={isDark ? "#131417" : "#ffffff"}
                   strokeWidth="2"
-                  className="filter drop-shadow-[0_0_6px_rgba(6,182,212,0.8)]"
+                  className="filter drop-shadow-[0_0_6px_rgba(16,185,129,0.5)]"
                 />
                 <text
                   x={pt.x}
                   y={svgHeight - 6}
                   textAnchor="middle"
-                  fill="#9ca3af"
+                  fill={isDark ? "#9ca3af" : "#71717a"}
                   fontSize="10"
                   fontFamily="sans-serif"
                 >
@@ -174,12 +178,14 @@ export const AnalyticsSection: React.FC<AnalyticsSectionProps> = ({
       </div>
 
       {/* COMPLETITUD GLOBAL DOUGHNUT */}
-      <div className="bg-[#05070e] p-6 rounded-2xl space-y-4 flex flex-col justify-between shadow-xl border border-white/5">
+      <div className={`p-6 rounded-3xl space-y-4 flex flex-col justify-between border transition-all ${
+        isDark ? 'bg-[#131417] border-white/10 shadow-xl' : 'bg-white border-zinc-200/80 shadow-xs'
+      }`}>
         <div>
-          <h4 className="text-sm font-extrabold text-white tracking-wide">
+          <h4 className={`text-sm font-extrabold tracking-wide ${isDark ? 'text-white' : 'text-zinc-900'}`}>
             Completitud Global
           </h4>
-          <p className="text-xs text-gray-400">Distribución de estados de materias</p>
+          <p className={`text-xs ${isDark ? 'text-zinc-400' : 'text-zinc-500'}`}>Distribución de estados de materias</p>
         </div>
 
         <div className="h-44 w-full flex items-center justify-center relative my-2">
@@ -189,27 +195,27 @@ export const AnalyticsSection: React.FC<AnalyticsSectionProps> = ({
               cx="80"
               cy="80"
               r={radius}
-              stroke="rgba(255, 255, 255, 0.08)"
+              stroke={isDark ? "rgba(255, 255, 255, 0.08)" : "rgba(0, 0, 0, 0.06)"}
               strokeWidth={strokeWidth}
               fill="transparent"
             />
-            {/* Pending segment (Purple) */}
+            {/* Pending segment */}
             <circle
               cx="80"
               cy="80"
               r={radius}
-              stroke="#8b5cf6"
+              stroke={isDark ? "#3f3f46" : "#e4e4e7"}
               strokeWidth={strokeWidth}
               strokeDasharray={circumference}
               strokeDashoffset={0}
               fill="transparent"
             />
-            {/* Delivered segment (Pink) */}
+            {/* Delivered segment (Emerald) */}
             <motion.circle
               cx="80"
               cy="80"
               r={radius}
-              stroke="#ec4899"
+              stroke="#10b981"
               strokeWidth={strokeWidth}
               strokeDasharray={circumference}
               strokeDashoffset={deliveredOffset}
@@ -223,20 +229,20 @@ export const AnalyticsSection: React.FC<AnalyticsSectionProps> = ({
 
           {/* Center text */}
           <div className="absolute inset-0 flex flex-col items-center justify-center text-center pointer-events-none">
-            <span className="text-2xl font-black text-white">{completedPct}%</span>
-            <span className="text-[10px] text-gray-400 uppercase font-mono">Avance</span>
+            <span className={`text-2xl font-black ${isDark ? 'text-white' : 'text-zinc-900'}`}>{completedPct}%</span>
+            <span className={`text-[10px] uppercase font-mono ${isDark ? 'text-zinc-400' : 'text-zinc-500'}`}>Avance</span>
           </div>
         </div>
 
         {/* Legend */}
-        <div className="grid grid-cols-2 gap-2 pt-3 border-t border-white/10 text-xs">
+        <div className={`grid grid-cols-2 gap-2 pt-3 border-t text-xs ${isDark ? 'border-white/10' : 'border-zinc-200'}`}>
           <div className="flex items-center space-x-2">
-            <span className="w-2.5 h-2.5 rounded-full bg-pink-500 shrink-0 shadow-[0_0_8px_rgba(236,72,153,0.6)]" />
-            <span className="text-gray-300">Entregadas ({completedPct}%)</span>
+            <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 shrink-0 shadow-[0_0_8px_rgba(16,185,129,0.4)]" />
+            <span className={isDark ? "text-zinc-300" : "text-zinc-600"}>Entregadas ({completedPct}%)</span>
           </div>
           <div className="flex items-center space-x-2">
-            <span className="w-2.5 h-2.5 rounded-full bg-purple-500 shrink-0 shadow-[0_0_8px_rgba(139,92,246,0.6)]" />
-            <span className="text-gray-300">Pendientes ({pendingPct}%)</span>
+            <span className={`w-2.5 h-2.5 rounded-full shrink-0 ${isDark ? "bg-zinc-600" : "bg-zinc-300"}`} />
+            <span className={isDark ? "text-zinc-400" : "text-zinc-600"}>Pendientes ({pendingPct}%)</span>
           </div>
         </div>
       </div>

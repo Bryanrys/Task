@@ -8,6 +8,7 @@ interface PromptModalProps {
   defaultValue?: string;
   onConfirm: (val: string) => void;
   onCancel: () => void;
+  isDark?: boolean;
 }
 
 export const PromptModal: React.FC<PromptModalProps> = ({
@@ -18,6 +19,7 @@ export const PromptModal: React.FC<PromptModalProps> = ({
   defaultValue = '',
   onConfirm,
   onCancel,
+  isDark = true,
 }) => {
   const [value, setValue] = useState(defaultValue);
 
@@ -30,30 +32,42 @@ export const PromptModal: React.FC<PromptModalProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-sm animate-fadeIn">
-      <div className="relative w-full max-w-[340px] bg-[#05070e] border border-white/10 rounded-3xl p-6 shadow-2xl">
-        <p className="text-xs font-semibold text-gray-400 mb-1">{title}</p>
-        <p className="text-sm font-bold text-white mb-4">{message}</p>
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fadeIn">
+      <div className={`relative w-full max-w-[360px] rounded-3xl p-6 shadow-2xl border transition-all ${
+        isDark ? 'bg-[#131417] border-white/10 text-white' : 'bg-white border-zinc-200 text-zinc-900'
+      }`}>
+        <p className={`text-xs font-semibold mb-1 ${isDark ? 'text-zinc-400' : 'text-zinc-500'}`}>{title}</p>
+        <p className="text-sm font-bold mb-4">{message}</p>
 
         <input
           type="text"
           value={value}
           onChange={(e) => setValue(e.target.value)}
           placeholder={placeholder}
-          className="w-full bg-[#0a0d17] border border-white/15 focus:border-cyan-400 rounded-xl px-3.5 py-2.5 text-sm text-white placeholder-gray-500 outline-none mb-6 transition-all"
+          className={`w-full rounded-2xl px-4 py-2.5 text-sm outline-none mb-6 border transition-all ${
+            isDark
+              ? 'bg-white/5 border-white/10 text-white placeholder-zinc-500 focus:border-white/30'
+              : 'bg-zinc-50 border-zinc-200 text-zinc-900 placeholder-zinc-400 focus:border-zinc-400'
+          }`}
           autoFocus
         />
 
-        <div className="flex items-center justify-end gap-3 text-xs font-bold">
+        <div className="flex items-center justify-end gap-2.5 text-xs font-bold">
           <button
             onClick={onCancel}
-            className="px-4 py-2 text-gray-400 hover:text-white rounded-lg transition-colors"
+            className={`px-4 py-2 rounded-full font-semibold transition-colors cursor-pointer ${
+              isDark ? 'text-zinc-400 hover:text-white' : 'text-zinc-600 hover:text-zinc-900'
+            }`}
           >
             Cancelar
           </button>
           <button
             onClick={() => onConfirm(value)}
-            className="px-5 py-2 bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white font-bold rounded-xl transition-all shadow-md cursor-pointer"
+            className={`px-5 py-2 rounded-full font-bold shadow-xs transition-all cursor-pointer active:scale-95 ${
+              isDark
+                ? 'bg-white text-zinc-950 hover:bg-zinc-200'
+                : 'bg-zinc-900 text-white hover:bg-zinc-800'
+            }`}
           >
             Aceptar
           </button>
@@ -72,6 +86,7 @@ interface ConfirmModalProps {
   onConfirm: () => void;
   onCancel: () => void;
   isDanger?: boolean;
+  isDark?: boolean;
 }
 
 export const ConfirmModal: React.FC<ConfirmModalProps> = ({
@@ -83,29 +98,36 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
   onConfirm,
   onCancel,
   isDanger = false,
+  isDark = true,
 }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-sm animate-fadeIn">
-      <div className="relative w-full max-w-[320px] bg-[#05070e] border border-white/10 rounded-3xl p-6 text-center shadow-2xl">
-        <h3 className="text-lg font-black text-white mb-1 tracking-wide">{title}</h3>
-        {subtitle && <p className="text-xs font-semibold text-gray-400 mb-6">{subtitle}</p>}
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fadeIn">
+      <div className={`relative w-full max-w-[340px] rounded-3xl p-6 text-center shadow-2xl border transition-all ${
+        isDark ? 'bg-[#131417] border-white/10 text-white' : 'bg-white border-zinc-200 text-zinc-900'
+      }`}>
+        <h3 className="text-base font-extrabold mb-1 tracking-tight">{title}</h3>
+        {subtitle && <p className={`text-xs font-medium mb-6 ${isDark ? 'text-zinc-400' : 'text-zinc-500'}`}>{subtitle}</p>}
 
         <div className="space-y-2 mt-4">
           <button
             onClick={onConfirm}
-            className={`w-full py-2.5 px-4 font-black text-xs rounded-xl transition-all shadow-md cursor-pointer ${
+            className={`w-full py-2.5 px-4 font-bold text-xs rounded-full transition-all shadow-xs cursor-pointer active:scale-95 ${
               isDanger
                 ? 'bg-rose-500 hover:bg-rose-600 text-white'
-                : 'bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white shadow-pink-500/20'
+                : isDark
+                ? 'bg-white text-zinc-950 hover:bg-zinc-200'
+                : 'bg-zinc-900 text-white hover:bg-zinc-800'
             }`}
           >
             {confirmText}
           </button>
           <button
             onClick={onCancel}
-            className="w-full py-2 text-xs font-semibold text-gray-400 hover:text-white transition-colors cursor-pointer"
+            className={`w-full py-2 text-xs font-semibold rounded-full transition-colors cursor-pointer ${
+              isDark ? 'text-zinc-400 hover:text-white' : 'text-zinc-600 hover:text-zinc-900'
+            }`}
           >
             {cancelText}
           </button>

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion } from 'motion/react';
 
 interface SegmentedLoaderProps {
   isOpen: boolean;
@@ -32,7 +32,7 @@ export const SegmentedLoader: React.FC<SegmentedLoaderProps> = ({ isOpen, onEnte
       if (current >= totalSegments) {
         clearInterval(interval);
         setTimeout(() => {
-          setStatusText('✨️ ¡Listo para ingresar! (Toca aquí)');
+          setStatusText('✨ ¡Listo para ingresar! (Toca aquí)');
           setIsReady(true);
         }, 200);
       }
@@ -44,14 +44,14 @@ export const SegmentedLoader: React.FC<SegmentedLoaderProps> = ({ isOpen, onEnte
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-[9999] bg-[#0c0a09] flex items-center justify-center p-5 text-center select-none animate-fadeIn">
+    <div className="fixed inset-0 z-[9999] bg-[#09090b] flex items-center justify-center p-5 text-center select-none animate-fadeIn">
       <motion.div
         initial={{ scale: 0.94, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         exit={{ scale: 0.94, opacity: 0 }}
         className="max-w-[420px] w-full flex flex-col items-center gap-4"
       >
-        <h2 className="text-3xl font-extrabold tracking-tight text-white uppercase">
+        <h2 className="text-3xl font-black tracking-tight text-white uppercase font-mono">
           BIENVENIDO
         </h2>
 
@@ -62,8 +62,8 @@ export const SegmentedLoader: React.FC<SegmentedLoaderProps> = ({ isOpen, onEnte
           disabled={!isReady}
           className={`w-full max-w-[320px] p-4 rounded-2xl border flex flex-col items-center gap-3 transition-all cursor-pointer ${
             isReady
-              ? 'bg-gradient-to-r from-pink-500/20 via-purple-500/20 to-cyan-500/20 border-pink-500/50 text-white shadow-xl shadow-pink-500/20 active:scale-95'
-              : 'bg-[#0a0d17] border-white/10 text-stone-400 cursor-wait'
+              ? 'bg-white text-zinc-950 border-white shadow-xl active:scale-95'
+              : 'bg-[#131417] border-white/10 text-zinc-400 cursor-wait'
           }`}
         >
           <span className="font-bold text-sm tracking-wide">
@@ -71,12 +71,12 @@ export const SegmentedLoader: React.FC<SegmentedLoaderProps> = ({ isOpen, onEnte
           </span>
 
           {/* 8-Segment Loading Bar */}
-          <div className="w-full h-1.5 bg-white/10 rounded-full overflow-hidden flex gap-1 p-0.5">
+          <div className="w-full h-1.5 bg-zinc-800 rounded-full overflow-hidden flex gap-1 p-0.5">
             {Array.from({ length: 8 }).map((_, i) => (
               <div
                 key={i}
                 className={`flex-1 h-full rounded-sm transition-colors duration-150 ${
-                  i < filledCount ? 'bg-gradient-to-r from-pink-500 to-purple-600 shadow-xs shadow-pink-500/40' : 'bg-white/15'
+                  i < filledCount ? (isReady ? 'bg-zinc-950' : 'bg-white') : 'bg-zinc-700'
                 }`}
               />
             ))}
@@ -84,7 +84,7 @@ export const SegmentedLoader: React.FC<SegmentedLoaderProps> = ({ isOpen, onEnte
         </button>
 
         {isReady && (
-          <p className="text-xs text-stone-400 animate-pulse">
+          <p className="text-xs text-zinc-400 animate-pulse font-mono">
             Toca el botón para entrar a tu Dashboard
           </p>
         )}

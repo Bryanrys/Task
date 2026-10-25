@@ -80,21 +80,24 @@ export const DrawerDashboards: React.FC<DrawerDashboardsProps> = ({
           <div className="flex-1 overflow-y-auto p-5 space-y-6">
             {/* User Profile Card (Estilo Sidebar HTML UEES) */}
             <div
-              className={`p-3.5 rounded-2xl border flex items-center justify-between transition-all ${isDark
-                  ? 'bg-[#121b2d]/80 border-white/10 shadow-lg'
-                  : 'bg-white border-stone-200 shadow-sm'
-                }`}
+              className={`p-3.5 rounded-2xl border flex items-center justify-between transition-all ${
+                isDark
+                  ? 'bg-[#18191e] border-white/10 shadow-sm'
+                  : 'bg-white border-zinc-200 shadow-xs'
+              }`}
             >
               <div className="flex items-center space-x-3">
-                <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-pink-500 via-purple-500 to-cyan-400 flex items-center justify-center font-black text-xs text-white shadow-md shadow-pink-500/25">
+                <div className={`w-9 h-9 rounded-xl flex items-center justify-center font-black text-xs border ${
+                  isDark ? 'bg-white text-zinc-950 border-white' : 'bg-zinc-900 text-white border-zinc-900'
+                }`}>
                   {loggedUser ? loggedUser.charAt(0).toUpperCase() : 'U'}
                 </div>
                 <div>
                   <p className="text-xs font-black tracking-wide uppercase">
                     {loggedUser || 'Estudiante UEES'}
                   </p>
-                  <p className="text-[10px] text-emerald-400 font-semibold flex items-center gap-1.5">
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse inline-block" />
+                  <p className={`text-[10px] font-semibold flex items-center gap-1.5 ${isDark ? 'text-zinc-400' : 'text-zinc-500'}`}>
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 inline-block" />
                     En línea • Pro
                   </p>
                 </div>
@@ -103,7 +106,11 @@ export const DrawerDashboards: React.FC<DrawerDashboardsProps> = ({
               {onTriggerCelebration && (
                 <button
                   onClick={onTriggerCelebration}
-                  className="p-2 rounded-xl bg-pink-500/10 hover:bg-pink-500/20 text-pink-400 border border-pink-500/25 transition-all cursor-pointer"
+                  className={`p-2 rounded-xl border transition-all cursor-pointer ${
+                    isDark
+                      ? 'bg-white/5 hover:bg-white/10 text-zinc-300 border-white/10'
+                      : 'bg-zinc-100 hover:bg-zinc-200 text-zinc-700 border-zinc-200'
+                  }`}
                   title="Celebrar logro académico"
                 >
                   <Sparkles className="w-4 h-4" />
@@ -184,22 +191,15 @@ export const DrawerDashboards: React.FC<DrawerDashboardsProps> = ({
                   return (
                     <div
                       key={week.id}
-                      className={`rounded-2xl p-3.5 transition-all flex items-center justify-between border ${isActive
-                          ? isParcial
-                            ? isDark
-                              ? 'border-pink-500 bg-pink-950/25 shadow-lg shadow-pink-500/15'
-                              : 'border-pink-400 bg-pink-50/80 shadow-sm'
-                            : isDark
-                              ? 'border-cyan-400/80 bg-cyan-500/10 shadow-lg shadow-cyan-500/15'
-                              : 'border-cyan-400 bg-cyan-50/80 shadow-sm'
-                          : isParcial
-                            ? isDark
-                              ? 'border-pink-500/25 bg-[#17171d] hover:border-pink-500/50'
-                              : 'border-pink-200 bg-pink-50/30 hover:border-pink-300'
-                            : isDark
-                              ? 'border-[#22222a] bg-[#17171d] hover:border-slate-600'
-                              : 'border-stone-200 bg-stone-50/80 hover:bg-stone-100 hover:border-stone-300'
-                        }`}
+                      className={`rounded-2xl p-3.5 transition-all flex items-center justify-between border ${
+                        isActive
+                          ? isDark
+                            ? 'border-white bg-white/10 text-white shadow-md'
+                            : 'border-zinc-900 bg-zinc-900 text-white shadow-md'
+                          : isDark
+                            ? 'border-white/5 bg-[#18191e] hover:border-white/20 text-zinc-300'
+                            : 'border-zinc-200 bg-zinc-50 hover:bg-zinc-100 text-zinc-800'
+                      }`}
                     >
                       <div
                         onClick={() => {
@@ -209,47 +209,39 @@ export const DrawerDashboards: React.FC<DrawerDashboardsProps> = ({
                         className="flex-1 cursor-pointer"
                       >
                         <div className="flex items-center gap-2">
-                          <span
-                            className={`font-black text-sm ${isActive
-                                ? isParcial
-                                  ? isDark
-                                    ? 'text-pink-300'
-                                    : 'text-pink-600'
-                                  : isDark
-                                    ? 'text-cyan-300'
-                                    : 'text-cyan-800'
-                                : isDark
-                                  ? 'text-slate-100'
-                                  : 'text-stone-800'
-                              }`}
-                          >
+                          <span className={`font-black text-sm ${
+                            isActive
+                              ? 'text-white'
+                              : isDark ? 'text-zinc-100' : 'text-zinc-900'
+                          }`}>
                             Semana {week.weekNumber}
                           </span>
                           {isActive && !isParcial && (
-                            <span
-                              className={`text-[9px] font-black px-1.5 py-0.5 rounded-full ${isDark
-                                  ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/30'
-                                  : 'bg-cyan-100 text-cyan-700 border border-cyan-300'
-                                }`}
-                            >
+                            <span className={`text-[9px] font-black px-1.5 py-0.5 rounded-full border ${
+                              isDark
+                                ? 'bg-white/20 text-white border-white/30'
+                                : 'bg-white/20 text-white border-white/30'
+                            }`}>
                               EN CURSO
                             </span>
                           )}
                           {isParcial && (
-                            <span
-                              className={`text-[9px] font-black px-1.5 py-0.5 rounded-full ${isDark
-                                  ? 'bg-pink-500/20 text-pink-300 border border-pink-500/30'
-                                  : 'bg-pink-100 text-pink-700 border border-pink-300'
-                                }`}
-                            >
+                            <span className={`text-[9px] font-black px-1.5 py-0.5 rounded-full border ${
+                              isActive
+                                ? 'bg-white/20 text-white border-white/30'
+                                : isDark
+                                ? 'bg-amber-500/15 text-amber-300 border-amber-500/30'
+                                : 'bg-amber-50 text-amber-800 border-amber-200'
+                            }`}>
                               🎯 PARCIAL
                             </span>
                           )}
                         </div>
-                        <p
-                          className={`text-[11px] mt-0.5 font-mono ${isDark ? 'text-slate-400' : 'text-stone-500'
-                            }`}
-                        >
+                        <p className={`text-[11px] mt-0.5 font-mono ${
+                          isActive
+                            ? 'text-zinc-300'
+                            : isDark ? 'text-zinc-400' : 'text-zinc-500'
+                        }`}>
                           {formatOrResolveWeekDateRange(week.weekNumber, activeDashboard.startDateISO, week.dateRange)}
                         </p>
                       </div>
@@ -262,23 +254,15 @@ export const DrawerDashboards: React.FC<DrawerDashboardsProps> = ({
                           </span>
                         )}
                         {week.status === 'EN PROCESO' && (
-                          <span
-                            className={`inline-flex items-center gap-1 text-[10px] font-extrabold px-2 py-0.5 rounded-full font-mono ${isParcial
-                                ? 'text-pink-400 bg-pink-500/10 border border-pink-500/30'
-                                : isDark
-                                  ? 'text-yellow-300 bg-yellow-400/10 border border-yellow-400/30'
-                                  : 'text-amber-800 bg-amber-100 border border-amber-300'
-                              }`}
-                          >
+                          <span className={`inline-flex items-center gap-1 text-[10px] font-extrabold px-2 py-0.5 rounded-full font-mono border ${
+                            isActive
+                              ? 'bg-white/20 text-white border-white/30'
+                              : isDark
+                              ? 'text-zinc-300 bg-white/5 border-white/10'
+                              : 'text-zinc-700 bg-zinc-100 border-zinc-200'
+                          }`}>
                             EN PROCESO...
-                            <Clock
-                              className={`w-3 h-3 inline animate-spin ${isParcial
-                                  ? 'text-pink-400'
-                                  : isDark
-                                    ? 'text-yellow-300'
-                                    : 'text-amber-800'
-                                }`}
-                            />
+                            <Clock className="w-3 h-3 inline animate-spin text-zinc-400" />
                           </span>
                         )}
                         {week.status === 'PENDIENTE' && (

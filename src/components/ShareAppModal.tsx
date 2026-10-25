@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, Copy, Check, Share2, Globe, ExternalLink, MessageCircle, Edit3, Sparkles, CheckCircle2, RotateCcw, Smartphone, Download } from 'lucide-react';
+import { X, Copy, Check, Share2, Globe, ExternalLink, MessageCircle, Edit3, Sparkles, CheckCircle2, Smartphone } from 'lucide-react';
 
 export const PRESET_HOSTING_OPTIONS = [
   {
@@ -113,19 +113,19 @@ export const ShareAppModal: React.FC<ShareAppModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-xs animate-fadeIn">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-xs animate-fadeIn">
       <div
-        className={`relative w-full max-w-sm rounded-3xl p-5 border shadow-2xl transition-all ${
+        className={`relative w-full max-w-sm rounded-3xl p-6 border shadow-2xl transition-all ${
           isDark
-            ? 'bg-[#0a0d17] border-white/10 text-stone-100'
-            : 'bg-white border-stone-200 text-stone-900'
+            ? 'bg-[#131417] border-white/10 text-white'
+            : 'bg-white border-zinc-200 text-zinc-900'
         }`}
       >
         {/* Close Button */}
         <button
           onClick={onClose}
           className={`absolute top-4 right-4 p-1.5 rounded-full transition-colors cursor-pointer ${
-            isDark ? 'hover:bg-white/10 text-stone-400' : 'hover:bg-stone-100 text-stone-500'
+            isDark ? 'hover:bg-white/10 text-zinc-400' : 'hover:bg-zinc-100 text-zinc-500'
           }`}
         >
           <X className="w-4 h-4" />
@@ -133,14 +133,16 @@ export const ShareAppModal: React.FC<ShareAppModalProps> = ({
 
         {/* Modal Header */}
         <div className="flex items-center gap-3 mb-4">
-          <div className="p-2.5 rounded-2xl bg-pink-500/15 text-pink-400 border border-pink-500/30">
+          <div className={`p-2.5 rounded-2xl border ${
+            isDark ? 'bg-white/5 border-white/10 text-white' : 'bg-zinc-100 border-zinc-200 text-zinc-900'
+          }`}>
             <Share2 className="w-5 h-5" />
           </div>
           <div>
             <h3 className="font-black text-sm uppercase tracking-wider font-mono">
               ENLACE DE LA APP WEB
             </h3>
-            <p className="text-[11px] text-stone-400">
+            <p className={`text-[11px] ${isDark ? 'text-zinc-400' : 'text-zinc-500'}`}>
               Para abrir en tu PC o compartir con amigos
             </p>
           </div>
@@ -148,40 +150,50 @@ export const ShareAppModal: React.FC<ShareAppModalProps> = ({
 
         {/* Edit Form or URL Display */}
         {isEditing ? (
-          <form onSubmit={handleSaveEdit} className="space-y-3 mb-3 p-3.5 rounded-2xl border bg-[#05070e] border-white/10">
+          <form onSubmit={handleSaveEdit} className={`space-y-3 mb-3 p-3.5 rounded-2xl border ${
+            isDark ? 'bg-white/[0.02] border-white/10' : 'bg-zinc-50 border-zinc-200'
+          }`}>
             <div className="flex items-center justify-between">
-              <span className="text-xs font-bold text-pink-400 flex items-center gap-1.5 font-mono">
+              <span className={`text-xs font-bold flex items-center gap-1.5 font-mono ${
+                isDark ? 'text-zinc-300' : 'text-zinc-700'
+              }`}>
                 <Edit3 className="w-3.5 h-3.5" />
                 Personalizar Enlace Compartido
               </span>
               <button
                 type="button"
                 onClick={() => setIsEditing(false)}
-                className="text-[10px] text-stone-400 hover:text-white cursor-pointer"
+                className={`text-[10px] cursor-pointer ${isDark ? 'text-zinc-400 hover:text-white' : 'text-zinc-500 hover:text-zinc-900'}`}
               >
                 Cancelar
               </button>
             </div>
 
             <div>
-              <label className="text-[10px] text-stone-400 block mb-1">
-                Escribe o pega la dirección web (sin Google):
+              <label className={`text-[10px] block mb-1 ${isDark ? 'text-zinc-400' : 'text-zinc-500'}`}>
+                Escribe o pega la dirección web:
               </label>
               <input
                 type="text"
                 value={tempUrl}
                 onChange={(e) => setTempUrl(e.target.value)}
                 placeholder="https://tu-dashboard.vercel.app"
-                className="w-full text-xs font-mono bg-[#0a0d17] border border-white/10 focus:border-pink-500 rounded-xl px-3 py-2 text-white outline-none"
+                className={`w-full text-xs font-mono rounded-xl px-3 py-2 outline-none border ${
+                  isDark
+                    ? 'bg-black/30 border-white/10 focus:border-white text-white'
+                    : 'bg-white border-zinc-200 focus:border-zinc-900 text-zinc-900'
+                }`}
                 autoFocus
               />
             </div>
 
             {/* Presets suggestions */}
             <div>
-              <span className="text-[10px] text-stone-400 block mb-1.5 flex items-center gap-1">
-                <Sparkles className="w-3 h-3 text-pink-400" />
-                O selecciona uno generado automáticamente:
+              <span className={`text-[10px] block mb-1.5 flex items-center gap-1 ${
+                isDark ? 'text-zinc-400' : 'text-zinc-500'
+              }`}>
+                <Sparkles className="w-3 h-3 text-zinc-400" />
+                O selecciona uno predeterminado:
               </span>
               <div className="grid grid-cols-3 gap-1.5">
                 {PRESET_HOSTING_OPTIONS.map((opt) => (
@@ -191,8 +203,12 @@ export const ShareAppModal: React.FC<ShareAppModalProps> = ({
                     onClick={() => handleSelectPreset(opt.url)}
                     className={`px-2 py-1.5 rounded-lg border text-[10px] font-bold text-center transition-all cursor-pointer truncate ${
                       tempUrl === opt.url
-                        ? 'bg-pink-500/20 border-pink-500 text-pink-300'
-                        : 'bg-white/5 border-white/10 text-stone-300 hover:bg-white/10'
+                        ? isDark
+                          ? 'bg-white text-zinc-950 border-white'
+                          : 'bg-zinc-900 text-white border-zinc-900'
+                        : isDark
+                        ? 'bg-white/5 border-white/10 text-zinc-300 hover:bg-white/10'
+                        : 'bg-zinc-100 border-zinc-200 text-zinc-700 hover:bg-zinc-200'
                     }`}
                   >
                     {opt.name}
@@ -205,13 +221,21 @@ export const ShareAppModal: React.FC<ShareAppModalProps> = ({
               <button
                 type="button"
                 onClick={() => setIsEditing(false)}
-                className="flex-1 py-1.5 rounded-xl border border-white/10 text-xs font-bold text-stone-400 hover:text-white cursor-pointer"
+                className={`flex-1 py-1.5 rounded-xl border text-xs font-bold cursor-pointer ${
+                  isDark
+                    ? 'border-white/10 text-zinc-400 hover:text-white'
+                    : 'border-zinc-200 text-zinc-600 hover:text-zinc-900'
+                }`}
               >
                 Cancelar
               </button>
               <button
                 type="submit"
-                className="flex-1 py-1.5 rounded-xl bg-gradient-to-r from-pink-500 to-purple-600 hover:opacity-90 text-white text-xs font-black cursor-pointer transition-colors shadow-md shadow-pink-500/20"
+                className={`flex-1 py-1.5 rounded-xl text-xs font-black cursor-pointer transition-all border ${
+                  isDark
+                    ? 'bg-white text-zinc-950 border-white hover:bg-zinc-200'
+                    : 'bg-zinc-900 text-white border-zinc-900 hover:bg-zinc-800'
+                }`}
               >
                 Guardar Enlace
               </button>
@@ -219,16 +243,16 @@ export const ShareAppModal: React.FC<ShareAppModalProps> = ({
           </form>
         ) : (
           <div
-            className={`p-3 rounded-2xl border mb-3 space-y-2 ${
+            className={`p-3.5 rounded-2xl border mb-3 space-y-2 ${
               isDark
-                ? 'bg-[#05070e] border-white/10'
-                : 'bg-stone-50 border-stone-200'
+                ? 'bg-white/[0.03] border-white/10'
+                : 'bg-zinc-50 border-zinc-200'
             }`}
           >
             <div className="flex items-center justify-between gap-2">
               <div className="flex items-center gap-2 overflow-hidden flex-1">
-                <Globe className="w-4 h-4 text-cyan-400 shrink-0" />
-                <span className="text-xs font-mono truncate select-all text-stone-200">
+                <Globe className={`w-4 h-4 shrink-0 ${isDark ? 'text-zinc-400' : 'text-zinc-600'}`} />
+                <span className={`text-xs font-mono truncate select-all ${isDark ? 'text-zinc-200' : 'text-zinc-800'}`}>
                   {appUrl}
                 </span>
               </div>
@@ -236,10 +260,12 @@ export const ShareAppModal: React.FC<ShareAppModalProps> = ({
               <button
                 onClick={handleCopy}
                 title="Copiar enlace"
-                className={`px-2.5 py-1.5 rounded-xl border text-xs font-bold transition-all cursor-pointer shrink-0 flex items-center gap-1 ${
+                className={`px-3 py-1.5 rounded-xl border text-xs font-bold transition-all cursor-pointer shrink-0 flex items-center gap-1.5 ${
                   copied
-                    ? 'bg-emerald-500/20 border-emerald-500/40 text-emerald-300'
-                    : 'bg-gradient-to-r from-pink-500 to-purple-600 hover:opacity-90 border-transparent text-white shadow-xs'
+                    ? 'bg-emerald-500/15 border-emerald-500/30 text-emerald-400'
+                    : isDark
+                    ? 'bg-white text-zinc-950 border-white hover:bg-zinc-200'
+                    : 'bg-zinc-900 text-white border-zinc-900 hover:bg-zinc-800'
                 }`}
               >
                 {copied ? <Check className="w-3.5 h-3.5 stroke-[3]" /> : <Copy className="w-3.5 h-3.5" />}
@@ -248,13 +274,17 @@ export const ShareAppModal: React.FC<ShareAppModalProps> = ({
             </div>
 
             {/* Quick Edit link bar */}
-            <div className="flex items-center justify-between pt-1 border-t border-stone-800/60 text-[11px]">
-              <span className="text-[10px] text-emerald-400 flex items-center gap-1">
-                <CheckCircle2 className="w-3 h-3" /> Enlace sin Google (sin 404)
+            <div className={`flex items-center justify-between pt-1 border-t text-[11px] ${
+              isDark ? 'border-white/5' : 'border-zinc-200'
+            }`}>
+              <span className="text-[10px] text-emerald-500 flex items-center gap-1">
+                <CheckCircle2 className="w-3 h-3" /> Enlace verificado
               </span>
               <button
                 onClick={handleStartEdit}
-                className="text-[10px] text-stone-400 hover:text-yellow-400 flex items-center gap-1 transition-colors cursor-pointer font-bold"
+                className={`text-[10px] flex items-center gap-1 transition-colors cursor-pointer font-bold ${
+                  isDark ? 'text-zinc-400 hover:text-white' : 'text-zinc-500 hover:text-zinc-900'
+                }`}
               >
                 <Edit3 className="w-3 h-3" />
                 <span>Cambiar enlace</span>
@@ -265,17 +295,35 @@ export const ShareAppModal: React.FC<ShareAppModalProps> = ({
 
         {/* Action Buttons */}
         <div className="space-y-2">
+          {/* Download APK Direct */}
+          <button
+            onClick={() => {
+              const link = document.createElement('a');
+              link.href = '/app-debug.apk';
+              link.download = 'app-debug.apk';
+              link.click();
+            }}
+            className={`w-full py-2.5 px-3 rounded-2xl border font-bold text-xs flex items-center justify-center gap-2 transition-all cursor-pointer active:scale-98 ${
+              isDark
+                ? 'bg-white text-zinc-950 border-white hover:bg-zinc-200'
+                : 'bg-zinc-900 text-white border-zinc-900 hover:bg-zinc-800'
+            }`}
+          >
+            <Smartphone className="w-4 h-4" />
+            <span>Descargar APK Directo (Actualizado)</span>
+          </button>
+
           {/* Download APK from GitHub */}
           <button
             onClick={() => window.open('https://github.com/Bryanrys/Task/raw/main/apk/app-debug.apk', '_blank')}
             className={`w-full py-2.5 px-3 rounded-2xl border font-bold text-xs flex items-center justify-center gap-2 transition-all cursor-pointer active:scale-98 ${
               isDark
-                ? 'bg-gradient-to-r from-pink-500/20 via-purple-600/20 to-cyan-500/20 border-pink-500/30 text-white hover:border-pink-400 shadow-md'
-                : 'bg-pink-50 border-pink-200 text-pink-700 hover:bg-pink-100 shadow-xs'
+                ? 'bg-white/10 border-white/15 text-white hover:bg-white/15'
+                : 'bg-zinc-100 border-zinc-200 text-zinc-800 hover:bg-zinc-200'
             }`}
           >
-            <Smartphone className="w-4 h-4 text-pink-400" />
-            <span>Descargar APK Android (GitHub)</span>
+            <Smartphone className="w-4 h-4 text-zinc-400" />
+            <span>Descargar APK (GitHub)</span>
           </button>
 
           {/* WhatsApp Button */}
@@ -292,11 +340,11 @@ export const ShareAppModal: React.FC<ShareAppModalProps> = ({
             onClick={handleNativeShare}
             className={`w-full py-2 px-3 rounded-2xl border font-bold text-xs flex items-center justify-center gap-2 transition-colors cursor-pointer active:scale-98 ${
               isDark
-                ? 'border-stone-700 bg-stone-800/80 hover:bg-stone-800 text-stone-200'
-                : 'border-stone-300 bg-stone-100 hover:bg-stone-200 text-stone-800'
+                ? 'border-white/10 bg-white/5 hover:bg-white/10 text-zinc-300'
+                : 'border-zinc-200 bg-zinc-50 hover:bg-zinc-100 text-zinc-700'
             }`}
           >
-            <Share2 className="w-3.5 h-3.5 text-yellow-400" />
+            <Share2 className="w-3.5 h-3.5 text-zinc-400" />
             <span>Compartir enlace...</span>
           </button>
 
@@ -305,8 +353,8 @@ export const ShareAppModal: React.FC<ShareAppModalProps> = ({
             onClick={handleOpenBrowser}
             className={`w-full py-2 px-3 rounded-2xl border text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors cursor-pointer ${
               isDark
-                ? 'border-white/5 text-stone-400 hover:text-white hover:bg-white/5'
-                : 'border-stone-200 text-stone-600 hover:text-stone-900 hover:bg-stone-50'
+                ? 'border-white/5 text-zinc-400 hover:text-white hover:bg-white/5'
+                : 'border-zinc-200 text-zinc-600 hover:text-zinc-900 hover:bg-zinc-50'
             }`}
           >
             <ExternalLink className="w-3.5 h-3.5" />
@@ -315,11 +363,10 @@ export const ShareAppModal: React.FC<ShareAppModalProps> = ({
         </div>
 
         {/* Footer info note */}
-        <p className="text-[10px] text-center text-stone-500 mt-3 font-mono">
+        <p className={`text-[10px] text-center mt-3 font-mono ${isDark ? 'text-zinc-500' : 'text-zinc-400'}`}>
           Tip: Puedes modificar el enlace arriba en cualquier momento pulsando &quot;Cambiar enlace&quot;.
         </p>
       </div>
     </div>
   );
 };
-

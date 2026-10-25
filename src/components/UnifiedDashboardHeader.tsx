@@ -123,12 +123,12 @@ export const UnifiedDashboardHeader: React.FC<UnifiedDashboardHeaderProps> = ({
           disabled={isSyncing}
           className={`py-2 px-3 rounded-2xl border flex items-center justify-center gap-2 font-bold text-xs transition-all cursor-pointer active:scale-95 disabled:opacity-50 disabled:pointer-events-none relative overflow-hidden ${
             isDark
-              ? 'bg-gradient-to-r from-blue-600/25 via-indigo-600/25 to-cyan-600/25 border-blue-400/40 text-blue-200 hover:border-blue-400/70 hover:from-blue-600/35 hover:to-cyan-600/35 shadow-[0_0_12px_rgba(59,130,246,0.18)]'
-              : 'bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-300 text-blue-900 hover:bg-blue-100 shadow-xs'
+              ? 'bg-white/10 border-white/15 text-white hover:bg-white/15'
+              : 'bg-zinc-900 border-zinc-900 text-white hover:bg-zinc-800'
           }`}
           title="Guardar materias y tareas en Supabase"
         >
-          <Upload className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
+          <Upload className="w-3.5 h-3.5 shrink-0" />
           <span className="font-extrabold tracking-wide text-xs">Subir Nube</span>
         </button>
 
@@ -138,12 +138,12 @@ export const UnifiedDashboardHeader: React.FC<UnifiedDashboardHeaderProps> = ({
           disabled={isSyncing}
           className={`py-2 px-3 rounded-2xl border flex items-center justify-center gap-2 font-bold text-xs transition-all cursor-pointer active:scale-95 disabled:opacity-50 disabled:pointer-events-none relative overflow-hidden ${
             isDark
-              ? 'bg-gradient-to-r from-emerald-600/25 via-teal-600/25 to-cyan-600/25 border-emerald-400/40 text-emerald-200 hover:border-emerald-400/70 hover:from-emerald-600/35 hover:to-cyan-600/35 shadow-[0_0_12px_rgba(16,185,129,0.18)]'
-              : 'bg-gradient-to-r from-emerald-50 to-teal-50 border-emerald-300 text-emerald-900 hover:bg-emerald-100 shadow-xs'
+              ? 'bg-white/5 border-white/10 text-zinc-200 hover:bg-white/10'
+              : 'bg-zinc-100 border-zinc-200 text-zinc-800 hover:bg-zinc-200'
           }`}
           title="Cargar materias y tareas desde Supabase con clave oo"
         >
-          <Download className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+          <Download className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
           <span className="font-extrabold tracking-wide text-xs">Descargar Nube</span>
         </button>
       </div>

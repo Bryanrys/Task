@@ -10,6 +10,31 @@
     <meta property="og:type" content="website" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="theme-color" content="#000000" />
+    <meta name="color-scheme" content="dark light" />
+    <script>
+      (function() {
+        try {
+          var mode = localStorage.getItem('uees_theme_mode');
+          if (!mode) {
+            var legacy = localStorage.getItem('academic_dashboard_theme_v1');
+            mode = legacy ? legacy : 'system';
+          }
+          var isDark = false;
+          if (mode === 'system') {
+            isDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+          } else {
+            isDark = mode === 'dark';
+          }
+          if (isDark) {
+            document.documentElement.classList.add('dark');
+            document.documentElement.style.colorScheme = 'dark';
+          } else {
+            document.documentElement.classList.remove('dark');
+            document.documentElement.style.colorScheme = 'light';
+          }
+        } catch(e) {}
+      })();
+    </script>
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />

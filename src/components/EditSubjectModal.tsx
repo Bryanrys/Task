@@ -51,31 +51,33 @@ export const EditSubjectModal: React.FC<EditSubjectModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-sm animate-fadeIn">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-xs animate-fadeIn">
       <div
         className={`relative w-full max-w-sm rounded-3xl p-6 border shadow-2xl transition-colors ${
           isDark
-            ? 'bg-[#0a0d17] border-white/10 text-stone-100'
-            : 'bg-white border-stone-200 text-stone-900'
+            ? 'bg-[#131417] border-white/10 text-white'
+            : 'bg-white border-zinc-200 text-zinc-900'
         }`}
       >
         {/* Header */}
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
-            <div className="p-2 rounded-xl bg-pink-500/15 text-pink-400 border border-pink-500/30">
+            <div className={`p-2 rounded-xl border ${
+              isDark ? 'bg-white/5 border-white/10 text-white' : 'bg-zinc-100 border-zinc-200 text-zinc-900'
+            }`}>
               <BookOpen className="w-5 h-5" />
             </div>
             <div>
               <h3 className="font-black text-sm uppercase tracking-wider font-mono">
                 EDITAR MATERIA
               </h3>
-              <p className="text-[11px] text-stone-400">Modifica el nombre o elimina la materia</p>
+              <p className={`text-[11px] ${isDark ? 'text-zinc-400' : 'text-zinc-500'}`}>Modifica el nombre o elimina la materia</p>
             </div>
           </div>
           <button
             onClick={onClose}
             className={`p-1.5 rounded-lg transition-colors cursor-pointer ${
-              isDark ? 'text-stone-400 hover:text-white' : 'text-stone-400 hover:text-stone-900'
+              isDark ? 'text-zinc-400 hover:text-white' : 'text-zinc-500 hover:text-zinc-900'
             }`}
           >
             <X className="w-5 h-5" />
@@ -85,7 +87,9 @@ export const EditSubjectModal: React.FC<EditSubjectModalProps> = ({
         {/* Rename Form */}
         <form onSubmit={handleSave} className="space-y-4 mb-4">
           <div>
-            <label className="block text-[10px] font-bold text-stone-400 uppercase tracking-wider mb-1 font-mono">
+            <label className={`block text-[10px] font-bold uppercase tracking-wider mb-1 font-mono ${
+              isDark ? 'text-zinc-400' : 'text-zinc-500'
+            }`}>
               NOMBRE DE LA MATERIA:
             </label>
             <input
@@ -95,8 +99,8 @@ export const EditSubjectModal: React.FC<EditSubjectModalProps> = ({
               placeholder="Ej. PROGRA 3, REDES, etc."
               className={`w-full py-2.5 px-3.5 rounded-xl border text-sm font-extrabold uppercase outline-none font-mono transition-all ${
                 isDark
-                  ? 'bg-[#05070e] border-white/10 text-white focus:border-pink-500'
-                  : 'bg-stone-50 border-stone-300 text-stone-900 focus:border-pink-500'
+                  ? 'bg-black/30 border-white/10 text-white focus:border-white'
+                  : 'bg-zinc-50 border-zinc-200 text-zinc-900 focus:border-zinc-900'
               }`}
               autoFocus
             />
@@ -106,17 +110,21 @@ export const EditSubjectModal: React.FC<EditSubjectModalProps> = ({
             <button
               type="button"
               onClick={onClose}
-              className={`flex-1 py-2.5 rounded-xl text-xs font-bold transition-colors cursor-pointer ${
+              className={`flex-1 py-2.5 rounded-xl text-xs font-bold transition-colors cursor-pointer border ${
                 isDark
-                  ? 'bg-white/5 border border-white/10 text-stone-300 hover:text-white'
-                  : 'bg-stone-100 text-stone-600 hover:bg-stone-200'
+                  ? 'bg-white/5 border-white/10 text-zinc-300 hover:text-white'
+                  : 'bg-zinc-100 border-zinc-200 text-zinc-700 hover:bg-zinc-200'
               }`}
             >
               Cancelar
             </button>
             <button
               type="submit"
-              className="flex-1 py-2.5 bg-gradient-to-r from-pink-500 to-purple-600 hover:opacity-90 text-white font-black text-xs rounded-xl transition-all cursor-pointer shadow-md shadow-pink-500/20 flex items-center justify-center gap-1.5"
+              className={`flex-1 py-2.5 font-bold text-xs rounded-xl transition-all cursor-pointer flex items-center justify-center gap-1.5 border ${
+                isDark
+                  ? 'bg-white text-zinc-950 border-white hover:bg-zinc-200'
+                  : 'bg-zinc-900 text-white border-zinc-900 hover:bg-zinc-800'
+              }`}
             >
               <Check className="w-4 h-4 stroke-[3]" />
               <span>Guardar</span>
@@ -126,23 +134,25 @@ export const EditSubjectModal: React.FC<EditSubjectModalProps> = ({
 
         {/* Delete Subject Section */}
         {canDelete && (
-          <div className="pt-3 border-t border-stone-800/60">
+          <div className={`pt-3 border-t ${isDark ? 'border-white/10' : 'border-zinc-200'}`}>
             {confirmingDelete ? (
               <div className="space-y-2">
-                <p className="text-[11px] text-rose-400 flex items-center gap-1 font-mono">
+                <p className="text-[11px] text-rose-500 flex items-center gap-1 font-mono">
                   <AlertTriangle className="w-3.5 h-3.5" />
                   ¿Seguro que deseas eliminar esta materia y sus tareas?
                 </p>
                 <div className="flex gap-2">
                   <button
                     onClick={() => setConfirmingDelete(false)}
-                    className="flex-1 py-2 text-xs text-stone-400 hover:text-white"
+                    className={`flex-1 py-2 text-xs font-semibold rounded-xl cursor-pointer ${
+                      isDark ? 'text-zinc-400 hover:text-white bg-white/5' : 'text-zinc-600 hover:text-zinc-900 bg-zinc-100'
+                    }`}
                   >
                     No, cancelar
                   </button>
                   <button
                     onClick={handleDelete}
-                    className="flex-1 py-2 bg-rose-600 hover:bg-rose-500 text-white font-extrabold text-xs rounded-xl cursor-pointer"
+                    className="flex-1 py-2 bg-rose-600 hover:bg-rose-500 text-white font-bold text-xs rounded-xl cursor-pointer"
                   >
                     Sí, eliminar
                   </button>
@@ -151,7 +161,7 @@ export const EditSubjectModal: React.FC<EditSubjectModalProps> = ({
             ) : (
               <button
                 onClick={handleDelete}
-                className="w-full py-2 text-xs font-bold text-rose-400 hover:text-rose-300 transition-colors flex items-center justify-center gap-1.5 cursor-pointer font-mono"
+                className="w-full py-2 text-xs font-bold text-rose-500 hover:text-rose-600 transition-colors flex items-center justify-center gap-1.5 cursor-pointer font-mono"
               >
                 <Trash2 className="w-3.5 h-3.5" />
                 <span>Eliminar esta materia del dashboard</span>

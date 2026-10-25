@@ -51,13 +51,13 @@ function renderFormattedLine(text: string): React.ReactNode {
       );
     } else if (seg.startsWith('*') && seg.endsWith('*') && seg.length >= 2) {
       parts.push(
-        <em key={idx} className="italic text-purple-200">
+        <em key={idx} className="italic text-zinc-300">
           {seg.slice(1, -1)}
         </em>
       );
     } else if (seg.startsWith('`') && seg.endsWith('`') && seg.length >= 2) {
       parts.push(
-        <code key={idx} className="font-mono bg-black/50 px-1 py-0.5 rounded text-pink-300 border border-white/10">
+        <code key={idx} className="font-mono bg-white/10 px-1 py-0.5 rounded text-white border border-white/15">
           {seg.slice(1, -1)}
         </code>
       );
@@ -250,32 +250,40 @@ export const AIAssistantModal: React.FC<AIAssistantModalProps> = ({
       <div
         className={`relative w-full max-w-2xl h-[90vh] sm:h-[85vh] flex flex-col rounded-3xl border shadow-2xl overflow-hidden transition-colors ${
           isDark
-            ? 'bg-[#080b16] border-purple-500/30 text-stone-100 shadow-[0_0_50px_rgba(168,85,247,0.15)]'
-            : 'bg-white border-stone-200 text-stone-900'
+            ? 'bg-[#131417] border-white/10 text-white'
+            : 'bg-white border-zinc-200 text-zinc-900'
         }`}
       >
         {/* Header KALI */}
-        <div className="p-3.5 sm:p-4 border-b border-white/10 flex items-center justify-between shrink-0 bg-gradient-to-r from-purple-950/60 via-indigo-950/40 to-pink-950/40">
+        <div className={`p-3.5 sm:p-4 border-b flex items-center justify-between shrink-0 ${
+          isDark ? 'border-white/10 bg-[#18191e]' : 'border-zinc-200 bg-zinc-50'
+        }`}>
           <div className="flex items-center gap-3">
             <div className="relative">
-              <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-pink-500 via-purple-600 to-cyan-400 p-[2px] shadow-lg shadow-purple-500/25">
-                <div className="w-full h-full bg-[#0a0d17] rounded-[14px] flex items-center justify-center">
-                  <Bot className="w-5 h-5 text-pink-400" />
-                </div>
+              <div className={`w-10 h-10 rounded-2xl border flex items-center justify-center ${
+                isDark ? 'bg-white text-zinc-950 border-white' : 'bg-zinc-900 text-white border-zinc-900'
+              }`}>
+                <Bot className="w-5 h-5" />
               </div>
-              <span className="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full bg-emerald-500 border-2 border-[#0a0d17] animate-pulse" />
+              <span className="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full bg-emerald-500 border-2 border-[#131417]" />
             </div>
 
             <div>
               <div className="flex items-center gap-2">
-                <h3 className="font-black text-sm sm:text-base uppercase tracking-wider font-mono text-white flex items-center gap-1.5">
+                <h3 className={`font-black text-sm sm:text-base uppercase tracking-wider font-mono flex items-center gap-1.5 ${
+                  isDark ? 'text-white' : 'text-zinc-900'
+                }`}>
                   KALI • IA UEES
-                  <span className="px-1.5 py-0.2 rounded text-[9px] bg-gradient-to-r from-pink-500 to-purple-500 text-white font-mono font-bold">
+                  <span className={`px-1.5 py-0.2 rounded text-[9px] font-mono font-bold border ${
+                    isDark ? 'bg-white/10 text-white border-white/20' : 'bg-zinc-200 text-zinc-900 border-zinc-300'
+                  }`}>
                     PRO
                   </span>
                 </h3>
               </div>
-              <p className="text-[10px] sm:text-[11px] text-stone-400 font-mono flex items-center gap-1.5">
+              <p className={`text-[10px] sm:text-[11px] font-mono flex items-center gap-1.5 ${
+                isDark ? 'text-zinc-400' : 'text-zinc-500'
+              }`}>
                 <span>{hasApiKey ? '🟢 Gemini Flash IA Conectado' : '⚡ Motor Académico Local'}</span>
               </p>
             </div>
@@ -287,8 +295,8 @@ export const AIAssistantModal: React.FC<AIAssistantModalProps> = ({
               title="Configuración de API Key"
               className={`p-2 rounded-xl transition-all cursor-pointer ${
                 hasApiKey
-                  ? 'text-stone-400 hover:text-white bg-white/5 hover:bg-white/10'
-                  : 'text-amber-300 bg-amber-500/15 border border-amber-500/30'
+                  ? isDark ? 'text-zinc-400 hover:text-white bg-white/5' : 'text-zinc-500 hover:text-zinc-900 bg-zinc-100'
+                  : 'text-amber-400 bg-amber-500/15 border border-amber-500/30'
               }`}
             >
               <Key className="w-4 h-4" />
@@ -297,14 +305,18 @@ export const AIAssistantModal: React.FC<AIAssistantModalProps> = ({
             <button
               onClick={handleClearChat}
               title="Limpiar conversación"
-              className="p-2 rounded-xl text-stone-400 hover:text-white bg-white/5 hover:bg-white/10 transition-all cursor-pointer"
+              className={`p-2 rounded-xl transition-all cursor-pointer ${
+                isDark ? 'text-zinc-400 hover:text-white bg-white/5' : 'text-zinc-500 hover:text-zinc-900 bg-zinc-100'
+              }`}
             >
               <Trash2 className="w-4 h-4" />
             </button>
 
             <button
               onClick={onClose}
-              className="p-2 rounded-xl text-stone-400 hover:text-white bg-white/5 hover:bg-white/10 transition-all cursor-pointer"
+              className={`p-2 rounded-xl transition-all cursor-pointer ${
+                isDark ? 'text-zinc-400 hover:text-white bg-white/5' : 'text-zinc-500 hover:text-zinc-900 bg-zinc-100'
+              }`}
             >
               <X className="w-4 h-4" />
             </button>
@@ -313,16 +325,20 @@ export const AIAssistantModal: React.FC<AIAssistantModalProps> = ({
 
         {/* Panel Desplegable de Configuración de API Key */}
         {showKeySettings && (
-          <div className="p-4 bg-[#0a0d17] border-b border-purple-500/20 text-xs font-mono space-y-2 animate-fadeIn">
+          <div className={`p-4 border-b text-xs font-mono space-y-2 animate-fadeIn ${
+            isDark ? 'bg-black/30 border-white/10 text-white' : 'bg-zinc-50 border-zinc-200 text-zinc-900'
+          }`}>
             <div className="flex items-center justify-between">
-              <span className="font-bold text-purple-300 flex items-center gap-1.5">
+              <span className="font-bold flex items-center gap-1.5">
                 <Key className="w-3.5 h-3.5" /> Clave de Google Gemini (Gratis)
               </span>
               <a
                 href="https://aistudio.google.com/app/apikey"
                 target="_blank"
                 rel="noreferrer"
-                className="text-[10px] text-pink-400 hover:underline flex items-center gap-1"
+                className={`text-[10px] hover:underline flex items-center gap-1 ${
+                  isDark ? 'text-zinc-300' : 'text-zinc-600'
+                }`}
               >
                 Obtener clave gratis <ExternalLink className="w-3 h-3" />
               </a>
@@ -334,12 +350,20 @@ export const AIAssistantModal: React.FC<AIAssistantModalProps> = ({
                 value={apiKeyDraft}
                 onChange={(e) => setApiKeyDraft(e.target.value)}
                 placeholder="Pega tu clave AIzaSy..."
-                className="flex-1 bg-black/60 border border-white/15 rounded-xl px-3 py-1.5 text-xs text-white outline-none focus:border-purple-400"
+                className={`flex-1 rounded-xl px-3 py-1.5 text-xs outline-none border ${
+                  isDark
+                    ? 'bg-black/40 border-white/15 text-white focus:border-white'
+                    : 'bg-white border-zinc-300 text-zinc-900 focus:border-zinc-900'
+                }`}
               />
               <button
                 onClick={handleSaveApiKey}
                 disabled={isValidatingKey}
-                className="px-3 py-1.5 rounded-xl bg-purple-600 hover:bg-purple-500 disabled:opacity-50 text-white font-bold cursor-pointer transition-all flex items-center gap-1.5"
+                className={`px-3 py-1.5 rounded-xl font-bold cursor-pointer transition-all flex items-center gap-1.5 border ${
+                  isDark
+                    ? 'bg-white text-zinc-950 border-white hover:bg-zinc-200'
+                    : 'bg-zinc-900 text-white border-zinc-900 hover:bg-zinc-800'
+                }`}
               >
                 {isValidatingKey ? 'Validando...' : 'Guardar'}
               </button>
@@ -351,7 +375,7 @@ export const AIAssistantModal: React.FC<AIAssistantModalProps> = ({
                     setHasApiKey(false);
                     setKeyValidationFeedback(null);
                   }}
-                  className="px-2.5 py-1.5 rounded-xl bg-rose-500/20 text-rose-300 border border-rose-500/30 cursor-pointer"
+                  className="px-2.5 py-1.5 rounded-xl bg-rose-500/15 text-rose-400 border border-rose-500/30 cursor-pointer"
                 >
                   Quitar
                 </button>
@@ -386,7 +410,11 @@ export const AIAssistantModal: React.FC<AIAssistantModalProps> = ({
               key={idx}
               onClick={() => handleSendMessage(item.prompt)}
               disabled={isLoading}
-              className="py-1 px-2.5 rounded-lg text-[10px] font-mono font-bold whitespace-nowrap bg-white/5 hover:bg-purple-500/20 hover:border-purple-500/40 border border-white/10 text-stone-300 hover:text-white transition-all cursor-pointer disabled:opacity-50"
+              className={`py-1 px-2.5 rounded-lg text-[10px] font-mono font-bold whitespace-nowrap border transition-all cursor-pointer disabled:opacity-50 ${
+                isDark
+                  ? 'bg-white/5 hover:bg-white/10 border-white/10 text-zinc-300 hover:text-white'
+                  : 'bg-zinc-100 hover:bg-zinc-200 border-zinc-200 text-zinc-700 hover:text-zinc-900'
+              }`}
             >
               {item.label}
             </button>
@@ -394,7 +422,9 @@ export const AIAssistantModal: React.FC<AIAssistantModalProps> = ({
         </div>
 
         {/* Mensajes Chat Container */}
-        <div className="flex-1 p-3 sm:p-4 overflow-y-auto space-y-3.5 custom-scrollbar bg-[#05070e]/60">
+        <div className={`flex-1 p-3 sm:p-4 overflow-y-auto space-y-3.5 custom-scrollbar ${
+          isDark ? 'bg-black/20' : 'bg-zinc-50'
+        }`}>
           {messages.map((msg) => {
             const isUser = msg.sender === 'user';
 
@@ -404,16 +434,22 @@ export const AIAssistantModal: React.FC<AIAssistantModalProps> = ({
                 className={`flex gap-2.5 ${isUser ? 'justify-end' : 'justify-start'} animate-fadeIn`}
               >
                 {!isUser && (
-                  <div className="w-7 h-7 rounded-xl bg-purple-500/20 border border-purple-500/30 flex items-center justify-center shrink-0 mt-1">
-                    <Sparkles className="w-3.5 h-3.5 text-purple-300" />
+                  <div className={`w-7 h-7 rounded-xl border flex items-center justify-center shrink-0 mt-1 ${
+                    isDark ? 'bg-white/5 border-white/10 text-white' : 'bg-zinc-200 border-zinc-300 text-zinc-900'
+                  }`}>
+                    <Sparkles className="w-3.5 h-3.5" />
                   </div>
                 )}
 
                 <div
                   className={`max-w-[85%] sm:max-w-[78%] rounded-2xl px-3.5 py-2.5 text-xs leading-relaxed ${
                     isUser
-                      ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white font-medium shadow-md shadow-purple-500/10'
-                      : 'bg-[#0e1322] border border-white/10 text-stone-200 shadow-sm'
+                      ? isDark
+                        ? 'bg-white text-zinc-950 font-semibold shadow-md'
+                        : 'bg-zinc-900 text-white font-medium shadow-sm'
+                      : isDark
+                      ? 'bg-[#18191e] border border-white/10 text-zinc-200 shadow-xs'
+                      : 'bg-white border border-zinc-200 text-zinc-800 shadow-2xs'
                   }`}
                 >
                   {/* Contenido del Mensaje con formato amigable y parseo Markdown */}
@@ -427,8 +463,10 @@ export const AIAssistantModal: React.FC<AIAssistantModalProps> = ({
                       // Sub-viñeta / flecha
                       if (trimmed.startsWith('↳') || trimmed.startsWith('• *') || trimmed.startsWith('•*')) {
                         return (
-                          <div key={i} className="pl-3.5 text-[11px] text-purple-200/90 flex items-start gap-1">
-                            <span className="text-pink-400 shrink-0">↳</span>
+                          <div key={i} className={`pl-3.5 text-[11px] flex items-start gap-1 ${
+                            isUser ? (isDark ? 'text-zinc-800' : 'text-zinc-200') : (isDark ? 'text-zinc-300' : 'text-zinc-600')
+                          }`}>
+                            <span className="shrink-0 font-bold">↳</span>
                             <div>{renderFormattedLine(trimmed.replace(/^[↳•]\s*/, ''))}</div>
                           </div>
                         );
@@ -438,7 +476,7 @@ export const AIAssistantModal: React.FC<AIAssistantModalProps> = ({
                       if (trimmed.startsWith('* ') || trimmed.startsWith('- ') || trimmed.startsWith('• ')) {
                         return (
                           <div key={i} className="flex items-start gap-1.5 my-0.5 pl-1">
-                            <span className="text-pink-400 shrink-0 mt-0.5">•</span>
+                            <span className="shrink-0 mt-0.5">•</span>
                             <div>{renderFormattedLine(trimmed.replace(/^[*|-|•]\s*/, ''))}</div>
                           </div>
                         );
@@ -450,7 +488,7 @@ export const AIAssistantModal: React.FC<AIAssistantModalProps> = ({
 
                   {/* Tarjeta de Acción Ejecutada si aplica */}
                   {msg.actionExecuted && (
-                    <div className="mt-2.5 p-2 rounded-xl bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 font-mono text-[10px] flex items-center gap-1.5">
+                    <div className="mt-2.5 p-2 rounded-xl bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 font-mono text-[10px] flex items-center gap-1.5">
                       <CheckCircle className="w-3.5 h-3.5 shrink-0 text-emerald-400" />
                       <span>{msg.actionExecuted.description}</span>
                     </div>
@@ -458,7 +496,9 @@ export const AIAssistantModal: React.FC<AIAssistantModalProps> = ({
 
                   <span
                     className={`block text-[9px] mt-1 text-right font-mono ${
-                      isUser ? 'text-purple-200/70' : 'text-stone-500'
+                      isUser
+                        ? isDark ? 'text-zinc-600' : 'text-zinc-400'
+                        : isDark ? 'text-zinc-500' : 'text-zinc-400'
                     }`}
                   >
                     {msg.timestamp}
@@ -471,13 +511,17 @@ export const AIAssistantModal: React.FC<AIAssistantModalProps> = ({
           {/* Typing Indicator */}
           {isLoading && (
             <div className="flex gap-2.5 justify-start animate-fadeIn">
-              <div className="w-7 h-7 rounded-xl bg-purple-500/20 border border-purple-500/30 flex items-center justify-center shrink-0">
-                <Sparkles className="w-3.5 h-3.5 text-purple-300 animate-spin" />
+              <div className={`w-7 h-7 rounded-xl border flex items-center justify-center shrink-0 ${
+                isDark ? 'bg-white/5 border-white/10 text-white' : 'bg-zinc-200 border-zinc-300 text-zinc-900'
+              }`}>
+                <Sparkles className="w-3.5 h-3.5 animate-spin" />
               </div>
-              <div className="rounded-2xl px-4 py-2.5 bg-[#0e1322] border border-white/10 flex items-center gap-1.5">
-                <span className="w-2 h-2 rounded-full bg-pink-400 animate-bounce" />
-                <span className="w-2 h-2 rounded-full bg-purple-400 animate-bounce [animation-delay:0.2s]" />
-                <span className="w-2 h-2 rounded-full bg-cyan-400 animate-bounce [animation-delay:0.4s]" />
+              <div className={`rounded-2xl px-4 py-2.5 border flex items-center gap-1.5 ${
+                isDark ? 'bg-[#18191e] border-white/10' : 'bg-white border-zinc-200'
+              }`}>
+                <span className={`w-2 h-2 rounded-full animate-bounce ${isDark ? 'bg-zinc-400' : 'bg-zinc-600'}`} />
+                <span className={`w-2 h-2 rounded-full animate-bounce [animation-delay:0.2s] ${isDark ? 'bg-zinc-400' : 'bg-zinc-600'}`} />
+                <span className={`w-2 h-2 rounded-full animate-bounce [animation-delay:0.4s] ${isDark ? 'bg-zinc-400' : 'bg-zinc-600'}`} />
               </div>
             </div>
           )}
@@ -486,7 +530,9 @@ export const AIAssistantModal: React.FC<AIAssistantModalProps> = ({
         </div>
 
         {/* Input Bar */}
-        <div className="p-3 sm:p-4 border-t border-white/10 bg-[#080b16] shrink-0">
+        <div className={`p-3 sm:p-4 border-t shrink-0 ${
+          isDark ? 'border-white/10 bg-[#131417]' : 'border-zinc-200 bg-white'
+        }`}>
           <form
             onSubmit={(e) => {
               e.preventDefault();
@@ -500,12 +546,20 @@ export const AIAssistantModal: React.FC<AIAssistantModalProps> = ({
               onChange={(e) => setInputPrompt(e.target.value)}
               placeholder="Pregúntale a KALI o pídele una tarea..."
               disabled={isLoading}
-              className="flex-1 bg-[#05070e] border border-white/15 focus:border-pink-500 text-white rounded-2xl px-4 py-3 text-xs outline-none transition-all placeholder:text-stone-500 font-mono"
+              className={`flex-1 rounded-2xl px-4 py-3 text-xs outline-none transition-all font-mono border ${
+                isDark
+                  ? 'bg-black/30 border-white/15 focus:border-white text-white placeholder:text-zinc-500'
+                  : 'bg-zinc-50 border-zinc-300 focus:border-zinc-900 text-zinc-900 placeholder:text-zinc-400'
+              }`}
             />
             <button
               type="submit"
               disabled={isLoading || !inputPrompt.trim()}
-              className="w-11 h-11 rounded-2xl bg-gradient-to-r from-purple-600 to-pink-600 hover:opacity-90 disabled:opacity-40 text-white flex items-center justify-center transition-all cursor-pointer shadow-md shadow-purple-500/25 shrink-0"
+              className={`w-11 h-11 rounded-2xl border disabled:opacity-40 flex items-center justify-center transition-all cursor-pointer shadow-md shrink-0 ${
+                isDark
+                  ? 'bg-white text-zinc-950 border-white hover:bg-zinc-200'
+                  : 'bg-zinc-900 text-white border-zinc-900 hover:bg-zinc-800'
+              }`}
             >
               <Send className="w-4 h-4" />
             </button>

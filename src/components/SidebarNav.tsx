@@ -13,6 +13,9 @@ import {
   BookOpen,
   Sparkles,
   LogOut,
+  Sun,
+  Moon,
+  Laptop,
 } from 'lucide-react';
 import { SubjectItem } from '../types';
 
@@ -34,6 +37,9 @@ interface SidebarNavProps {
   onLogout: () => void;
   isMobileDrawer?: boolean;
   onCloseMobileDrawer?: () => void;
+  isDark?: boolean;
+  themeMode?: 'system' | 'dark' | 'light';
+  onCycleTheme?: () => void;
 }
 
 export const SidebarNav: React.FC<SidebarNavProps> = ({
@@ -54,30 +60,36 @@ export const SidebarNav: React.FC<SidebarNavProps> = ({
   onLogout,
   isMobileDrawer = false,
   onCloseMobileDrawer,
+  isDark = true,
+  themeMode = 'system',
+  onCycleTheme,
 }) => {
   const getSubjectIcon = (name: string, index: number) => {
     const n = name.toLowerCase();
     if (n.includes('progra') || n.includes('web') || n.includes('codigo') || n.includes('code')) {
-      return <Code2 className="w-4 h-4 text-pink-400" />;
+      return <Code2 className="w-4 h-4 text-zinc-400" />;
     }
     if (n.includes('mate') || n.includes('calculo') || n.includes('algebra')) {
-      return <Binary className="w-4 h-4 text-purple-400" />;
+      return <Binary className="w-4 h-4 text-zinc-400" />;
     }
     if (n.includes('fisi') || n.includes('quim') || n.includes('ciencia')) {
-      return <Atom className="w-4 h-4 text-cyan-400" />;
+      return <Atom className="w-4 h-4 text-zinc-400" />;
     }
-    const colors = ['text-pink-400', 'text-purple-400', 'text-cyan-400', 'text-emerald-400', 'text-amber-400'];
-    return <BookOpen className={`w-4 h-4 ${colors[index % colors.length]}`} />;
+    return <BookOpen className="w-4 h-4 text-zinc-400" />;
   };
 
   const getSubjectDotColor = (index: number) => {
-    const dots = ['bg-pink-400', 'bg-purple-400', 'bg-cyan-400', 'bg-emerald-400', 'bg-amber-400', 'bg-fuchsia-400'];
+    const dots = ['bg-zinc-400', 'bg-zinc-500', 'bg-emerald-500', 'bg-zinc-400', 'bg-zinc-600'];
     return dots[index % dots.length];
   };
 
   return (
     <aside
-      className={`bg-[#000000] border-r border-white/5 flex flex-col justify-between shrink-0 select-none ${
+      className={`transition-colors duration-200 border-r flex flex-col justify-between shrink-0 select-none ${
+        isDark
+          ? 'bg-[#0c0d10] border-white/5 text-zinc-100'
+          : 'bg-[#ffffff] md:bg-[#fbfbf9] border-zinc-200/80 text-zinc-900'
+      } ${
         isMobileDrawer
           ? 'w-72 h-full shadow-2xl p-0'
           : 'hidden md:flex md:w-64 min-h-screen'
@@ -86,32 +98,42 @@ export const SidebarNav: React.FC<SidebarNavProps> = ({
       <div className="p-5 space-y-6 overflow-y-auto">
         {/* Brand / Logo Header */}
         <div className="flex items-center space-x-3">
-          <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-pink-500 to-purple-600 flex items-center justify-center text-white shadow-md shadow-pink-500/25 shrink-0">
+          <div className={`w-9 h-9 rounded-2xl flex items-center justify-center shadow-xs shrink-0 ${
+            isDark ? 'bg-white text-zinc-950 font-black' : 'bg-zinc-900 text-white font-black'
+          }`}>
             <GraduationCap className="w-5 h-5" />
           </div>
           <div>
-            <h2 className="text-xs font-black text-white tracking-widest uppercase">
+            <h2 className={`text-xs font-black tracking-widest uppercase ${
+              isDark ? 'text-white' : 'text-zinc-900'
+            }`}>
               REYES ALVARADO
             </h2>
-            <p className="text-[10px] text-gray-400 font-mono">UEES Dashboard</p>
+            <p className={`text-[10px] font-mono ${
+              isDark ? 'text-zinc-400' : 'text-zinc-500'
+            }`}>UEES Dashboard</p>
           </div>
         </div>
 
         {/* Navigation Section */}
-        <nav className="space-y-1.5 pt-1">
+        <nav className="space-y-1 pt-1">
           <button
             onClick={() => {
               onSwitchView('dashboard');
               if (onSelectSubject) onSelectSubject(null);
               if (onCloseMobileDrawer) onCloseMobileDrawer();
             }}
-            className={`w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
+            className={`w-full flex items-center space-x-3 px-3 py-2.5 rounded-2xl text-xs font-semibold transition-all cursor-pointer ${
               currentView === 'dashboard' && !selectedSubjectId
-                ? 'text-white bg-gradient-to-r from-pink-500/25 to-purple-500/25 border-l-4 border-pink-500 shadow-sm'
-                : 'text-gray-400 hover:text-white hover:bg-white/5'
+                ? isDark
+                  ? 'text-zinc-950 bg-white font-bold shadow-xs'
+                  : 'text-white bg-zinc-900 font-bold shadow-xs'
+                : isDark
+                ? 'text-zinc-400 hover:text-white hover:bg-white/5'
+                : 'text-zinc-600 hover:text-zinc-900 hover:bg-zinc-100'
             }`}
           >
-            <PieChart className="w-4 h-4 text-pink-400 shrink-0" />
+            <PieChart className="w-4 h-4 shrink-0" />
             <span>Dashboard Principal</span>
           </button>
 
@@ -120,13 +142,17 @@ export const SidebarNav: React.FC<SidebarNavProps> = ({
               onSwitchView('schedule');
               if (onCloseMobileDrawer) onCloseMobileDrawer();
             }}
-            className={`w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
+            className={`w-full flex items-center space-x-3 px-3 py-2.5 rounded-2xl text-xs font-semibold transition-all cursor-pointer ${
               currentView === 'schedule'
-                ? 'text-white bg-gradient-to-r from-purple-500/25 to-cyan-500/25 border-l-4 border-purple-500 shadow-sm'
-                : 'text-gray-400 hover:text-white hover:bg-white/5'
+                ? isDark
+                  ? 'text-zinc-950 bg-white font-bold shadow-xs'
+                  : 'text-white bg-zinc-900 font-bold shadow-xs'
+                : isDark
+                ? 'text-zinc-400 hover:text-white hover:bg-white/5'
+                : 'text-zinc-600 hover:text-zinc-900 hover:bg-zinc-100'
             }`}
           >
-            <Calendar className="w-4 h-4 text-purple-400 shrink-0" />
+            <Calendar className="w-4 h-4 shrink-0" />
             <span>Horario & Clases</span>
           </button>
 
@@ -135,21 +161,27 @@ export const SidebarNav: React.FC<SidebarNavProps> = ({
               onSwitchView('cloud');
               if (onCloseMobileDrawer) onCloseMobileDrawer();
             }}
-            className={`w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
+            className={`w-full flex items-center space-x-3 px-3 py-2.5 rounded-2xl text-xs font-semibold transition-all cursor-pointer ${
               currentView === 'cloud'
-                ? 'text-white bg-gradient-to-r from-cyan-500/25 to-pink-500/25 border-l-4 border-cyan-400 shadow-sm'
-                : 'text-gray-400 hover:text-white hover:bg-white/5'
+                ? isDark
+                  ? 'text-zinc-950 bg-white font-bold shadow-xs'
+                  : 'text-white bg-zinc-900 font-bold shadow-xs'
+                : isDark
+                ? 'text-zinc-400 hover:text-white hover:bg-white/5'
+                : 'text-zinc-600 hover:text-zinc-900 hover:bg-zinc-100'
             }`}
           >
-            <CloudUpload className="w-4 h-4 text-cyan-400 shrink-0" />
+            <CloudUpload className="w-4 h-4 shrink-0" />
             <span>Base de Datos Nube</span>
           </button>
         </nav>
 
         {/* Materias del Ciclo */}
-        <div className="pt-3 border-t border-white/5 space-y-2">
+        <div className={`pt-3 border-t space-y-2 ${isDark ? 'border-white/5' : 'border-zinc-200/80'}`}>
           <div className="flex items-center justify-between px-3">
-            <p className="text-[10px] font-extrabold uppercase tracking-wider text-gray-400 font-mono">
+            <p className={`text-[10px] font-extrabold uppercase tracking-wider font-mono ${
+              isDark ? 'text-zinc-400' : 'text-zinc-500'
+            }`}>
               Materias Ciclo
             </p>
             {selectedSubjectId && (
@@ -158,7 +190,9 @@ export const SidebarNav: React.FC<SidebarNavProps> = ({
                   if (onSelectSubject) onSelectSubject(null);
                   onSwitchView('dashboard');
                 }}
-                className="text-[9px] font-mono text-pink-400 hover:text-pink-300 underline cursor-pointer"
+                className={`text-[10px] font-mono underline cursor-pointer ${
+                  isDark ? 'text-zinc-300 hover:text-white' : 'text-zinc-700 hover:text-zinc-900'
+                }`}
               >
                 Ver todas
               </button>
@@ -181,16 +215,20 @@ export const SidebarNav: React.FC<SidebarNavProps> = ({
                   }}
                   className={`w-full text-left flex items-center justify-between px-3 py-2 rounded-xl text-xs transition-all cursor-pointer group ${
                     isSelected
-                      ? 'bg-gradient-to-r from-pink-500/20 to-purple-500/20 text-white border-l-2 border-pink-500 shadow-sm'
-                      : 'text-gray-300 hover:bg-white/5'
+                      ? isDark
+                        ? 'bg-white/10 text-white font-bold border border-white/15'
+                        : 'bg-zinc-200/80 text-zinc-900 font-bold border border-zinc-300/80'
+                      : isDark
+                      ? 'text-zinc-400 hover:text-white hover:bg-white/5'
+                      : 'text-zinc-600 hover:text-zinc-900 hover:bg-zinc-100'
                   }`}
-                  title={`Abrir ventana de actividades de ${s.name}`}
+                  title={`Abrir actividades de ${s.name}`}
                 >
                   <span className="flex items-center space-x-2.5 truncate pr-2">
                     {getSubjectIcon(s.name, idx)}
-                    <span className={`truncate ${isSelected ? 'text-white font-bold' : 'group-hover:text-white font-medium'}`}>{s.name}</span>
+                    <span className="truncate">{s.name}</span>
                   </span>
-                  <span className={`w-2 h-2 rounded-full ${getSubjectDotColor(idx)} shrink-0 shadow-xs ${isSelected ? 'ring-2 ring-pink-500/50' : ''}`} />
+                  <span className={`w-2 h-2 rounded-full ${getSubjectDotColor(idx)} shrink-0`} />
                 </button>
               );
             })}
@@ -198,8 +236,10 @@ export const SidebarNav: React.FC<SidebarNavProps> = ({
         </div>
 
         {/* Utilidades */}
-        <div className="pt-3 border-t border-white/5 space-y-2">
-          <p className="text-[10px] font-extrabold uppercase tracking-wider text-gray-400 px-3 font-mono">
+        <div className={`pt-3 border-t space-y-1.5 ${isDark ? 'border-white/5' : 'border-zinc-200/80'}`}>
+          <p className={`text-[10px] font-extrabold uppercase tracking-wider px-3 font-mono ${
+            isDark ? 'text-zinc-400' : 'text-zinc-500'
+          }`}>
             Utilidades
           </p>
           <div className="space-y-1">
@@ -208,9 +248,11 @@ export const SidebarNav: React.FC<SidebarNavProps> = ({
                 onOpenWeeks();
                 if (onCloseMobileDrawer) onCloseMobileDrawer();
               }}
-              className="w-full text-left flex items-center space-x-3 px-3 py-2 rounded-xl text-xs text-gray-300 hover:bg-white/5 transition-all cursor-pointer"
+              className={`w-full text-left flex items-center space-x-3 px-3 py-2 rounded-xl text-xs transition-all cursor-pointer ${
+                isDark ? 'text-zinc-300 hover:text-white hover:bg-white/5' : 'text-zinc-600 hover:text-zinc-900 hover:bg-zinc-100'
+              }`}
             >
-              <CalendarDays className="w-4 h-4 text-pink-400 shrink-0" />
+              <CalendarDays className="w-4 h-4 text-zinc-400 shrink-0" />
               <span>Semanas ({activeWeekNumber ? `Sem. ${activeWeekNumber} activa` : `${totalWeeksCount} Sem.`})</span>
             </button>
 
@@ -219,9 +261,11 @@ export const SidebarNav: React.FC<SidebarNavProps> = ({
                 onOpenPomodoro();
                 if (onCloseMobileDrawer) onCloseMobileDrawer();
               }}
-              className="w-full text-left flex items-center space-x-3 px-3 py-2 rounded-xl text-xs text-gray-300 hover:bg-white/5 transition-all cursor-pointer"
+              className={`w-full text-left flex items-center space-x-3 px-3 py-2 rounded-xl text-xs transition-all cursor-pointer ${
+                isDark ? 'text-zinc-300 hover:text-white hover:bg-white/5' : 'text-zinc-600 hover:text-zinc-900 hover:bg-zinc-100'
+              }`}
             >
-              <Timer className="w-4 h-4 text-emerald-400 shrink-0" />
+              <Timer className="w-4 h-4 text-emerald-500 shrink-0" />
               <span>Pomodoro Timer</span>
             </button>
 
@@ -230,9 +274,11 @@ export const SidebarNav: React.FC<SidebarNavProps> = ({
                 onOpenCalculator();
                 if (onCloseMobileDrawer) onCloseMobileDrawer();
               }}
-              className="w-full text-left flex items-center space-x-3 px-3 py-2 rounded-xl text-xs text-gray-300 hover:bg-white/5 transition-all cursor-pointer"
+              className={`w-full text-left flex items-center space-x-3 px-3 py-2 rounded-xl text-xs transition-all cursor-pointer ${
+                isDark ? 'text-zinc-300 hover:text-white hover:bg-white/5' : 'text-zinc-600 hover:text-zinc-900 hover:bg-zinc-100'
+              }`}
             >
-              <Calculator className="w-4 h-4 text-purple-400 shrink-0" />
+              <Calculator className="w-4 h-4 text-blue-500 shrink-0" />
               <span>Notas y Promedios UEES</span>
             </button>
 
@@ -241,44 +287,89 @@ export const SidebarNav: React.FC<SidebarNavProps> = ({
                 if (onOpenAIAssistant) onOpenAIAssistant();
                 if (onCloseMobileDrawer) onCloseMobileDrawer();
               }}
-              className="w-full text-left flex items-center space-x-3 px-3 py-2 rounded-xl text-xs text-pink-300 hover:bg-pink-500/10 border border-pink-500/20 transition-all cursor-pointer font-bold"
+              className={`w-full text-left flex items-center space-x-3 px-3 py-2 rounded-xl text-xs font-semibold border transition-all cursor-pointer ${
+                isDark
+                  ? 'text-zinc-200 hover:text-white bg-white/5 border-white/10 hover:border-white/20'
+                  : 'text-zinc-800 hover:text-zinc-950 bg-zinc-100/80 border-zinc-200 hover:border-zinc-300'
+              }`}
             >
-              <Sparkles className="w-4 h-4 text-pink-400 shrink-0 animate-pulse" />
+              <Sparkles className="w-4 h-4 text-emerald-500 shrink-0" />
               <span>KALI • Copiloto IA</span>
             </button>
           </div>
         </div>
       </div>
 
-      {/* User Footer Profile & Logout */}
-      <div className="p-4 border-t border-white/5 space-y-2.5 bg-[#000000]">
-        <div className="glass-card-uees p-3 rounded-2xl flex items-center justify-between border border-white/10">
-          <div className="flex items-center space-x-3 min-w-0">
-            <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-pink-500 to-purple-500 flex items-center justify-center font-bold text-xs text-white shrink-0 shadow-md">
+      {/* User Footer Profile & Theme Toggle */}
+      <div className={`p-4 border-t space-y-2.5 ${isDark ? 'border-white/5 bg-[#0e0f12]' : 'border-zinc-200/80 bg-zinc-50'}`}>
+        {/* Theme mode button */}
+        {onCycleTheme && (
+          <button
+            onClick={onCycleTheme}
+            className={`w-full py-2 px-3 rounded-xl border text-xs font-semibold flex items-center justify-between transition-all cursor-pointer ${
+              isDark
+                ? 'bg-white/5 hover:bg-white/10 border-white/10 text-zinc-300'
+                : 'bg-white hover:bg-zinc-100 border-zinc-200 text-zinc-700 shadow-2xs'
+            }`}
+            title="Cambiar modo de tema (Sistema / Oscuro / Claro)"
+          >
+            <div className="flex items-center gap-2">
+              {themeMode === 'system' ? (
+                <Laptop className="w-3.5 h-3.5 text-emerald-500" />
+              ) : isDark ? (
+                <Moon className="w-3.5 h-3.5 text-blue-400" />
+              ) : (
+                <Sun className="w-3.5 h-3.5 text-amber-500" />
+              )}
+              <span>
+                {themeMode === 'system'
+                  ? `Tema: Auto (${isDark ? 'Oscuro' : 'Claro'})`
+                  : themeMode === 'dark'
+                  ? 'Tema: Modo Oscuro'
+                  : 'Tema: Modo Claro'}
+              </span>
+            </div>
+            <span className={`text-[10px] px-1.5 py-0.5 rounded-md font-mono ${
+              isDark ? 'bg-white/10 text-zinc-300' : 'bg-zinc-100 text-zinc-600'
+            }`}>
+              {themeMode === 'system' ? 'AUTO' : themeMode === 'dark' ? 'DARK' : 'LIGHT'}
+            </span>
+          </button>
+        )}
+
+        <div className={`p-2.5 rounded-2xl flex items-center justify-between border ${
+          isDark ? 'bg-[#131417] border-white/5' : 'bg-white border-zinc-200/80 shadow-2xs'
+        }`}>
+          <div className="flex items-center space-x-2.5 min-w-0">
+            <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs shrink-0 ${
+              isDark ? 'bg-zinc-800 text-white' : 'bg-zinc-900 text-white'
+            }`}>
               {loggedUser.charAt(0).toUpperCase()}
             </div>
             <div className="min-w-0">
-              <p className="text-xs font-bold text-white truncate">{loggedUser}</p>
-              <p className="text-[10px] text-emerald-400 flex items-center font-medium">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 mr-1.5 inline-block animate-pulse shrink-0" />
+              <p className={`text-xs font-bold truncate ${isDark ? 'text-white' : 'text-zinc-900'}`}>{loggedUser}</p>
+              <p className="text-[10px] text-emerald-500 flex items-center font-medium">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 mr-1.5 inline-block animate-pulse shrink-0" />
                 En línea
               </p>
             </div>
           </div>
           <button
             onClick={onTriggerCelebration}
-            className="p-1.5 rounded-lg text-gray-400 hover:text-pink-400 transition-colors cursor-pointer shrink-0"
+            className={`p-1.5 rounded-lg transition-colors cursor-pointer shrink-0 ${
+              isDark ? 'text-zinc-400 hover:text-white' : 'text-zinc-500 hover:text-zinc-900'
+            }`}
             title="Celebrar logro académico"
           >
-            <Sparkles className="w-4 h-4" />
+            <Sparkles className="w-4 h-4 text-emerald-500" />
           </button>
         </div>
 
         <button
           onClick={onLogout}
-          className="w-full py-2.5 bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/20 rounded-xl text-xs font-bold transition-all flex items-center justify-center space-x-2 cursor-pointer active:scale-95"
+          className={`w-full py-2 bg-red-500/10 hover:bg-red-500/20 text-red-500 border border-red-500/20 rounded-xl text-xs font-semibold transition-all flex items-center justify-center space-x-2 cursor-pointer active:scale-95`}
         >
-          <LogOut className="w-4 h-4" />
+          <LogOut className="w-3.5 h-3.5" />
           <span>Cerrar Sesión</span>
         </button>
       </div>

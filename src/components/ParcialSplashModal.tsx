@@ -33,22 +33,22 @@ export const ParcialSplashModal: React.FC<ParcialSplashModalProps> = ({
             animate={{ scale: 1, opacity: 1, y: 0 }}
             exit={{ scale: 0.9, opacity: 0, y: -20 }}
             transition={{ type: 'spring', damping: 20, stiffness: 300 }}
-            className="w-full max-w-[360px] bg-[#141217] border border-pink-500/60 rounded-3xl p-7 text-center shadow-2xl shadow-pink-500/10"
+            className="w-full max-w-[360px] bg-[#131417] border border-white/15 rounded-3xl p-7 text-center shadow-2xl text-white"
           >
             <div className="text-4xl mb-3 select-none animate-bounce">😎✨</div>
-            <h2 className="text-xl font-extrabold text-white mb-1.5 uppercase tracking-wide">
+            <h2 className="text-xl font-black text-white mb-1.5 uppercase tracking-wide">
               ¡Semana {weekNumber} de Parciales!
             </h2>
-            <p className="text-xs text-pink-400 font-bold mb-3 tracking-widest uppercase">
-              FASE DE EXÁMENES
+            <p className="text-xs text-zinc-400 font-bold mb-3 tracking-widest uppercase font-mono">
+              FASE DE EXÁMENES OFICIALES
             </p>
-            <p className="text-xs text-slate-300 mb-6 leading-relaxed italic">
+            <p className="text-xs text-zinc-300 mb-6 leading-relaxed italic">
               "{frase}"
             </p>
 
             <button
               onClick={onClose}
-              className="w-full py-3 px-5 bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-600 hover:to-rose-600 active:scale-95 text-white font-extrabold text-xs rounded-xl transition-all shadow-lg shadow-pink-500/20 cursor-pointer"
+              className="w-full py-3 px-5 bg-white text-zinc-950 hover:bg-zinc-200 active:scale-95 font-black text-xs rounded-xl transition-all shadow-lg border border-white cursor-pointer font-mono"
             >
               Iniciar Fase de Exámenes 🎯
             </button>

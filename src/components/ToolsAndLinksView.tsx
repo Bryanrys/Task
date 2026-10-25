@@ -7,25 +7,19 @@ import {
   MapPin,
   GraduationCap,
   ExternalLink,
-  FileDown,
-  FileUp,
   Cloud,
   Download,
   Upload,
   Link as LinkIcon,
   Calculator,
   Timer,
-  CheckCircle2,
-  ChevronLeft,
   Sparkles,
-  ArrowLeft,
   Share2,
   Video,
   Pencil,
   ClipboardPaste,
   Check,
   X,
-  Plus,
 } from 'lucide-react';
 import {
   ClassSlot,
@@ -69,10 +63,6 @@ export const ToolsAndLinksView: React.FC<ToolsAndLinksViewProps> = ({
   accessCode,
   startDate,
   daysElapsed,
-  pendingTasksCount,
-  onBackToTasks,
-  onExportJSON,
-  onImportJSONClick,
   onOpenSchedule,
   onOpenLinks,
   onOpenGrades,
@@ -198,35 +188,35 @@ export const ToolsAndLinksView: React.FC<ToolsAndLinksViewProps> = ({
   return (
     <div className="space-y-4 pb-6">
       {/* Class Schedule Card */}
-
-
-
-      {/* Class Schedule Card */}
       <motion.div
         initial={{ opacity: 0, scale: 0.98 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ delay: 0.1 }}
-        className={`rounded-3xl p-5 border transition-all ${isDark
-          ? 'bg-[#05070e] border-cyan-500/25 shadow-[0_0_30px_rgba(6,182,212,0.08)]'
-          : 'bg-white border-cyan-200 shadow-md'
-          }`}
+        className={`rounded-3xl p-5 border transition-all ${
+          isDark
+            ? 'bg-[#131417] border-white/10 shadow-lg text-white'
+            : 'bg-white border-zinc-200/80 shadow-xs text-zinc-900'
+        }`}
       >
         <div className="flex items-center justify-between mb-3.5">
           <div className="flex items-center gap-2.5">
-            <div className="p-2 rounded-xl bg-cyan-500/20 text-cyan-400 border border-cyan-500/30">
+            <div className={`p-2 rounded-xl border ${
+              isDark ? 'bg-white/5 border-white/10 text-white' : 'bg-zinc-100 border-zinc-200 text-zinc-900'
+            }`}>
               <BookOpen className="w-5 h-5" />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h3 className={`font-black text-sm uppercase tracking-wide ${isDark ? 'text-cyan-300' : 'text-cyan-800'}`}>
+                <h3 className={`font-black text-sm uppercase tracking-wide ${isDark ? 'text-white' : 'text-zinc-900'}`}>
                   Horario de Clases
                 </h3>
-                <span className={`text-[10px] font-mono px-2 py-0.5 rounded-full font-bold uppercase ${isDark ? 'bg-cyan-500/20 text-cyan-300' : 'bg-cyan-100 text-cyan-800'
-                  }`}>
+                <span className={`text-[10px] font-mono px-2 py-0.5 rounded-full font-bold uppercase border ${
+                  isDark ? 'bg-white/10 border-white/10 text-zinc-300' : 'bg-zinc-100 border-zinc-200 text-zinc-800'
+                }`}>
                   Hoy: {currentDayName}
                 </span>
               </div>
-              <p className={`text-[11px] ${isDark ? 'text-stone-400' : 'text-stone-600'}`}>
+              <p className={`text-[11px] ${isDark ? 'text-zinc-400' : 'text-zinc-500'}`}>
                 {todayClasses.length > 0 ? `${todayClasses.length} materias programadas para hoy` : 'No hay clases programadas para hoy'}
               </p>
             </div>
@@ -234,10 +224,11 @@ export const ToolsAndLinksView: React.FC<ToolsAndLinksViewProps> = ({
 
           <button
             onClick={onOpenSchedule}
-            className={`px-3 py-1.5 rounded-xl border text-xs font-bold transition-all cursor-pointer active:scale-95 ${isDark
-              ? 'bg-cyan-500/15 border-cyan-400/40 text-cyan-300 hover:bg-cyan-500/25'
-              : 'bg-cyan-50 border-cyan-300 text-cyan-800 hover:bg-cyan-100'
-              }`}
+            className={`px-3 py-1.5 rounded-xl border text-xs font-bold transition-all cursor-pointer active:scale-95 ${
+              isDark
+                ? 'bg-white/10 border-white/10 text-white hover:bg-white/15'
+                : 'bg-zinc-900 border-zinc-900 text-white hover:bg-zinc-800'
+            }`}
           >
             Ver Todo / Editar
           </button>
@@ -253,30 +244,34 @@ export const ToolsAndLinksView: React.FC<ToolsAndLinksViewProps> = ({
               return (
                 <div
                   key={item.id}
-                  className={`p-3.5 rounded-2xl border flex flex-col sm:flex-row sm:items-center justify-between gap-3 transition-all ${isDark
-                    ? 'bg-white/[0.04] border-white/10 text-stone-200 hover:border-cyan-500/30'
-                    : 'bg-stone-50 border-stone-200 text-stone-800 hover:border-cyan-400/40'
-                    }`}
+                  className={`p-3.5 rounded-2xl border flex flex-col sm:flex-row sm:items-center justify-between gap-3 transition-all ${
+                    isDark
+                      ? 'bg-white/[0.03] border-white/5 text-zinc-200 hover:border-white/15'
+                      : 'bg-zinc-50 border-zinc-200/80 text-zinc-800 hover:border-zinc-300'
+                  }`}
                 >
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-2">
                       <span className="font-extrabold text-xs tracking-wide uppercase">
                         {item.subjectName}
                       </span>
-                      <span className={`text-[9px] font-mono px-1.5 py-0.5 rounded-md font-bold shrink-0 ${isDark ? 'bg-cyan-500/15 text-cyan-300' : 'bg-cyan-100 text-cyan-800'
-                        }`}>
+                      <span className={`text-[9px] font-mono px-1.5 py-0.5 rounded-md font-bold shrink-0 border ${
+                        isDark ? 'bg-white/5 border-white/10 text-zinc-300' : 'bg-zinc-100 border-zinc-200 text-zinc-700'
+                      }`}>
                         CLASE
                       </span>
                     </div>
 
-                    <div className={`text-[10px] flex flex-wrap items-center gap-x-3 gap-y-1 mt-1 ${isDark ? 'text-stone-400' : 'text-stone-500'}`}>
+                    <div className={`text-[10px] flex flex-wrap items-center gap-x-3 gap-y-1 mt-1 ${
+                      isDark ? 'text-zinc-400' : 'text-zinc-500'
+                    }`}>
                       <span className="flex items-center gap-1 font-mono">
-                        <Clock className="w-3 h-3 text-cyan-400 shrink-0" />
+                        <Clock className="w-3 h-3 text-zinc-400 shrink-0" />
                         {item.timeRange}
                       </span>
                       {displayLoc && (
                         <span className="flex items-center gap-1 truncate max-w-[220px]">
-                          <MapPin className="w-3 h-3 text-rose-400 shrink-0" />
+                          <MapPin className="w-3 h-3 text-zinc-400 shrink-0" />
                           <span>{displayLoc}</span>
                         </span>
                       )}
@@ -291,19 +286,24 @@ export const ToolsAndLinksView: React.FC<ToolsAndLinksViewProps> = ({
                           href={teamsLink}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-indigo-600 via-indigo-500 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white font-extrabold text-xs shadow-md shadow-indigo-600/30 active:scale-95 transition-all cursor-pointer border border-indigo-400/30"
+                          className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl font-bold text-xs active:scale-95 transition-all cursor-pointer border ${
+                            isDark
+                              ? 'bg-white text-zinc-950 border-white hover:bg-zinc-200'
+                              : 'bg-zinc-900 text-white border-zinc-900 hover:bg-zinc-800'
+                          }`}
                           title="Entrar directamente a la clase en Microsoft Teams"
                         >
-                          <Video className="w-3.5 h-3.5 animate-pulse" />
+                          <Video className="w-3.5 h-3.5" />
                           <span>Entrar a Teams</span>
                           <ExternalLink className="w-3 h-3 opacity-80" />
                         </a>
                         <button
                           onClick={() => handleOpenQuickTeams(item)}
-                          className={`p-1.5 rounded-xl border transition-all cursor-pointer ${isDark
-                            ? 'bg-white/5 border-white/10 text-stone-300 hover:text-white hover:bg-white/10'
-                            : 'bg-stone-100 border-stone-200 text-stone-600 hover:text-stone-900'
-                            }`}
+                          className={`p-1.5 rounded-xl border transition-all cursor-pointer ${
+                            isDark
+                              ? 'bg-white/5 border-white/10 text-zinc-300 hover:text-white hover:bg-white/10'
+                              : 'bg-zinc-100 border-zinc-200 text-zinc-600 hover:text-zinc-900'
+                          }`}
                           title="Cambiar o configurar enlace de Teams"
                         >
                           <Pencil className="w-3.5 h-3.5" />
@@ -312,10 +312,14 @@ export const ToolsAndLinksView: React.FC<ToolsAndLinksViewProps> = ({
                     ) : (
                       <button
                         onClick={() => handleOpenQuickTeams(item)}
-                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-indigo-500/15 hover:bg-indigo-500/25 text-indigo-300 border border-indigo-500/30 text-xs font-bold active:scale-95 transition-all cursor-pointer"
+                        className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold active:scale-95 transition-all cursor-pointer border ${
+                          isDark
+                            ? 'bg-white/10 hover:bg-white/15 text-white border-white/10'
+                            : 'bg-zinc-100 hover:bg-zinc-200 text-zinc-800 border-zinc-200'
+                        }`}
                         title="Configurar enlace de Microsoft Teams para esta clase"
                       >
-                        <Video className="w-3.5 h-3.5 text-indigo-400" />
+                        <Video className="w-3.5 h-3.5 text-zinc-400" />
                         <span>+ Link Teams</span>
                       </button>
                     )}
@@ -324,8 +328,9 @@ export const ToolsAndLinksView: React.FC<ToolsAndLinksViewProps> = ({
               );
             })
           ) : (
-            <div className={`p-3 text-center rounded-2xl border text-xs italic ${isDark ? 'border-white/5 text-stone-500 bg-white/[0.02]' : 'border-stone-200 text-stone-400 bg-stone-50'
-              }`}>
+            <div className={`p-3 text-center rounded-2xl border text-xs italic ${
+              isDark ? 'border-white/5 text-zinc-500 bg-white/[0.02]' : 'border-zinc-200 text-zinc-400 bg-zinc-50'
+            }`}>
               🎉 ¡Día libre o sin clases registradas para {currentDayName}! Toca "Ver Todo / Editar" para configurar tu horario semanal.
             </div>
           )}
@@ -337,21 +342,24 @@ export const ToolsAndLinksView: React.FC<ToolsAndLinksViewProps> = ({
         initial={{ opacity: 0, scale: 0.98 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ delay: 0.15 }}
-        className={`rounded-3xl p-5 border transition-all ${isDark
-          ? 'bg-[#05070e] border-violet-500/25 shadow-[0_0_30px_rgba(168,85,247,0.08)]'
-          : 'bg-white border-violet-200 shadow-md'
-          }`}
+        className={`rounded-3xl p-5 border transition-all ${
+          isDark
+            ? 'bg-[#131417] border-white/10 shadow-lg text-white'
+            : 'bg-white border-zinc-200/80 shadow-xs text-zinc-900'
+        }`}
       >
         <div className="flex items-center justify-between mb-3.5">
           <div className="flex items-center gap-2.5">
-            <div className="p-2 rounded-xl bg-violet-500/20 text-violet-400 border border-violet-500/30">
+            <div className={`p-2 rounded-xl border ${
+              isDark ? 'bg-white/5 border-white/10 text-white' : 'bg-zinc-100 border-zinc-200 text-zinc-900'
+            }`}>
               <GraduationCap className="w-5 h-5" />
             </div>
             <div>
-              <h3 className={`font-black text-sm uppercase tracking-wide ${isDark ? 'text-violet-300' : 'text-violet-800'}`}>
+              <h3 className={`font-black text-sm uppercase tracking-wide ${isDark ? 'text-white' : 'text-zinc-900'}`}>
                 Enlaces Universitarios UEES
               </h3>
-              <p className={`text-[11px] ${isDark ? 'text-stone-400' : 'text-stone-600'}`}>
+              <p className={`text-[11px] ${isDark ? 'text-zinc-400' : 'text-zinc-500'}`}>
                 Acceso directo a portales, aulas virtuales y recursos
               </p>
             </div>
@@ -359,10 +367,11 @@ export const ToolsAndLinksView: React.FC<ToolsAndLinksViewProps> = ({
 
           <button
             onClick={onOpenLinks}
-            className={`px-3 py-1.5 rounded-xl border text-xs font-bold transition-all cursor-pointer active:scale-95 ${isDark
-              ? 'bg-violet-500/15 border-violet-400/40 text-violet-300 hover:bg-violet-500/25'
-              : 'bg-violet-50 border-violet-300 text-violet-800 hover:bg-violet-100'
-              }`}
+            className={`px-3 py-1.5 rounded-xl border text-xs font-bold transition-all cursor-pointer active:scale-95 ${
+              isDark
+                ? 'bg-white/10 border-white/10 text-white hover:bg-white/15'
+                : 'bg-zinc-900 border-zinc-900 text-white hover:bg-zinc-800'
+            }`}
           >
             Administrar
           </button>
@@ -376,17 +385,19 @@ export const ToolsAndLinksView: React.FC<ToolsAndLinksViewProps> = ({
               href={item.url}
               target="_blank"
               rel="noopener noreferrer"
-              className={`p-3 rounded-2xl border flex flex-col justify-between transition-all cursor-pointer active:scale-95 hover:scale-[1.02] ${isDark
-                ? 'bg-white/[0.04] border-white/10 hover:border-violet-400/40 text-stone-200 shadow-xs'
-                : 'bg-stone-50 border-stone-200 hover:border-violet-300 text-stone-800 shadow-2xs'
-                }`}
+              className={`p-3 rounded-2xl border flex flex-col justify-between transition-all cursor-pointer active:scale-95 hover:scale-[1.01] ${
+                isDark
+                  ? 'bg-white/[0.03] border-white/5 hover:border-white/20 text-zinc-200'
+                  : 'bg-zinc-50 border-zinc-200/80 hover:border-zinc-300 text-zinc-800'
+              }`}
             >
               <div className="flex items-start justify-between gap-1 mb-1">
-                <span className={`text-[9px] font-bold uppercase tracking-wider font-mono ${isDark ? 'text-violet-400' : 'text-violet-700'
-                  }`}>
+                <span className={`text-[9px] font-bold uppercase tracking-wider font-mono ${
+                  isDark ? 'text-zinc-400' : 'text-zinc-500'
+                }`}>
                   {item.category}
                 </span>
-                <ExternalLink className="w-3 h-3 text-stone-400 shrink-0" />
+                <ExternalLink className="w-3 h-3 text-zinc-400 shrink-0" />
               </div>
               <div className="text-xs font-bold line-clamp-2">
                 {item.title}
@@ -401,27 +412,31 @@ export const ToolsAndLinksView: React.FC<ToolsAndLinksViewProps> = ({
         initial={{ opacity: 0, scale: 0.98 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ delay: 0.2 }}
-        className={`rounded-3xl p-5 border transition-all ${isDark
-          ? 'bg-[#05070e] border-blue-500/25 shadow-[0_0_30px_rgba(59,130,246,0.08)]'
-          : 'bg-white border-blue-200 shadow-md'
-          }`}
+        className={`rounded-3xl p-5 border transition-all ${
+          isDark
+            ? 'bg-[#131417] border-white/10 shadow-lg text-white'
+            : 'bg-white border-zinc-200/80 shadow-xs text-zinc-900'
+        }`}
       >
         <div className="flex items-center justify-between mb-3.5">
           <div className="flex items-center gap-2.5">
-            <div className="p-2 rounded-xl bg-blue-500/20 text-blue-400 border border-blue-500/30">
+            <div className={`p-2 rounded-xl border ${
+              isDark ? 'bg-white/5 border-white/10 text-white' : 'bg-zinc-100 border-zinc-200 text-zinc-900'
+            }`}>
               <Cloud className="w-5 h-5" />
             </div>
             <div>
-              <h3 className={`font-black text-sm uppercase tracking-wide ${isDark ? 'text-blue-300' : 'text-blue-800'}`}>
+              <h3 className={`font-black text-sm uppercase tracking-wide ${isDark ? 'text-white' : 'text-zinc-900'}`}>
                 Base de Datos y Nube (Supabase)
               </h3>
-              <p className={`text-[11px] ${isDark ? 'text-stone-400' : 'text-stone-600'}`}>
+              <p className={`text-[11px] ${isDark ? 'text-zinc-400' : 'text-zinc-500'}`}>
                 Sincronización remota para mantener tus datos en cualquier parte
               </p>
             </div>
           </div>
-          <div className={`px-2.5 py-1 rounded-full text-[10px] font-bold font-mono border ${isDark ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400' : 'bg-emerald-50 border-emerald-300 text-emerald-700'
-            }`}>
+          <div className={`px-2.5 py-1 rounded-full text-[10px] font-bold font-mono border ${
+            isDark ? 'bg-white/5 border-white/10 text-zinc-300' : 'bg-zinc-100 border-zinc-200 text-zinc-700'
+          }`}>
             {cloudStatus}
           </div>
         </div>
@@ -429,10 +444,11 @@ export const ToolsAndLinksView: React.FC<ToolsAndLinksViewProps> = ({
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
           <button
             onClick={onUploadCloud}
-            className={`p-3 rounded-2xl border flex items-center justify-center gap-2 font-bold text-xs transition-all cursor-pointer active:scale-95 ${isDark
-              ? 'bg-blue-500/15 border-blue-400/40 text-blue-300 hover:bg-blue-500/25'
-              : 'bg-blue-50 border-blue-300 text-blue-800 hover:bg-blue-100'
-              }`}
+            className={`p-3 rounded-2xl border flex items-center justify-center gap-2 font-bold text-xs transition-all cursor-pointer active:scale-95 ${
+              isDark
+                ? 'bg-white/10 border-white/10 text-white hover:bg-white/15'
+                : 'bg-zinc-900 border-zinc-900 text-white hover:bg-zinc-800'
+            }`}
           >
             <Upload className="w-4 h-4" />
             <span>Guardar en Nube</span>
@@ -440,21 +456,23 @@ export const ToolsAndLinksView: React.FC<ToolsAndLinksViewProps> = ({
 
           <button
             onClick={onDownloadCloud}
-            className={`p-3 rounded-2xl border flex items-center justify-center gap-2 font-bold text-xs transition-all cursor-pointer active:scale-95 ${isDark
-              ? 'bg-white/[0.04] border-white/10 text-stone-200 hover:bg-white/[0.08]'
-              : 'bg-stone-50 border-stone-200 text-stone-800 hover:bg-stone-100'
-              }`}
+            className={`p-3 rounded-2xl border flex items-center justify-center gap-2 font-bold text-xs transition-all cursor-pointer active:scale-95 ${
+              isDark
+                ? 'bg-white/5 border-white/10 text-zinc-200 hover:bg-white/10'
+                : 'bg-zinc-100 border-zinc-200 text-zinc-800 hover:bg-zinc-200'
+            }`}
           >
-            <Download className="w-4 h-4 text-emerald-400" />
+            <Download className="w-4 h-4 text-emerald-500" />
             <span>Descargar Nube</span>
           </button>
 
           <button
             onClick={onCopyLink}
-            className={`p-3 rounded-2xl border flex items-center justify-center gap-2 font-bold text-xs transition-all cursor-pointer active:scale-95 ${isDark
-              ? 'bg-white/[0.04] border-white/10 text-cyan-300 hover:bg-white/[0.08]'
-              : 'bg-stone-50 border-stone-200 text-cyan-800 hover:bg-stone-100'
-              }`}
+            className={`p-3 rounded-2xl border flex items-center justify-center gap-2 font-bold text-xs transition-all cursor-pointer active:scale-95 ${
+              isDark
+                ? 'bg-white/5 border-white/10 text-zinc-200 hover:bg-white/10'
+                : 'bg-zinc-100 border-zinc-200 text-zinc-800 hover:bg-zinc-200'
+            }`}
           >
             <LinkIcon className="w-4 h-4" />
             <span>Código: {accessCode}</span>
@@ -472,19 +490,26 @@ export const ToolsAndLinksView: React.FC<ToolsAndLinksViewProps> = ({
         {/* Copiloto IA UEES */}
         <button
           onClick={onOpenAIAssistant}
-          className={`p-4 rounded-3xl border text-left transition-all cursor-pointer active:scale-95 ${isDark
-            ? 'bg-gradient-to-br from-[#0e071c] to-[#070b18] border-pink-500/40 hover:border-pink-400 shadow-lg shadow-pink-500/10'
-            : 'bg-gradient-to-br from-pink-50 to-purple-50 border-pink-300 hover:border-pink-400 shadow-md'
-            }`}
+          className={`p-4 rounded-3xl border text-left transition-all cursor-pointer active:scale-95 ${
+            isDark
+              ? 'bg-[#131417] border-white/10 hover:border-white/20 shadow-md text-white'
+              : 'bg-white border-zinc-200/80 hover:border-zinc-300 shadow-xs text-zinc-900'
+          }`}
         >
           <div className="flex items-center justify-between mb-2">
-            <div className="p-2 rounded-xl bg-pink-500/20 text-pink-400 border border-pink-500/30">
-              <Sparkles className="w-4 h-4 animate-pulse" />
+            <div className={`p-2 rounded-xl border ${
+              isDark ? 'bg-white/5 border-white/10 text-white' : 'bg-zinc-100 border-zinc-200 text-zinc-900'
+            }`}>
+              <Sparkles className="w-4 h-4" />
             </div>
-            <span className="text-[10px] font-mono uppercase text-pink-400 font-bold">Agente IA</span>
+            <span className={`text-[10px] font-mono uppercase font-bold border px-1.5 py-0.5 rounded-md ${
+              isDark ? 'bg-white/5 border-white/10 text-zinc-400' : 'bg-zinc-100 border-zinc-200 text-zinc-600'
+            }`}>
+              Agente IA
+            </span>
           </div>
-          <div className="font-extrabold text-xs text-pink-300 uppercase">KALI • Copiloto IA</div>
-          <p className={`text-[10px] mt-0.5 ${isDark ? 'text-stone-400' : 'text-stone-600'}`}>
+          <div className="font-extrabold text-xs uppercase">KALI • Copiloto IA</div>
+          <p className={`text-[10px] mt-0.5 ${isDark ? 'text-zinc-400' : 'text-zinc-500'}`}>
             Asistente académico, tutor de dudas y gestor de tareas
           </p>
         </button>
@@ -492,19 +517,26 @@ export const ToolsAndLinksView: React.FC<ToolsAndLinksViewProps> = ({
         {/* Promedios */}
         <button
           onClick={onOpenGrades}
-          className={`p-4 rounded-3xl border text-left transition-all cursor-pointer active:scale-95 ${isDark
-            ? 'bg-[#05070e] border-purple-500/25 hover:border-purple-400/50 shadow-xs'
-            : 'bg-white border-purple-200 hover:border-purple-400 shadow-md'
-            }`}
+          className={`p-4 rounded-3xl border text-left transition-all cursor-pointer active:scale-95 ${
+            isDark
+              ? 'bg-[#131417] border-white/10 hover:border-white/20 shadow-md text-white'
+              : 'bg-white border-zinc-200/80 hover:border-zinc-300 shadow-xs text-zinc-900'
+          }`}
         >
           <div className="flex items-center justify-between mb-2">
-            <div className="p-2 rounded-xl bg-purple-500/20 text-purple-400 border border-purple-500/30">
+            <div className={`p-2 rounded-xl border ${
+              isDark ? 'bg-white/5 border-white/10 text-white' : 'bg-zinc-100 border-zinc-200 text-zinc-900'
+            }`}>
               <Calculator className="w-4 h-4" />
             </div>
-            <span className="text-[10px] font-mono uppercase text-purple-400 font-bold">Oficial UEES</span>
+            <span className={`text-[10px] font-mono uppercase font-bold border px-1.5 py-0.5 rounded-md ${
+              isDark ? 'bg-white/5 border-white/10 text-zinc-400' : 'bg-zinc-100 border-zinc-200 text-zinc-600'
+            }`}>
+              Oficial UEES
+            </span>
           </div>
-          <div className="font-extrabold text-xs text-purple-300 uppercase">Sistema de Notas UEES</div>
-          <p className={`text-[10px] mt-0.5 ${isDark ? 'text-stone-400' : 'text-stone-600'}`}>
+          <div className="font-extrabold text-xs uppercase">Sistema de Notas UEES</div>
+          <p className={`text-[10px] mt-0.5 ${isDark ? 'text-zinc-400' : 'text-zinc-500'}`}>
             Consulta notas oficiales, registros (30%-30%-40%) y promedios
           </p>
         </button>
@@ -512,19 +544,26 @@ export const ToolsAndLinksView: React.FC<ToolsAndLinksViewProps> = ({
         {/* Pomodoro */}
         <button
           onClick={onOpenPomodoro}
-          className={`p-4 rounded-3xl border text-left transition-all cursor-pointer active:scale-95 ${isDark
-            ? 'bg-[#05070e] border-pink-500/25 hover:border-pink-400/50 shadow-xs'
-            : 'bg-white border-pink-200 hover:border-pink-400 shadow-md'
-            }`}
+          className={`p-4 rounded-3xl border text-left transition-all cursor-pointer active:scale-95 ${
+            isDark
+              ? 'bg-[#131417] border-white/10 hover:border-white/20 shadow-md text-white'
+              : 'bg-white border-zinc-200/80 hover:border-zinc-300 shadow-xs text-zinc-900'
+          }`}
         >
           <div className="flex items-center justify-between mb-2">
-            <div className="p-2 rounded-xl bg-pink-500/20 text-pink-400 border border-pink-500/30">
+            <div className={`p-2 rounded-xl border ${
+              isDark ? 'bg-white/5 border-white/10 text-white' : 'bg-zinc-100 border-zinc-200 text-zinc-900'
+            }`}>
               <Timer className="w-4 h-4" />
             </div>
-            <span className="text-[10px] font-mono uppercase text-pink-400 font-bold">Enfoque</span>
+            <span className={`text-[10px] font-mono uppercase font-bold border px-1.5 py-0.5 rounded-md ${
+              isDark ? 'bg-white/5 border-white/10 text-zinc-400' : 'bg-zinc-100 border-zinc-200 text-zinc-600'
+            }`}>
+              Enfoque
+            </span>
           </div>
-          <div className="font-extrabold text-xs text-pink-300 uppercase">Pomodoro Timer</div>
-          <p className={`text-[10px] mt-0.5 ${isDark ? 'text-stone-400' : 'text-stone-600'}`}>
+          <div className="font-extrabold text-xs uppercase">Pomodoro Timer</div>
+          <p className={`text-[10px] mt-0.5 ${isDark ? 'text-zinc-400' : 'text-zinc-500'}`}>
             Sesiones de estudio de 25 min + descansos
           </p>
         </button>
@@ -532,19 +571,26 @@ export const ToolsAndLinksView: React.FC<ToolsAndLinksViewProps> = ({
         {/* Start Date & Days Elapsed */}
         <button
           onClick={onOpenStartDate}
-          className={`p-4 rounded-3xl border text-left transition-all cursor-pointer active:scale-95 ${isDark
-            ? 'bg-[#05070e] border-cyan-500/25 hover:border-cyan-400/50 shadow-xs'
-            : 'bg-white border-cyan-200 hover:border-cyan-400 shadow-md'
-            }`}
+          className={`p-4 rounded-3xl border text-left transition-all cursor-pointer active:scale-95 ${
+            isDark
+              ? 'bg-[#131417] border-white/10 hover:border-white/20 shadow-md text-white'
+              : 'bg-white border-zinc-200/80 hover:border-zinc-300 shadow-xs text-zinc-900'
+          }`}
         >
           <div className="flex items-center justify-between mb-2">
-            <div className="p-2 rounded-xl bg-cyan-500/20 text-cyan-400 border border-cyan-500/30">
+            <div className={`p-2 rounded-xl border ${
+              isDark ? 'bg-white/5 border-white/10 text-white' : 'bg-zinc-100 border-zinc-200 text-zinc-900'
+            }`}>
               <Calendar className="w-4 h-4" />
             </div>
-            <span className="text-[10px] font-mono uppercase text-cyan-400 font-bold">Ciclo</span>
+            <span className={`text-[10px] font-mono uppercase font-bold border px-1.5 py-0.5 rounded-md ${
+              isDark ? 'bg-white/5 border-white/10 text-zinc-400' : 'bg-zinc-100 border-zinc-200 text-zinc-600'
+            }`}>
+              Ciclo
+            </span>
           </div>
-          <div className="font-extrabold text-xs text-cyan-300 uppercase">{daysElapsed} Días Transcurridos</div>
-          <p className={`text-[10px] mt-0.5 ${isDark ? 'text-stone-400' : 'text-stone-600'}`}>
+          <div className="font-extrabold text-xs uppercase">{daysElapsed} Días Transcurridos</div>
+          <p className={`text-[10px] mt-0.5 ${isDark ? 'text-zinc-400' : 'text-zinc-500'}`}>
             Inicio: {startDate} (toca para editar)
           </p>
         </button>
@@ -554,10 +600,11 @@ export const ToolsAndLinksView: React.FC<ToolsAndLinksViewProps> = ({
       <div className="pt-2 text-center">
         <button
           onClick={onOpenShareModal}
-          className={`inline-flex items-center gap-2 px-5 py-2.5 rounded-full border text-xs font-bold transition-all cursor-pointer active:scale-95 ${isDark
-            ? 'bg-cyan-500/10 border-cyan-400/30 text-cyan-300 hover:bg-cyan-500/20'
-            : 'bg-cyan-50 border-cyan-300 text-cyan-800 hover:bg-cyan-100'
-            }`}
+          className={`inline-flex items-center gap-2 px-5 py-2.5 rounded-full border text-xs font-bold transition-all cursor-pointer active:scale-95 ${
+            isDark
+              ? 'bg-white/10 border-white/10 text-white hover:bg-white/15'
+              : 'bg-zinc-900 border-zinc-900 text-white hover:bg-zinc-800'
+          }`}
         >
           <Share2 className="w-4 h-4" />
           <span>Compartir Dashboard o Abrir en Navegador</span>
@@ -566,30 +613,37 @@ export const ToolsAndLinksView: React.FC<ToolsAndLinksViewProps> = ({
 
       {/* Modal Rápido para Configurar Link de Teams */}
       {quickTeamsSlot && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-fadeIn">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-xs animate-fadeIn">
           <div
-            className={`relative w-full max-w-sm rounded-3xl p-5 border shadow-2xl transition-all ${isDark
-              ? 'bg-[#0a0d17] border-indigo-500/40 text-stone-100'
-              : 'bg-white border-indigo-200 text-stone-900'
-              }`}
+            className={`relative w-full max-w-sm rounded-3xl p-5 border shadow-2xl transition-all ${
+              isDark
+                ? 'bg-[#131417] border-white/10 text-white'
+                : 'bg-white border-zinc-200/80 text-zinc-900'
+            }`}
           >
-            <div className="flex items-center justify-between mb-3 pb-2 border-b border-white/10">
+            <div className={`flex items-center justify-between mb-3 pb-2 border-b ${
+              isDark ? 'border-white/10' : 'border-zinc-200'
+            }`}>
               <div className="flex items-center gap-2">
-                <div className="p-2 rounded-xl bg-indigo-500/20 text-indigo-400 border border-indigo-500/30">
+                <div className={`p-2 rounded-xl border ${
+                  isDark ? 'bg-white/5 border-white/10 text-white' : 'bg-zinc-100 border-zinc-200 text-zinc-900'
+                }`}>
                   <Video className="w-4 h-4" />
                 </div>
                 <div>
                   <h4 className="font-black text-xs uppercase tracking-wide">
                     Enlace de Teams
                   </h4>
-                  <p className="text-[10px] text-stone-400">
-                    Materia: <strong className="text-indigo-300">{quickTeamsSlot.subjectName}</strong>
+                  <p className={`text-[10px] ${isDark ? 'text-zinc-400' : 'text-zinc-500'}`}>
+                    Materia: <strong className={isDark ? 'text-white' : 'text-zinc-900'}>{quickTeamsSlot.subjectName}</strong>
                   </p>
                 </div>
               </div>
               <button
                 onClick={() => setQuickTeamsSlot(null)}
-                className="p-1 rounded-lg text-stone-400 hover:text-white cursor-pointer"
+                className={`p-1 rounded-lg cursor-pointer ${
+                  isDark ? 'text-zinc-400 hover:text-white' : 'text-zinc-500 hover:text-zinc-900'
+                }`}
               >
                 <X className="w-4 h-4" />
               </button>
@@ -598,13 +652,17 @@ export const ToolsAndLinksView: React.FC<ToolsAndLinksViewProps> = ({
             <form onSubmit={handleSaveQuickTeams} className="space-y-3">
               <div>
                 <div className="flex items-center justify-between mb-1.5">
-                  <label className="text-[10px] text-stone-400 font-semibold">
+                  <label className={`text-[10px] font-semibold ${isDark ? 'text-zinc-400' : 'text-zinc-500'}`}>
                     Pega tu link de Microsoft Teams:
                   </label>
                   <button
                     type="button"
                     onClick={handlePasteQuickTeams}
-                    className="text-[10px] font-mono text-indigo-300 hover:text-white flex items-center gap-1 cursor-pointer bg-indigo-500/10 px-1.5 py-0.5 rounded border border-indigo-500/20"
+                    className={`text-[10px] font-mono flex items-center gap-1 cursor-pointer px-1.5 py-0.5 rounded border ${
+                      isDark
+                        ? 'bg-white/5 border-white/10 text-zinc-300 hover:text-white'
+                        : 'bg-zinc-100 border-zinc-200 text-zinc-700 hover:text-zinc-900'
+                    }`}
                     title="Pegar del portapapeles"
                   >
                     <ClipboardPaste className="w-2.5 h-2.5" />
@@ -616,7 +674,11 @@ export const ToolsAndLinksView: React.FC<ToolsAndLinksViewProps> = ({
                   placeholder="https://teams.microsoft.com/meet/..."
                   value={quickTeamsUrl}
                   onChange={(e) => setQuickTeamsUrl(e.target.value)}
-                  className="w-full text-xs bg-[#05070e] border border-indigo-500/30 rounded-xl px-3 py-2 text-white outline-none focus:border-indigo-400 font-mono placeholder:text-stone-600"
+                  className={`w-full text-xs rounded-xl px-3 py-2 outline-none font-mono border ${
+                    isDark
+                      ? 'bg-white/5 border-white/10 text-white placeholder:text-zinc-600 focus:border-white/30'
+                      : 'bg-zinc-50 border-zinc-200 text-zinc-900 placeholder:text-zinc-400 focus:border-zinc-400'
+                  }`}
                   autoFocus
                 />
               </div>
@@ -627,7 +689,9 @@ export const ToolsAndLinksView: React.FC<ToolsAndLinksViewProps> = ({
                     href={quickTeamsUrl.startsWith('http') ? quickTeamsUrl : `https://${quickTeamsUrl}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-indigo-400 hover:text-indigo-300 flex items-center gap-1 text-[10px] font-bold"
+                    className={`flex items-center gap-1 text-[10px] font-bold ${
+                      isDark ? 'text-zinc-300 hover:text-white' : 'text-zinc-700 hover:text-zinc-900'
+                    }`}
                   >
                     <span>Probar enlace de Teams</span>
                     <ExternalLink className="w-2.5 h-2.5" />
@@ -635,7 +699,7 @@ export const ToolsAndLinksView: React.FC<ToolsAndLinksViewProps> = ({
                   <button
                     type="button"
                     onClick={() => setQuickTeamsUrl('')}
-                    className="text-rose-400 hover:text-rose-300 text-[10px] cursor-pointer"
+                    className="text-rose-500 hover:text-rose-600 text-[10px] cursor-pointer"
                   >
                     Quitar enlace
                   </button>
@@ -646,13 +710,21 @@ export const ToolsAndLinksView: React.FC<ToolsAndLinksViewProps> = ({
                 <button
                   type="button"
                   onClick={() => setQuickTeamsSlot(null)}
-                  className="flex-1 py-2 text-xs font-bold text-stone-400 hover:text-white bg-white/5 rounded-xl cursor-pointer"
+                  className={`flex-1 py-2 text-xs font-bold rounded-xl cursor-pointer ${
+                    isDark
+                      ? 'text-zinc-400 hover:text-white bg-white/5'
+                      : 'text-zinc-600 hover:text-zinc-900 bg-zinc-100'
+                  }`}
                 >
                   Cancelar
                 </button>
                 <button
                   type="submit"
-                  className="flex-1 py-2 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-extrabold text-xs rounded-xl shadow-md shadow-indigo-600/30 cursor-pointer active:scale-95 transition-all flex items-center justify-center gap-1"
+                  className={`flex-1 py-2 font-bold text-xs rounded-xl cursor-pointer active:scale-95 transition-all flex items-center justify-center gap-1 border ${
+                    isDark
+                      ? 'bg-white text-zinc-950 border-white hover:bg-zinc-200'
+                      : 'bg-zinc-900 text-white border-zinc-900 hover:bg-zinc-800'
+                  }`}
                 >
                   {quickTeamsSaved ? <Check className="w-3.5 h-3.5" /> : null}
                   <span>{quickTeamsSaved ? '¡Guardado!' : 'Guardar Enlace'}</span>

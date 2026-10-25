@@ -139,21 +139,29 @@ export const GradeCalculatorModal: React.FC<GradeCalculatorModalProps> = ({
         }`}
       >
         {/* Header Modal */}
-        <div className="p-4 sm:p-5 border-b border-white/10 flex items-center justify-between shrink-0 bg-gradient-to-r from-purple-950/40 via-transparent to-pink-950/30">
+        <div className={`p-4 sm:p-5 border-b flex items-center justify-between shrink-0 ${
+          isDark ? 'border-white/10 bg-[#16171c]' : 'border-zinc-200 bg-zinc-50'
+        }`}>
           <div className="flex items-center gap-3">
-            <div className="p-2.5 rounded-2xl bg-purple-500/20 text-purple-400 border border-purple-500/30 shadow-[0_0_15px_rgba(168,85,247,0.2)]">
+            <div className={`p-2.5 rounded-2xl border ${
+              isDark ? 'bg-white/5 border-white/10 text-white' : 'bg-zinc-100 border-zinc-200 text-zinc-900'
+            }`}>
               <GraduationCap className="w-5 h-5 sm:w-6 sm:h-6" />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h3 className="font-black text-sm sm:text-base uppercase tracking-wider font-mono text-white">
+                <h3 className={`font-black text-sm sm:text-base uppercase tracking-wider font-mono ${
+                  isDark ? 'text-white' : 'text-zinc-900'
+                }`}>
                   Sistema de Notas UEES
                 </h3>
-                <span className="hidden sm:inline-block px-2 py-0.5 rounded-md text-[10px] font-mono font-bold bg-pink-500/20 text-pink-300 border border-pink-500/30">
+                <span className={`hidden sm:inline-block px-2 py-0.5 rounded-md text-[10px] font-mono font-bold border ${
+                  isDark ? 'bg-white/10 text-zinc-300 border-white/10' : 'bg-zinc-100 text-zinc-800 border-zinc-200'
+                }`}>
                   R1: 30% | R2: 30% | R3: 40%
                 </span>
               </div>
-              <p className="text-[11px] text-stone-400">
+              <p className={`text-[11px] ${isDark ? 'text-zinc-400' : 'text-zinc-500'}`}>
                 Cálculo oficial de promedios ponderados y seguimiento por registro
               </p>
             </div>
@@ -163,7 +171,11 @@ export const GradeCalculatorModal: React.FC<GradeCalculatorModalProps> = ({
             <button
               onClick={handleRestoreOfficialGrades}
               title="Cargar notas exactas de mis fotos UEES"
-              className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-purple-500/15 hover:bg-purple-500/25 border border-purple-500/30 text-purple-300 transition-all cursor-pointer"
+              className={`hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold border transition-all cursor-pointer ${
+                isDark
+                  ? 'bg-white/5 hover:bg-white/10 border-white/10 text-zinc-300'
+                  : 'bg-zinc-100 hover:bg-zinc-200 border-zinc-200 text-zinc-800'
+              }`}
             >
               <RefreshCw className="w-3.5 h-3.5" />
               <span>Cargar Notas de Fotos</span>
@@ -171,7 +183,7 @@ export const GradeCalculatorModal: React.FC<GradeCalculatorModalProps> = ({
             <button
               onClick={onClose}
               className={`p-2 rounded-xl transition-colors cursor-pointer ${
-                isDark ? 'text-stone-400 hover:text-white bg-white/5' : 'text-stone-400 hover:text-stone-900 bg-stone-100'
+                isDark ? 'text-zinc-400 hover:text-white bg-white/5' : 'text-zinc-500 hover:text-zinc-900 bg-zinc-100'
               }`}
             >
               <X className="w-5 h-5" />
@@ -180,14 +192,20 @@ export const GradeCalculatorModal: React.FC<GradeCalculatorModalProps> = ({
         </div>
 
         {/* View Tabs Selector */}
-        <div className="px-4 sm:px-6 pt-3 pb-2 border-b border-white/5 flex items-center justify-between gap-2 shrink-0 bg-[#060812]">
+        <div className={`px-4 sm:px-6 pt-3 pb-2 border-b flex items-center justify-between gap-2 shrink-0 ${
+          isDark ? 'border-white/5 bg-[#111215]' : 'border-zinc-200 bg-white'
+        }`}>
           <div className="flex gap-2">
             <button
               onClick={() => setActiveTab('cards')}
-              className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-2 font-mono ${
+              className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-2 font-mono border ${
                 activeTab === 'cards'
-                  ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-md shadow-purple-500/25'
-                  : 'text-stone-400 hover:text-stone-200 bg-white/5 hover:bg-white/10'
+                  ? isDark
+                    ? 'bg-white text-zinc-950 border-white shadow-sm font-black'
+                    : 'bg-zinc-900 text-white border-zinc-900 shadow-sm font-black'
+                  : isDark
+                  ? 'text-zinc-400 hover:text-white bg-white/5 hover:bg-white/10 border-transparent'
+                  : 'text-zinc-600 hover:text-zinc-900 bg-zinc-100 hover:bg-zinc-200 border-transparent'
               }`}
             >
               <BookOpen className="w-3.5 h-3.5" />
@@ -196,10 +214,14 @@ export const GradeCalculatorModal: React.FC<GradeCalculatorModalProps> = ({
 
             <button
               onClick={() => setActiveTab('simulator')}
-              className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-2 font-mono ${
+              className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-2 font-mono border ${
                 activeTab === 'simulator'
-                  ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-md shadow-purple-500/25'
-                  : 'text-stone-400 hover:text-stone-200 bg-white/5 hover:bg-white/10'
+                  ? isDark
+                    ? 'bg-white text-zinc-950 border-white shadow-sm font-black'
+                    : 'bg-zinc-900 text-white border-zinc-900 shadow-sm font-black'
+                  : isDark
+                  ? 'text-zinc-400 hover:text-white bg-white/5 hover:bg-white/10 border-transparent'
+                  : 'text-zinc-600 hover:text-zinc-900 bg-zinc-100 hover:bg-zinc-200 border-transparent'
               }`}
             >
               <Sliders className="w-3.5 h-3.5" />
@@ -208,8 +230,8 @@ export const GradeCalculatorModal: React.FC<GradeCalculatorModalProps> = ({
           </div>
 
           <div className="flex items-center gap-2">
-            <span className="text-[10px] text-stone-400 font-mono hidden md:inline">Nota Mínima Aprobatoria:</span>
-            <span className="text-xs font-black font-mono px-2 py-0.5 rounded-lg bg-emerald-500/15 border border-emerald-500/30 text-emerald-300">
+            <span className={`text-[10px] font-mono hidden md:inline ${isDark ? 'text-zinc-400' : 'text-zinc-500'}`}>Nota Mínima Aprobatoria:</span>
+            <span className="text-xs font-black font-mono px-2 py-0.5 rounded-lg bg-emerald-500/15 border border-emerald-500/30 text-emerald-400">
               {passingGrade.toFixed(1)}
             </span>
           </div>
@@ -222,16 +244,22 @@ export const GradeCalculatorModal: React.FC<GradeCalculatorModalProps> = ({
             <div>
               <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
                 <div>
-                  <h4 className="text-xs font-bold uppercase tracking-wider text-purple-300 font-mono">
+                  <h4 className={`text-xs font-bold uppercase tracking-wider font-mono ${
+                    isDark ? 'text-zinc-300' : 'text-zinc-800'
+                  }`}>
                     Consulta de Notas Oficiales • Ciclo Académico
                   </h4>
-                  <p className="text-[11px] text-stone-400">
-                    Fórmula oficial UEES: <code className="text-pink-300 font-mono">Promedio = (R1 × 0.30) + (R2 × 0.30) + (R3 × 0.40)</code>
+                  <p className={`text-[11px] ${isDark ? 'text-zinc-400' : 'text-zinc-500'}`}>
+                    Fórmula oficial UEES: <code className="font-mono font-bold">Promedio = (R1 × 0.30) + (R2 × 0.30) + (R3 × 0.40)</code>
                   </p>
                 </div>
                 <button
                   onClick={handleRestoreOfficialGrades}
-                  className="sm:hidden flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-bold bg-purple-500/15 border border-purple-500/30 text-purple-300"
+                  className={`sm:hidden flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-bold border ${
+                    isDark
+                      ? 'bg-white/5 border-white/10 text-zinc-300'
+                      : 'bg-zinc-100 border-zinc-200 text-zinc-800'
+                  }`}
                 >
                   <RefreshCw className="w-3 h-3" />
                   <span>Restaurar de Fotos</span>
@@ -244,52 +272,39 @@ export const GradeCalculatorModal: React.FC<GradeCalculatorModalProps> = ({
                   const sGrade = findGradeDataForSubject(subj.id, subj.name, gradesData);
                   const sCalc = calculateUeesGrade(sGrade, passingGrade);
 
-                  // Decoración temática de imagen por materia estilo portal UEES
-                  const isTech =
-                    subj.name.toLowerCase().includes('base') ||
-                    subj.name.toLowerCase().includes('datos') ||
-                    subj.name.toLowerCase().includes('programac');
-                  const isMath =
-                    subj.name.toLowerCase().includes('matem') ||
-                    subj.name.toLowerCase().includes('físic') ||
-                    subj.name.toLowerCase().includes('fisic');
-
-                  const bannerGradient = isTech
-                    ? 'from-blue-600 via-indigo-700 to-purple-800'
-                    : isMath
-                    ? 'from-amber-600 via-orange-700 to-red-800'
-                    : 'from-emerald-600 via-teal-700 to-cyan-800';
-
                   return (
                     <div
                       key={subj.id}
-                      className="rounded-2xl border border-white/10 bg-[#060812] overflow-hidden flex flex-col justify-between shadow-lg hover:border-purple-500/40 transition-all group"
+                      className={`rounded-2xl border overflow-hidden flex flex-col justify-between transition-all ${
+                        isDark
+                          ? 'bg-[#131417] border-white/10 hover:border-white/20 shadow-md'
+                          : 'bg-white border-zinc-200 hover:border-zinc-300 shadow-xs'
+                      }`}
                     >
-                      {/* Top Header Card con Banner estilo UEES */}
+                      {/* Top Header Card con Banner Monocromático */}
                       <div>
-                        <div
-                          className={`h-24 w-full bg-gradient-to-r ${bannerGradient} relative p-3 flex flex-col justify-between overflow-hidden`}
-                        >
-                          <div className="absolute inset-0 opacity-20 bg-[radial-gradient(#fff_1px,transparent_1px)] [background-size:12px_12px]" />
-                          <div className="flex items-center justify-between relative z-10">
-                            <span className="px-2 py-0.5 rounded-md text-[9px] font-mono font-black uppercase tracking-wider bg-black/40 backdrop-blur-md text-white border border-white/20">
+                        <div className={`h-22 w-full p-3.5 flex flex-col justify-between border-b ${
+                          isDark
+                            ? 'bg-[#18191e] border-white/5 text-white'
+                            : 'bg-zinc-900 border-zinc-800 text-white'
+                        }`}>
+                          <div className="flex items-center justify-between">
+                            <span className="px-2 py-0.5 rounded-md text-[9px] font-mono font-bold uppercase tracking-wider bg-white/10 text-zinc-300 border border-white/10">
                               Materia {idx + 1}
                             </span>
                             <span
                               className={`px-2 py-0.5 rounded-md text-[10px] font-mono font-extrabold uppercase ${
                                 sCalc.isPassed
-                                  ? 'bg-emerald-500/90 text-white shadow-xs'
-                                  : sCalc.passedAlready
-                                  ? 'bg-emerald-500/90 text-white'
-                                  : 'bg-black/60 text-stone-200 border border-white/20'
+                                  ? 'bg-emerald-500 text-white'
+                                  : 'bg-white/10 text-zinc-200 border border-white/15'
                               }`}
                             >
                               {sCalc.isPassed ? 'Aprobada ✓' : `Prom. ${sCalc.ueesAverageFormatted}`}
                             </span>
                           </div>
 
-                          <div className="relative z-10">
-                            <h4 className="font-black text-sm text-white uppercase tracking-wide drop-shadow-md line-clamp-2 leading-tight">
+                          <div>
+                            <h4 className="font-black text-sm uppercase tracking-wide truncate">
                               {subj.name}
                             </h4>
                           </div>
@@ -297,55 +312,57 @@ export const GradeCalculatorModal: React.FC<GradeCalculatorModalProps> = ({
 
                         {/* Tabla de Registros estilo WSCLASS UEES */}
                         <div className="p-4 space-y-2 text-xs font-mono">
-                          <div className="flex items-center justify-between py-1 border-b border-white/5">
-                            <span className="text-stone-400">Registro 1 (30%):</span>
-                            <span className="font-bold text-white text-sm">
+                          <div className={`flex items-center justify-between py-1 border-b ${isDark ? 'border-white/5' : 'border-zinc-100'}`}>
+                            <span className={isDark ? 'text-zinc-400' : 'text-zinc-500'}>Registro 1 (30%):</span>
+                            <span className={`font-bold text-sm ${isDark ? 'text-white' : 'text-zinc-900'}`}>
                               {sGrade.p1 !== '' ? parseFloat(sGrade.p1).toFixed(2) : '-'}
                             </span>
                           </div>
 
-                          <div className="flex items-center justify-between py-1 border-b border-white/5">
-                            <span className="text-stone-400">Registro 2 (30%):</span>
-                            <span className="font-bold text-white text-sm">
+                          <div className={`flex items-center justify-between py-1 border-b ${isDark ? 'border-white/5' : 'border-zinc-100'}`}>
+                            <span className={isDark ? 'text-zinc-400' : 'text-zinc-500'}>Registro 2 (30%):</span>
+                            <span className={`font-bold text-sm ${isDark ? 'text-white' : 'text-zinc-900'}`}>
                               {sGrade.p2 !== '' ? parseFloat(sGrade.p2).toFixed(2) : '-'}
                             </span>
                           </div>
 
-                          <div className="flex items-center justify-between py-1 border-b border-white/5">
-                            <span className="text-stone-400">Registro 3 (40%):</span>
-                            <span className="font-bold text-white text-sm">
+                          <div className={`flex items-center justify-between py-1 border-b ${isDark ? 'border-white/5' : 'border-zinc-100'}`}>
+                            <span className={isDark ? 'text-zinc-400' : 'text-zinc-500'}>Registro 3 (40%):</span>
+                            <span className={`font-bold text-sm ${isDark ? 'text-white' : 'text-zinc-900'}`}>
                               {sGrade.p3 !== '' ? parseFloat(sGrade.p3).toFixed(2) : '-'}
                             </span>
                           </div>
 
-                          <div className="flex items-center justify-between py-1 border-b border-white/5">
-                            <span className="text-stone-400">Reposición:</span>
-                            <span className="font-bold text-purple-300 text-sm">
+                          <div className={`flex items-center justify-between py-1 border-b ${isDark ? 'border-white/5' : 'border-zinc-100'}`}>
+                            <span className={isDark ? 'text-zinc-400' : 'text-zinc-500'}>Reposición:</span>
+                            <span className={`font-bold text-sm ${isDark ? 'text-white' : 'text-zinc-900'}`}>
                               {sGrade.repo && sGrade.repo !== '' ? parseFloat(sGrade.repo).toFixed(2) : '-'}
                             </span>
                           </div>
 
                           {/* Promedio Oficial Destacado */}
                           <div className="flex items-center justify-between pt-2">
-                            <span className="font-black text-xs uppercase tracking-wider text-pink-300">
+                            <span className={`font-black text-xs uppercase tracking-wider ${isDark ? 'text-zinc-300' : 'text-zinc-700'}`}>
                               Promedio UEES:
                             </span>
-                            <span className="font-mono font-black text-xl text-emerald-400">
+                            <span className="font-mono font-black text-xl text-emerald-500">
                               {sCalc.ueesAverageFormatted}
                             </span>
                           </div>
 
                           {/* Puntos y Requerimiento de Registro 3 */}
-                          <div className="pt-2 text-[10px] text-stone-400 space-y-1">
+                          <div className={`pt-2 text-[10px] space-y-1 ${isDark ? 'text-zinc-400' : 'text-zinc-500'}`}>
                             <div className="flex justify-between">
                               <span>Puntos acumulados:</span>
-                              <span className="text-stone-200 font-bold">{sCalc.accumulatedFormatted} / 10.0</span>
+                              <span className={`font-bold ${isDark ? 'text-zinc-200' : 'text-zinc-700'}`}>{sCalc.accumulatedFormatted} / 10.0</span>
                             </div>
 
                             {sCalc.neededInR3 && (
-                              <div className="p-1.5 rounded-lg bg-purple-500/10 border border-purple-500/25 text-purple-200">
+                              <div className={`p-1.5 rounded-lg border ${
+                                isDark ? 'bg-white/5 border-white/10 text-zinc-300' : 'bg-zinc-50 border-zinc-200 text-zinc-700'
+                              }`}>
                                 🎯 Necesitas en R3 (40%):{' '}
-                                <strong className="text-pink-300 font-extrabold">{sCalc.neededInR3}</strong>
+                                <strong className="font-extrabold text-amber-500">{sCalc.neededInR3}</strong>
                               </div>
                             )}
                           </div>
@@ -354,16 +371,20 @@ export const GradeCalculatorModal: React.FC<GradeCalculatorModalProps> = ({
 
                       {/* Docente Card Footer & Acción de Editar */}
                       <div>
-                        <div className="px-3.5 py-2.5 bg-gradient-to-r from-blue-700/80 to-indigo-700/80 flex items-center justify-between text-white">
+                        <div className={`px-3.5 py-2.5 flex items-center justify-between border-t ${
+                          isDark ? 'bg-[#18191e] border-white/5 text-zinc-200' : 'bg-zinc-50 border-zinc-200 text-zinc-800'
+                        }`}>
                           <div className="flex items-center gap-2 min-w-0">
-                            <div className="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center shrink-0">
-                              <User className="w-3.5 h-3.5 text-white" />
+                            <div className={`w-6 h-6 rounded-full flex items-center justify-center shrink-0 border ${
+                              isDark ? 'bg-white/10 border-white/10 text-zinc-300' : 'bg-zinc-200 border-zinc-300 text-zinc-700'
+                            }`}>
+                              <User className="w-3.5 h-3.5" />
                             </div>
                             <div className="min-w-0">
-                              <span className="text-[9px] uppercase tracking-wider block text-blue-200 font-mono">
+                              <span className={`text-[9px] uppercase tracking-wider block font-mono ${isDark ? 'text-zinc-400' : 'text-zinc-500'}`}>
                                 Docente:
                               </span>
-                              <span className="text-[11px] font-bold truncate block text-yellow-300">
+                              <span className={`text-[11px] font-bold truncate block ${isDark ? 'text-white' : 'text-zinc-900'}`}>
                                 {sGrade.teacher || 'Catedrático UEES'}
                               </span>
                             </div>
@@ -374,7 +395,11 @@ export const GradeCalculatorModal: React.FC<GradeCalculatorModalProps> = ({
                               setSelectedSubjId(subj.id);
                               setActiveTab('simulator');
                             }}
-                            className="px-2 py-1 rounded-md text-[10px] font-bold bg-white/15 hover:bg-white/25 border border-white/20 transition-all cursor-pointer whitespace-nowrap ml-2"
+                            className={`px-2 py-1 rounded-md text-[10px] font-bold border transition-all cursor-pointer whitespace-nowrap ml-2 ${
+                              isDark
+                                ? 'bg-white/10 hover:bg-white/15 border-white/15 text-white'
+                                : 'bg-zinc-200 hover:bg-zinc-300 border-zinc-300 text-zinc-900'
+                            }`}
                           >
                             Modificar
                           </button>
@@ -392,7 +417,9 @@ export const GradeCalculatorModal: React.FC<GradeCalculatorModalProps> = ({
             <div className="max-w-2xl mx-auto space-y-5">
               {/* Selector de Materias (Pills) */}
               <div>
-                <label className="block text-[11px] font-bold text-stone-400 uppercase tracking-wider mb-2 font-mono">
+                <label className={`block text-[11px] font-bold uppercase tracking-wider mb-2 font-mono ${
+                  isDark ? 'text-zinc-400' : 'text-zinc-500'
+                }`}>
                   SELECCIONA LA MATERIA A SIMULAR:
                 </label>
                 <div className="flex gap-1.5 overflow-x-auto pb-2 scrollbar-none">
@@ -400,12 +427,14 @@ export const GradeCalculatorModal: React.FC<GradeCalculatorModalProps> = ({
                     <button
                       key={subj.id}
                       onClick={() => setSelectedSubjId(subj.id)}
-                      className={`py-2 px-3.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all cursor-pointer font-mono ${
+                      className={`py-2 px-3.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all cursor-pointer font-mono border ${
                         selectedSubjId === subj.id
-                          ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-md font-extrabold'
+                          ? isDark
+                            ? 'bg-white text-zinc-950 border-white font-black'
+                            : 'bg-zinc-900 text-white border-zinc-900 font-black'
                           : isDark
-                          ? 'bg-[#05070e] border border-white/10 text-stone-300 hover:border-purple-500/40'
-                          : 'bg-stone-100 border border-stone-200 text-stone-700 hover:bg-stone-200'
+                          ? 'bg-white/5 border-white/10 text-zinc-400 hover:text-white hover:bg-white/10'
+                          : 'bg-zinc-50 border-zinc-200 text-zinc-600 hover:text-zinc-900 hover:bg-zinc-100'
                       }`}
                     >
                       {subj.name}
@@ -415,19 +444,25 @@ export const GradeCalculatorModal: React.FC<GradeCalculatorModalProps> = ({
               </div>
 
               {/* Materia Activa Header Banner */}
-              <div className="p-4 rounded-2xl bg-gradient-to-r from-purple-900/40 via-indigo-900/30 to-pink-900/30 border border-purple-500/30 flex items-center justify-between">
+              <div className={`p-4 rounded-2xl border flex items-center justify-between ${
+                isDark ? 'bg-[#18191e] border-white/10' : 'bg-zinc-50 border-zinc-200'
+              }`}>
                 <div>
-                  <span className="text-[10px] font-mono uppercase tracking-wider text-pink-400 font-bold block">
+                  <span className={`text-[10px] font-mono uppercase tracking-wider font-bold block ${
+                    isDark ? 'text-zinc-400' : 'text-zinc-500'
+                  }`}>
                     Editando Calificaciones de:
                   </span>
-                  <h3 className="text-base sm:text-lg font-black text-white uppercase font-mono">
+                  <h3 className={`text-base sm:text-lg font-black uppercase font-mono ${
+                    isDark ? 'text-white' : 'text-zinc-900'
+                  }`}>
                     {currentSubjectObj.name}
                   </h3>
                 </div>
 
                 <div className="text-right">
-                  <span className="text-[10px] text-stone-400 font-mono block">Promedio Oficial:</span>
-                  <span className="text-2xl font-black font-mono text-emerald-400">
+                  <span className={`text-[10px] font-mono block ${isDark ? 'text-zinc-400' : 'text-zinc-500'}`}>Promedio Oficial:</span>
+                  <span className="text-2xl font-black font-mono text-emerald-500">
                     {currentCalc.ueesAverageFormatted}
                   </span>
                 </div>
@@ -438,14 +473,18 @@ export const GradeCalculatorModal: React.FC<GradeCalculatorModalProps> = ({
                 {/* Registro 1 */}
                 <div
                   className={`p-3.5 rounded-2xl border transition-colors ${
-                    isDark ? 'bg-[#05070e] border-white/10' : 'bg-stone-50 border-stone-200'
+                    isDark ? 'bg-[#18191e] border-white/10' : 'bg-zinc-50 border-zinc-200'
                   }`}
                 >
                   <div className="flex items-center justify-between mb-2">
-                    <span className="text-xs font-black uppercase tracking-wide font-mono text-purple-300">
+                    <span className={`text-xs font-black uppercase tracking-wide font-mono ${
+                      isDark ? 'text-zinc-300' : 'text-zinc-700'
+                    }`}>
                       Registro 1
                     </span>
-                    <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-purple-500/20 text-purple-300">
+                    <span className={`text-[10px] font-mono px-1.5 py-0.5 rounded border ${
+                      isDark ? 'bg-white/5 border-white/10 text-zinc-300' : 'bg-zinc-100 border-zinc-200 text-zinc-800'
+                    }`}>
                       30%
                     </span>
                   </div>
@@ -459,24 +498,28 @@ export const GradeCalculatorModal: React.FC<GradeCalculatorModalProps> = ({
                     placeholder="0.00"
                     className={`w-full text-center font-extrabold text-lg rounded-xl py-2 border outline-none font-mono ${
                       isDark
-                        ? 'bg-[#0a0d17] border-white/10 text-white focus:border-purple-400'
-                        : 'bg-white border-stone-300 text-stone-900 focus:border-purple-500'
+                        ? 'bg-black/30 border-white/10 text-white focus:border-white'
+                        : 'bg-white border-zinc-300 text-zinc-900 focus:border-zinc-900'
                     }`}
                   />
-                  <span className="text-[10px] text-stone-500 block text-center mt-1">Primer cómputo</span>
+                  <span className={`text-[10px] block text-center mt-1 ${isDark ? 'text-zinc-500' : 'text-zinc-400'}`}>Primer cómputo</span>
                 </div>
 
                 {/* Registro 2 */}
                 <div
                   className={`p-3.5 rounded-2xl border transition-colors ${
-                    isDark ? 'bg-[#05070e] border-white/10' : 'bg-stone-50 border-stone-200'
+                    isDark ? 'bg-[#18191e] border-white/10' : 'bg-zinc-50 border-zinc-200'
                   }`}
                 >
                   <div className="flex items-center justify-between mb-2">
-                    <span className="text-xs font-black uppercase tracking-wide font-mono text-purple-300">
+                    <span className={`text-xs font-black uppercase tracking-wide font-mono ${
+                      isDark ? 'text-zinc-300' : 'text-zinc-700'
+                    }`}>
                       Registro 2
                     </span>
-                    <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-purple-500/20 text-purple-300">
+                    <span className={`text-[10px] font-mono px-1.5 py-0.5 rounded border ${
+                      isDark ? 'bg-white/5 border-white/10 text-zinc-300' : 'bg-zinc-100 border-zinc-200 text-zinc-800'
+                    }`}>
                       30%
                     </span>
                   </div>
@@ -490,24 +533,28 @@ export const GradeCalculatorModal: React.FC<GradeCalculatorModalProps> = ({
                     placeholder="0.00"
                     className={`w-full text-center font-extrabold text-lg rounded-xl py-2 border outline-none font-mono ${
                       isDark
-                        ? 'bg-[#0a0d17] border-white/10 text-white focus:border-purple-400'
-                        : 'bg-white border-stone-300 text-stone-900 focus:border-purple-500'
+                        ? 'bg-black/30 border-white/10 text-white focus:border-white'
+                        : 'bg-white border-zinc-300 text-zinc-900 focus:border-zinc-900'
                     }`}
                   />
-                  <span className="text-[10px] text-stone-500 block text-center mt-1">Segundo cómputo</span>
+                  <span className={`text-[10px] block text-center mt-1 ${isDark ? 'text-zinc-500' : 'text-zinc-400'}`}>Segundo cómputo</span>
                 </div>
 
                 {/* Registro 3 */}
                 <div
                   className={`p-3.5 rounded-2xl border transition-colors ${
-                    isDark ? 'bg-[#05070e] border-white/10' : 'bg-stone-50 border-stone-200'
+                    isDark ? 'bg-[#18191e] border-white/10' : 'bg-zinc-50 border-zinc-200'
                   }`}
                 >
                   <div className="flex items-center justify-between mb-2">
-                    <span className="text-xs font-black uppercase tracking-wide font-mono text-purple-300">
+                    <span className={`text-xs font-black uppercase tracking-wide font-mono ${
+                      isDark ? 'text-zinc-300' : 'text-zinc-700'
+                    }`}>
                       Registro 3
                     </span>
-                    <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-pink-500/20 text-pink-300 font-bold">
+                    <span className={`text-[10px] font-mono px-1.5 py-0.5 rounded border font-bold ${
+                      isDark ? 'bg-white/10 border-white/15 text-zinc-200' : 'bg-zinc-200 border-zinc-300 text-zinc-900'
+                    }`}>
                       40%
                     </span>
                   </div>
@@ -521,11 +568,11 @@ export const GradeCalculatorModal: React.FC<GradeCalculatorModalProps> = ({
                     placeholder="0.00"
                     className={`w-full text-center font-extrabold text-lg rounded-xl py-2 border outline-none font-mono ${
                       isDark
-                        ? 'bg-[#0a0d17] border-white/10 text-white focus:border-purple-400'
-                        : 'bg-white border-stone-300 text-stone-900 focus:border-purple-500'
+                        ? 'bg-black/30 border-white/10 text-white focus:border-white'
+                        : 'bg-white border-zinc-300 text-zinc-900 focus:border-zinc-900'
                     }`}
                   />
-                  <span className="text-[10px] text-stone-500 block text-center mt-1">Evaluación final</span>
+                  <span className={`text-[10px] block text-center mt-1 ${isDark ? 'text-zinc-500' : 'text-zinc-400'}`}>Evaluación final</span>
                 </div>
               </div>
 
@@ -534,14 +581,14 @@ export const GradeCalculatorModal: React.FC<GradeCalculatorModalProps> = ({
                 {/* Reposición */}
                 <div
                   className={`p-3.5 rounded-2xl border ${
-                    isDark ? 'bg-[#05070e] border-white/10' : 'bg-stone-50 border-stone-200'
+                    isDark ? 'bg-[#18191e] border-white/10' : 'bg-zinc-50 border-zinc-200'
                   }`}
                 >
                   <div className="flex items-center justify-between mb-1.5">
-                    <span className="text-xs font-black uppercase tracking-wide font-mono text-yellow-400">
+                    <span className={`text-xs font-black uppercase tracking-wide font-mono ${isDark ? 'text-zinc-300' : 'text-zinc-800'}`}>
                       Reposición (Extraordinario)
                     </span>
-                    <span className="text-[10px] text-stone-400 font-mono">Opcional</span>
+                    <span className={`text-[10px] font-mono ${isDark ? 'text-zinc-400' : 'text-zinc-500'}`}>Opcional</span>
                   </div>
                   <input
                     type="number"
@@ -553,11 +600,11 @@ export const GradeCalculatorModal: React.FC<GradeCalculatorModalProps> = ({
                     placeholder="Dejar vacío si no aplica"
                     className={`w-full text-left font-mono font-bold text-sm rounded-xl px-3 py-2 border outline-none ${
                       isDark
-                        ? 'bg-[#0a0d17] border-white/10 text-yellow-300 focus:border-yellow-400'
-                        : 'bg-white border-stone-300 text-stone-900 focus:border-yellow-500'
+                        ? 'bg-black/30 border-white/10 text-white focus:border-white'
+                        : 'bg-white border-zinc-300 text-zinc-900 focus:border-zinc-900'
                     }`}
                   />
-                  <p className="text-[10px] text-stone-400 mt-1">
+                  <p className={`text-[10px] mt-1 ${isDark ? 'text-zinc-400' : 'text-zinc-500'}`}>
                     Sustituye automáticamente la nota más baja si ayuda a subir el promedio final.
                   </p>
                 </div>
@@ -565,11 +612,11 @@ export const GradeCalculatorModal: React.FC<GradeCalculatorModalProps> = ({
                 {/* Docente */}
                 <div
                   className={`p-3.5 rounded-2xl border ${
-                    isDark ? 'bg-[#05070e] border-white/10' : 'bg-stone-50 border-stone-200'
+                    isDark ? 'bg-[#18191e] border-white/10' : 'bg-zinc-50 border-zinc-200'
                   }`}
                 >
                   <div className="flex items-center justify-between mb-1.5">
-                    <span className="text-xs font-black uppercase tracking-wide font-mono text-blue-300">
+                    <span className={`text-xs font-black uppercase tracking-wide font-mono ${isDark ? 'text-zinc-300' : 'text-zinc-800'}`}>
                       Catedrático / Docente
                     </span>
                   </div>
@@ -580,11 +627,11 @@ export const GradeCalculatorModal: React.FC<GradeCalculatorModalProps> = ({
                     placeholder="Nombre del catedrático"
                     className={`w-full text-left font-mono font-bold text-sm rounded-xl px-3 py-2 border outline-none ${
                       isDark
-                        ? 'bg-[#0a0d17] border-white/10 text-blue-200 focus:border-blue-400'
-                        : 'bg-white border-stone-300 text-stone-900 focus:border-blue-500'
+                        ? 'bg-black/30 border-white/10 text-white focus:border-white'
+                        : 'bg-white border-zinc-300 text-zinc-900 focus:border-zinc-900'
                     }`}
                   />
-                  <p className="text-[10px] text-stone-400 mt-1">
+                  <p className={`text-[10px] mt-1 ${isDark ? 'text-zinc-400' : 'text-zinc-500'}`}>
                     Aparece reflejado en la tarjeta al estilo del portal de autogestión.
                   </p>
                 </div>
@@ -592,8 +639,10 @@ export const GradeCalculatorModal: React.FC<GradeCalculatorModalProps> = ({
 
               {/* Indicador de reposición si aplica */}
               {currentCalc.replacedRegistro && (
-                <div className="p-3 rounded-xl bg-amber-500/15 border border-amber-500/30 text-amber-200 text-xs flex items-center gap-2">
-                  <Sparkles className="w-4 h-4 text-amber-400 shrink-0" />
+                <div className={`p-3 rounded-xl border text-xs flex items-center gap-2 ${
+                  isDark ? 'bg-white/5 border-white/10 text-zinc-300' : 'bg-zinc-100 border-zinc-200 text-zinc-800'
+                }`}>
+                  <Sparkles className="w-4 h-4 text-emerald-500 shrink-0" />
                   <span>
                     La Reposición de <strong>{currentCalc.repo?.toFixed(2)}</strong> sustituyó automáticamente la nota del{' '}
                     <strong>Registro {currentCalc.replacedRegistro}</strong> con mayor ponderación.
@@ -604,28 +653,30 @@ export const GradeCalculatorModal: React.FC<GradeCalculatorModalProps> = ({
               {/* Tarjeta de Resumen Detallado y Proyección */}
               <div
                 className={`p-4 sm:p-5 rounded-2xl border font-mono ${
-                  isDark ? 'bg-[#05070e] border-white/10' : 'bg-stone-100/80 border-stone-200'
+                  isDark ? 'bg-[#18191e] border-white/10 text-white' : 'bg-zinc-50 border-zinc-200 text-zinc-900'
                 }`}
               >
-                <div className="flex items-center justify-between mb-3 pb-3 border-b border-white/10">
-                  <span className="text-xs font-bold text-stone-400 uppercase">
+                <div className={`flex items-center justify-between mb-3 pb-3 border-b ${
+                  isDark ? 'border-white/10' : 'border-zinc-200'
+                }`}>
+                  <span className={`text-xs font-bold uppercase ${isDark ? 'text-zinc-400' : 'text-zinc-500'}`}>
                     Promedio Oficial Portal UEES (1 decimal):
                   </span>
-                  <span className="text-2xl font-black text-emerald-400">
+                  <span className="text-2xl font-black text-emerald-500">
                     {currentCalc.ueesAverageFormatted}
                   </span>
                 </div>
 
                 <div className="grid grid-cols-2 gap-3 text-xs mb-3">
-                  <div className="p-2.5 rounded-xl bg-white/5">
-                    <span className="text-stone-400 block text-[10px] uppercase">Puntaje Acumulado Exacto:</span>
-                    <span className="text-sm font-black text-purple-300">
+                  <div className={`p-2.5 rounded-xl border ${isDark ? 'bg-white/5 border-white/5' : 'bg-white border-zinc-200'}`}>
+                    <span className={`block text-[10px] uppercase ${isDark ? 'text-zinc-400' : 'text-zinc-500'}`}>Puntaje Acumulado Exacto:</span>
+                    <span className={`text-sm font-black ${isDark ? 'text-white' : 'text-zinc-900'}`}>
                       {currentCalc.accumulatedFormatted} / 10.0
                     </span>
                   </div>
-                  <div className="p-2.5 rounded-xl bg-white/5">
-                    <span className="text-stone-400 block text-[10px] uppercase">Promedio de lo Evaluado:</span>
-                    <span className="text-sm font-black text-cyan-300">
+                  <div className={`p-2.5 rounded-xl border ${isDark ? 'bg-white/5 border-white/5' : 'bg-white border-zinc-200'}`}>
+                    <span className={`block text-[10px] uppercase ${isDark ? 'text-zinc-400' : 'text-zinc-500'}`}>Promedio de lo Evaluado:</span>
+                    <span className={`text-sm font-black ${isDark ? 'text-white' : 'text-zinc-900'}`}>
                       {currentCalc.relativeAverage} / 10.0
                     </span>
                   </div>
@@ -633,10 +684,14 @@ export const GradeCalculatorModal: React.FC<GradeCalculatorModalProps> = ({
 
                 {/* Meta para pasar con 6.0 */}
                 {currentCalc.neededInR3 && (
-                  <div className="p-3 rounded-xl bg-purple-500/15 border border-purple-500/30 text-xs text-purple-200">
+                  <div className={`p-3 rounded-xl border text-xs ${
+                    isDark ? 'bg-white/5 border-white/10 text-zinc-300' : 'bg-zinc-100 border-zinc-200 text-zinc-800'
+                  }`}>
                     <div className="font-bold flex items-center justify-between">
                       <span>🎯 Meta para aprobar con {passingGrade.toFixed(1)}:</span>
-                      <span className="text-sm font-black px-2 py-0.5 rounded bg-pink-500/25 text-pink-300 border border-pink-500/40">
+                      <span className={`text-sm font-black px-2 py-0.5 rounded border ${
+                        isDark ? 'bg-white/10 text-white border-white/20' : 'bg-zinc-900 text-white border-zinc-900'
+                      }`}>
                         {currentCalc.neededInR3} en R3 (40%)
                       </span>
                     </div>
@@ -656,13 +711,19 @@ export const GradeCalculatorModal: React.FC<GradeCalculatorModalProps> = ({
         </div>
 
         {/* Footer Modal */}
-        <div className="p-4 border-t border-white/10 flex flex-wrap items-center justify-between gap-3 shrink-0 bg-[#060812]">
-          <div className="text-[11px] text-stone-400 font-mono">
+        <div className={`p-4 border-t flex flex-wrap items-center justify-between gap-3 shrink-0 ${
+          isDark ? 'border-white/10 bg-[#111215]' : 'border-zinc-200 bg-zinc-50'
+        }`}>
+          <div className={`text-[11px] font-mono ${isDark ? 'text-zinc-400' : 'text-zinc-500'}`}>
             Las calificaciones se sincronizan automáticamente con tu copia local y la nube.
           </div>
           <button
             onClick={onClose}
-            className="py-2.5 px-6 bg-gradient-to-r from-purple-600 to-pink-600 hover:opacity-90 text-white font-black text-xs rounded-xl transition-all cursor-pointer shadow-md shadow-purple-500/20 font-mono"
+            className={`py-2.5 px-6 font-black text-xs rounded-xl transition-all cursor-pointer font-mono border ${
+              isDark
+                ? 'bg-white text-zinc-950 border-white hover:bg-zinc-200 shadow-md'
+                : 'bg-zinc-900 text-white border-zinc-900 hover:bg-zinc-800 shadow-sm'
+            }`}
           >
             Cerrar y Aplicar ✓
           </button>

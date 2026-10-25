@@ -238,13 +238,13 @@ export const UniversityLinksModal: React.FC<UniversityLinksModalProps> = ({
               <button
                 type="button"
                 onClick={() => setIsAdding(false)}
-                className="flex-1 py-1.5 text-xs text-stone-400 hover:text-white cursor-pointer"
+                className="flex-1 py-1.5 text-xs text-zinc-400 hover:text-white cursor-pointer"
               >
                 Cancelar
               </button>
               <button
                 type="submit"
-                className="flex-1 py-1.5 bg-gradient-to-r from-violet-600 to-purple-600 text-white font-extrabold text-xs rounded-lg cursor-pointer shadow-md shadow-violet-500/20"
+                className="flex-1 py-1.5 bg-white text-zinc-950 font-bold text-xs rounded-lg cursor-pointer border border-white hover:bg-zinc-200"
               >
                 Guardar Enlace
               </button>
@@ -253,7 +253,7 @@ export const UniversityLinksModal: React.FC<UniversityLinksModalProps> = ({
         ) : (
           <button
             onClick={() => setIsAdding(true)}
-            className="w-full py-2 mb-2 border border-dashed border-white/20 hover:border-violet-400/60 rounded-xl text-xs font-bold text-stone-300 hover:text-violet-300 transition-colors flex items-center justify-center gap-1 cursor-pointer font-mono"
+            className="w-full py-2 mb-2 border border-dashed border-white/20 hover:border-white rounded-xl text-xs font-bold text-zinc-300 hover:text-white transition-colors flex items-center justify-center gap-1 cursor-pointer font-mono"
           >
             <Plus className="w-3.5 h-3.5" />
             <span>+ Agregar Enlace Universitario</span>

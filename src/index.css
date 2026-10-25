@@ -2,6 +2,50 @@
 
 :root {
   color-scheme: dark light;
+  --color-zinc-950: #09090b;
+  --color-zinc-900: #18181b;
+  --color-zinc-800: #27272a;
+  --color-zinc-100: #f4f4f5;
+  --color-zinc-200: #e4e4e7;
+  --color-zinc-300: #d4d4d8;
+  --color-zinc-400: #a1a1aa;
+}
+
+/* Fallback hexadecimal universal para navegadores móviles y Android WebViews */
+.text-zinc-950,
+.text-zinc-900 {
+  color: #09090b !important;
+}
+
+.text-white {
+  color: #ffffff !important;
+}
+
+.text-black {
+  color: #000000 !important;
+}
+
+/* Asegurar que botones con fondo blanco siempre tengan texto e iconos 100% negros */
+button.bg-white,
+a.bg-white,
+button.bg-white span,
+button.bg-white p,
+button.bg-white svg,
+.bg-white > svg,
+.bg-white > span {
+  color: #000000 !important;
+}
+
+/* Asegurar que botones oscuros activos tengan texto blanco legible */
+button.bg-zinc-950,
+button.bg-black,
+a.bg-zinc-950,
+a.bg-black,
+button.bg-zinc-950 span,
+button.bg-black span,
+button.bg-zinc-950 svg,
+button.bg-black svg {
+  color: #ffffff !important;
 }
 
 html.dark {

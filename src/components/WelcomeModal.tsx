@@ -77,7 +77,7 @@ export const WelcomeModal: React.FC<WelcomeModalProps> = ({ isOpen, onStart }) =
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.96 }}
               onClick={onStart}
-              className="w-full py-3 px-5 bg-white text-zinc-950 font-black text-sm rounded-xl transition-all shadow-lg border border-white hover:bg-zinc-200 cursor-pointer font-mono"
+              className="w-full py-3 px-5 bg-white !text-black text-black font-black text-sm rounded-xl transition-all shadow-lg border border-white hover:bg-zinc-200 cursor-pointer font-mono"
             >
               Comenzar Configuración
             </motion.button>

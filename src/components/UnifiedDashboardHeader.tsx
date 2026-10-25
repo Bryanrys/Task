@@ -123,12 +123,12 @@ export const UnifiedDashboardHeader: React.FC<UnifiedDashboardHeaderProps> = ({
           disabled={isSyncing}
           className={`py-2 px-3 rounded-2xl border flex items-center justify-center gap-2 font-bold text-xs transition-all cursor-pointer active:scale-95 disabled:opacity-50 disabled:pointer-events-none relative overflow-hidden ${
             isDark
-              ? 'bg-white/10 border-white/15 text-white hover:bg-white/15'
-              : 'bg-zinc-900 border-zinc-900 text-white hover:bg-zinc-800'
+              ? 'bg-white !text-black text-black border-white hover:bg-zinc-200 shadow-sm'
+              : 'bg-black !text-white text-white border-black hover:bg-zinc-800 shadow-sm'
           }`}
           title="Guardar materias y tareas en Supabase"
         >
-          <Upload className="w-3.5 h-3.5 shrink-0" />
+          <Upload className={`w-3.5 h-3.5 shrink-0 stroke-[2.2] ${isDark ? '!text-black text-black' : '!text-white text-white'}`} />
           <span className="font-extrabold tracking-wide text-xs">Subir Nube</span>
         </button>
 
@@ -138,12 +138,12 @@ export const UnifiedDashboardHeader: React.FC<UnifiedDashboardHeaderProps> = ({
           disabled={isSyncing}
           className={`py-2 px-3 rounded-2xl border flex items-center justify-center gap-2 font-bold text-xs transition-all cursor-pointer active:scale-95 disabled:opacity-50 disabled:pointer-events-none relative overflow-hidden ${
             isDark
-              ? 'bg-white/5 border-white/10 text-zinc-200 hover:bg-white/10'
-              : 'bg-zinc-100 border-zinc-200 text-zinc-800 hover:bg-zinc-200'
+              ? 'bg-zinc-900 border-white/20 text-white hover:bg-zinc-800'
+              : 'bg-white border-zinc-300 text-black hover:bg-zinc-100'
           }`}
           title="Cargar materias y tareas desde Supabase con clave oo"
         >
-          <Download className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
+          <Download className="w-3.5 h-3.5 text-emerald-500 shrink-0 stroke-[2.2]" />
           <span className="font-extrabold tracking-wide text-xs">Descargar Nube</span>
         </button>
       </div>

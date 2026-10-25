@@ -261,7 +261,7 @@ export const AIAssistantModal: React.FC<AIAssistantModalProps> = ({
           <div className="flex items-center gap-3">
             <div className="relative">
               <div className={`w-10 h-10 rounded-2xl border flex items-center justify-center ${
-                isDark ? 'bg-white text-zinc-950 border-white' : 'bg-zinc-900 text-white border-zinc-900'
+                isDark ? 'bg-white !text-black text-black border-white' : 'bg-black !text-white text-white border-black'
               }`}>
                 <Bot className="w-5 h-5" />
               </div>
@@ -361,8 +361,8 @@ export const AIAssistantModal: React.FC<AIAssistantModalProps> = ({
                 disabled={isValidatingKey}
                 className={`px-3 py-1.5 rounded-xl font-bold cursor-pointer transition-all flex items-center gap-1.5 border ${
                   isDark
-                    ? 'bg-white text-zinc-950 border-white hover:bg-zinc-200'
-                    : 'bg-zinc-900 text-white border-zinc-900 hover:bg-zinc-800'
+                    ? 'bg-white !text-black text-black border-white hover:bg-zinc-200'
+                    : 'bg-black !text-white text-white border-black hover:bg-zinc-800'
                 }`}
               >
                 {isValidatingKey ? 'Validando...' : 'Guardar'}
@@ -445,8 +445,8 @@ export const AIAssistantModal: React.FC<AIAssistantModalProps> = ({
                   className={`max-w-[85%] sm:max-w-[78%] rounded-2xl px-3.5 py-2.5 text-xs leading-relaxed ${
                     isUser
                       ? isDark
-                        ? 'bg-white text-zinc-950 font-semibold shadow-md'
-                        : 'bg-zinc-900 text-white font-medium shadow-sm'
+                        ? 'bg-white !text-black text-black font-semibold shadow-md'
+                        : 'bg-black !text-white text-white font-medium shadow-sm'
                       : isDark
                       ? 'bg-[#18191e] border border-white/10 text-zinc-200 shadow-xs'
                       : 'bg-white border border-zinc-200 text-zinc-800 shadow-2xs'
@@ -557,8 +557,8 @@ export const AIAssistantModal: React.FC<AIAssistantModalProps> = ({
               disabled={isLoading || !inputPrompt.trim()}
               className={`w-11 h-11 rounded-2xl border disabled:opacity-40 flex items-center justify-center transition-all cursor-pointer shadow-md shrink-0 ${
                 isDark
-                  ? 'bg-white text-zinc-950 border-white hover:bg-zinc-200'
-                  : 'bg-zinc-900 text-white border-zinc-900 hover:bg-zinc-800'
+                  ? 'bg-white !text-black text-black border-white hover:bg-zinc-200'
+                  : 'bg-black !text-white text-white border-black hover:bg-zinc-800'
               }`}
             >
               <Send className="w-4 h-4" />

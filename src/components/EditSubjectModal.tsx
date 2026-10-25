@@ -122,8 +122,8 @@ export const EditSubjectModal: React.FC<EditSubjectModalProps> = ({
               type="submit"
               className={`flex-1 py-2.5 font-bold text-xs rounded-xl transition-all cursor-pointer flex items-center justify-center gap-1.5 border ${
                 isDark
-                  ? 'bg-white text-zinc-950 border-white hover:bg-zinc-200'
-                  : 'bg-zinc-900 text-white border-zinc-900 hover:bg-zinc-800'
+                  ? 'bg-white !text-black text-black border-white hover:bg-zinc-200'
+                  : 'bg-black !text-white text-white border-black hover:bg-zinc-800'
               }`}
             >
               <Check className="w-4 h-4 stroke-[3]" />

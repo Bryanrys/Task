@@ -201,8 +201,8 @@ export const GradeCalculatorModal: React.FC<GradeCalculatorModalProps> = ({
               className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-2 font-mono border ${
                 activeTab === 'cards'
                   ? isDark
-                    ? 'bg-white text-zinc-950 border-white shadow-sm font-black'
-                    : 'bg-zinc-900 text-white border-zinc-900 shadow-sm font-black'
+                    ? 'bg-white !text-black text-black border-white shadow-sm font-black'
+                    : 'bg-black !text-white text-white border-black shadow-sm font-black'
                   : isDark
                   ? 'text-zinc-400 hover:text-white bg-white/5 hover:bg-white/10 border-transparent'
                   : 'text-zinc-600 hover:text-zinc-900 bg-zinc-100 hover:bg-zinc-200 border-transparent'
@@ -217,8 +217,8 @@ export const GradeCalculatorModal: React.FC<GradeCalculatorModalProps> = ({
               className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-2 font-mono border ${
                 activeTab === 'simulator'
                   ? isDark
-                    ? 'bg-white text-zinc-950 border-white shadow-sm font-black'
-                    : 'bg-zinc-900 text-white border-zinc-900 shadow-sm font-black'
+                    ? 'bg-white !text-black text-black border-white shadow-sm font-black'
+                    : 'bg-black !text-white text-white border-black shadow-sm font-black'
                   : isDark
                   ? 'text-zinc-400 hover:text-white bg-white/5 hover:bg-white/10 border-transparent'
                   : 'text-zinc-600 hover:text-zinc-900 bg-zinc-100 hover:bg-zinc-200 border-transparent'
@@ -430,8 +430,8 @@ export const GradeCalculatorModal: React.FC<GradeCalculatorModalProps> = ({
                       className={`py-2 px-3.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all cursor-pointer font-mono border ${
                         selectedSubjId === subj.id
                           ? isDark
-                            ? 'bg-white text-zinc-950 border-white font-black'
-                            : 'bg-zinc-900 text-white border-zinc-900 font-black'
+                            ? 'bg-white !text-black text-black border-white font-black'
+                            : 'bg-black !text-white text-white border-black font-black'
                           : isDark
                           ? 'bg-white/5 border-white/10 text-zinc-400 hover:text-white hover:bg-white/10'
                           : 'bg-zinc-50 border-zinc-200 text-zinc-600 hover:text-zinc-900 hover:bg-zinc-100'
@@ -721,8 +721,8 @@ export const GradeCalculatorModal: React.FC<GradeCalculatorModalProps> = ({
             onClick={onClose}
             className={`py-2.5 px-6 font-black text-xs rounded-xl transition-all cursor-pointer font-mono border ${
               isDark
-                ? 'bg-white text-zinc-950 border-white hover:bg-zinc-200 shadow-md'
-                : 'bg-zinc-900 text-white border-zinc-900 hover:bg-zinc-800 shadow-sm'
+                ? 'bg-white !text-black text-black border-white hover:bg-zinc-200 shadow-md'
+                : 'bg-black !text-white text-white border-black hover:bg-zinc-800 shadow-sm'
             }`}
           >
             Cerrar y Aplicar ✓

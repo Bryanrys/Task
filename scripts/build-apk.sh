@@ -48,8 +48,9 @@ cd "$PROJECT_ROOT"
 
 # 5. Copiar APK a la carpeta pública apk/
 echo "📁 4/4 Actualizando apk/app-debug.apk..."
-mkdir -p apk
+mkdir -p apk public
 cp android/app/build/outputs/apk/debug/app-debug.apk apk/app-debug.apk
+cp android/app/build/outputs/apk/debug/app-debug.apk public/app-debug.apk
 
 APK_SIZE=$(du -h apk/app-debug.apk | cut -f1)
 

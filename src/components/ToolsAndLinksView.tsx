@@ -288,8 +288,8 @@ export const ToolsAndLinksView: React.FC<ToolsAndLinksViewProps> = ({
                           rel="noopener noreferrer"
                           className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl font-bold text-xs active:scale-95 transition-all cursor-pointer border ${
                             isDark
-                              ? 'bg-white text-zinc-950 border-white hover:bg-zinc-200'
-                              : 'bg-zinc-900 text-white border-zinc-900 hover:bg-zinc-800'
+                              ? 'bg-white !text-black text-black border-white hover:bg-zinc-200'
+                              : 'bg-black !text-white text-white border-black hover:bg-zinc-800'
                           }`}
                           title="Entrar directamente a la clase en Microsoft Teams"
                         >
@@ -722,8 +722,8 @@ export const ToolsAndLinksView: React.FC<ToolsAndLinksViewProps> = ({
                   type="submit"
                   className={`flex-1 py-2 font-bold text-xs rounded-xl cursor-pointer active:scale-95 transition-all flex items-center justify-center gap-1 border ${
                     isDark
-                      ? 'bg-white text-zinc-950 border-white hover:bg-zinc-200'
-                      : 'bg-zinc-900 text-white border-zinc-900 hover:bg-zinc-800'
+                      ? 'bg-white !text-black text-black border-white hover:bg-zinc-200'
+                      : 'bg-black !text-white text-white border-black hover:bg-zinc-800'
                   }`}
                 >
                   {quickTeamsSaved ? <Check className="w-3.5 h-3.5" /> : null}

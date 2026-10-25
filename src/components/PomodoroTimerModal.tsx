@@ -96,8 +96,8 @@ export const PomodoroTimerModal: React.FC<PomodoroTimerModalProps> = ({
             className={`flex-1 py-1.5 px-2 rounded-lg text-xs font-extrabold flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
               mode === 'study'
                 ? isDark
-                  ? 'bg-white text-zinc-950 font-black shadow-xs'
-                  : 'bg-zinc-900 text-white font-black shadow-xs'
+                  ? 'bg-white !text-black text-black font-black shadow-xs'
+                  : 'bg-black !text-white text-white font-black shadow-xs'
                 : isDark
                 ? 'text-zinc-400 hover:text-white'
                 : 'text-zinc-600 hover:text-zinc-900'
@@ -154,8 +154,8 @@ export const PomodoroTimerModal: React.FC<PomodoroTimerModalProps> = ({
             className={`flex-1 py-3 px-4 font-black text-xs rounded-xl flex items-center justify-center gap-2 transition-all cursor-pointer active:scale-95 shadow-md border ${
               mode === 'study'
                 ? isDark
-                  ? 'bg-white text-zinc-950 border-white hover:bg-zinc-200'
-                  : 'bg-zinc-900 text-white border-zinc-900 hover:bg-zinc-800'
+                  ? 'bg-white !text-black text-black border-white hover:bg-zinc-200'
+                  : 'bg-black !text-white text-white border-black hover:bg-zinc-800'
                 : 'bg-emerald-600 hover:bg-emerald-500 text-white border-emerald-600'
             }`}
           >

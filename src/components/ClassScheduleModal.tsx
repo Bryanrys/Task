@@ -272,8 +272,8 @@ export const ClassScheduleModal: React.FC<ClassScheduleModalProps> = ({
                 className={`py-1.5 px-3 rounded-xl text-xs font-bold whitespace-nowrap transition-all cursor-pointer relative border ${
                   isSelected
                     ? isDark
-                      ? 'bg-white text-zinc-950 border-white font-black'
-                      : 'bg-zinc-900 text-white border-zinc-900 font-black'
+                      ? 'bg-white !text-black text-black border-white font-black'
+                      : 'bg-black !text-white text-white border-black font-black'
                     : isDark
                     ? 'bg-white/5 border-white/10 text-zinc-400 hover:text-white hover:bg-white/10'
                     : 'bg-zinc-50 border-zinc-200 text-zinc-600 hover:text-zinc-900 hover:bg-zinc-100'
@@ -407,8 +407,8 @@ export const ClassScheduleModal: React.FC<ClassScheduleModalProps> = ({
                   type="submit"
                   className={`flex-1 py-1.5 text-xs font-bold rounded-lg cursor-pointer active:scale-95 transition-all border ${
                     isDark
-                      ? 'bg-white text-zinc-950 border-white hover:bg-zinc-200'
-                      : 'bg-zinc-900 text-white border-zinc-900 hover:bg-zinc-800'
+                      ? 'bg-white !text-black text-black border-white hover:bg-zinc-200'
+                      : 'bg-black !text-white text-white border-black hover:bg-zinc-800'
                   }`}
                 >
                   {editingId ? 'Guardar Cambios' : 'Guardar Clase'}
@@ -498,8 +498,8 @@ export const ClassScheduleModal: React.FC<ClassScheduleModalProps> = ({
                           rel="noopener noreferrer"
                           className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[10px] font-bold transition-all cursor-pointer border ${
                             isDark
-                              ? 'bg-white text-zinc-950 border-white hover:bg-zinc-200'
-                              : 'bg-zinc-900 text-white border-zinc-900 hover:bg-zinc-800'
+                              ? 'bg-white !text-black text-black border-white hover:bg-zinc-200'
+                              : 'bg-black !text-white text-white border-black hover:bg-zinc-800'
                           }`}
                           title="Abrir reunión de Teams"
                         >

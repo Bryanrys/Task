@@ -207,7 +207,7 @@ export const WizardModal: React.FC<WizardModalProps> = ({
 
               <button
                 type="submit"
-                className="w-full py-3 px-5 bg-white text-zinc-950 font-black text-sm rounded-xl transition-all shadow-md hover:bg-zinc-200 mb-3 flex items-center justify-center gap-1.5 cursor-pointer border border-white font-mono"
+                className="w-full py-3 px-5 bg-white !text-black text-black font-black text-sm rounded-xl transition-all shadow-md hover:bg-zinc-200 mb-3 flex items-center justify-center gap-1.5 cursor-pointer border border-white font-mono"
               >
                 Siguiente Paso 👏
               </button>
@@ -270,7 +270,7 @@ export const WizardModal: React.FC<WizardModalProps> = ({
                 </button>
                 <button
                   type="submit"
-                  className="w-2/3 py-3 px-5 bg-white text-zinc-950 font-black text-sm rounded-xl transition-all shadow-md hover:bg-zinc-200 flex items-center justify-center gap-1.5 cursor-pointer border border-white font-mono"
+                  className="w-2/3 py-3 px-5 bg-white !text-black text-black font-black text-sm rounded-xl transition-all shadow-md hover:bg-zinc-200 flex items-center justify-center gap-1.5 cursor-pointer border border-white font-mono"
                 >
                   Siguiente Paso 👏
                 </button>
@@ -319,7 +319,7 @@ export const WizardModal: React.FC<WizardModalProps> = ({
                 </button>
                 <button
                   type="submit"
-                  className="w-2/3 py-3 px-5 bg-white text-zinc-950 font-black text-base rounded-xl transition-all shadow-md hover:bg-zinc-200 flex items-center justify-center gap-2 cursor-pointer border border-white font-mono"
+                  className="w-2/3 py-3 px-5 bg-white !text-black text-black font-black text-base rounded-xl transition-all shadow-md hover:bg-zinc-200 flex items-center justify-center gap-2 cursor-pointer border border-white font-mono"
                 >
                   <span>Crear Dashboard</span>
                   <span>✅</span>

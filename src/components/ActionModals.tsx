@@ -65,8 +65,8 @@ export const PromptModal: React.FC<PromptModalProps> = ({
             onClick={() => onConfirm(value)}
             className={`px-5 py-2 rounded-full font-bold shadow-xs transition-all cursor-pointer active:scale-95 ${
               isDark
-                ? 'bg-white text-zinc-950 hover:bg-zinc-200'
-                : 'bg-zinc-900 text-white hover:bg-zinc-800'
+                ? 'bg-white !text-black text-black hover:bg-zinc-200'
+                : 'bg-black !text-white text-white hover:bg-zinc-800'
             }`}
           >
             Aceptar
@@ -117,8 +117,8 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
               isDanger
                 ? 'bg-rose-500 hover:bg-rose-600 text-white'
                 : isDark
-                ? 'bg-white text-zinc-950 hover:bg-zinc-200'
-                : 'bg-zinc-900 text-white hover:bg-zinc-800'
+                ? 'bg-white !text-black text-black hover:bg-zinc-200'
+                : 'bg-black !text-white text-white hover:bg-zinc-800'
             }`}
           >
             {confirmText}

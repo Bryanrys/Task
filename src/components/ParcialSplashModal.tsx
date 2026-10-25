@@ -48,7 +48,7 @@ export const ParcialSplashModal: React.FC<ParcialSplashModalProps> = ({
 
             <button
               onClick={onClose}
-              className="w-full py-3 px-5 bg-white text-zinc-950 hover:bg-zinc-200 active:scale-95 font-black text-xs rounded-xl transition-all shadow-lg border border-white cursor-pointer font-mono"
+              className="w-full py-3 px-5 bg-white !text-black text-black hover:bg-zinc-200 active:scale-95 font-black text-xs rounded-xl transition-all shadow-lg border border-white cursor-pointer font-mono"
             >
               Iniciar Fase de Exámenes 🎯
             </button>

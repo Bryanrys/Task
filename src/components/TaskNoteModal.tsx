@@ -187,8 +187,8 @@ export const TaskNoteModal: React.FC<TaskNoteModalProps> = ({
               type="submit"
               className={`px-4 py-2 font-bold text-xs rounded-xl transition-all cursor-pointer flex items-center gap-1.5 border ${
                 isDark
-                  ? 'bg-white text-zinc-950 border-white hover:bg-zinc-200'
-                  : 'bg-zinc-900 text-white border-zinc-900 hover:bg-zinc-800'
+                  ? 'bg-white !text-black text-black border-white hover:bg-zinc-200'
+                  : 'bg-black !text-white text-white border-black hover:bg-zinc-800'
               }`}
             >
               <Check className="w-3.5 h-3.5 stroke-[3]" />

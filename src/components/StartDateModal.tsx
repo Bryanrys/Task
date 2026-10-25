@@ -102,7 +102,7 @@ export const StartDateModal: React.FC<StartDateModalProps> = ({
             </button>
             <button
               type="submit"
-              className="px-5 py-2.5 bg-white text-zinc-950 font-bold text-xs rounded-xl transition-all border border-white hover:bg-zinc-200 flex items-center gap-1.5 cursor-pointer"
+              className="px-5 py-2.5 bg-white !text-black text-black font-bold text-xs rounded-xl transition-all border border-white hover:bg-zinc-200 flex items-center gap-1.5 cursor-pointer shadow-sm"
             >
               <Check className="w-4 h-4 stroke-[3]" />
               <span>Guardar Fecha</span>

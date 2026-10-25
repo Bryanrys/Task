@@ -244,7 +244,7 @@ export const UniversityLinksModal: React.FC<UniversityLinksModalProps> = ({
               </button>
               <button
                 type="submit"
-                className="flex-1 py-1.5 bg-white text-zinc-950 font-bold text-xs rounded-lg cursor-pointer border border-white hover:bg-zinc-200"
+                className="flex-1 py-1.5 bg-white !text-black text-black font-bold text-xs rounded-lg cursor-pointer border border-white hover:bg-zinc-200"
               >
                 Guardar Enlace
               </button>

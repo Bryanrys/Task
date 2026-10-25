@@ -88,7 +88,7 @@ export const DrawerDashboards: React.FC<DrawerDashboardsProps> = ({
             >
               <div className="flex items-center space-x-3">
                 <div className={`w-9 h-9 rounded-xl flex items-center justify-center font-black text-xs border ${
-                  isDark ? 'bg-white text-zinc-950 border-white' : 'bg-zinc-900 text-white border-zinc-900'
+                  isDark ? 'bg-white !text-black text-black border-white' : 'bg-black !text-white text-white border-black'
                 }`}>
                   {loggedUser ? loggedUser.charAt(0).toUpperCase() : 'U'}
                 </div>

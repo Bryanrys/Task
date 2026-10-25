@@ -204,8 +204,8 @@ export const ShareAppModal: React.FC<ShareAppModalProps> = ({
                     className={`px-2 py-1.5 rounded-lg border text-[10px] font-bold text-center transition-all cursor-pointer truncate ${
                       tempUrl === opt.url
                         ? isDark
-                          ? 'bg-white text-zinc-950 border-white'
-                          : 'bg-zinc-900 text-white border-zinc-900'
+                          ? 'bg-white !text-black text-black border-white'
+                          : 'bg-black !text-white text-white border-black'
                         : isDark
                         ? 'bg-white/5 border-white/10 text-zinc-300 hover:bg-white/10'
                         : 'bg-zinc-100 border-zinc-200 text-zinc-700 hover:bg-zinc-200'
@@ -233,8 +233,8 @@ export const ShareAppModal: React.FC<ShareAppModalProps> = ({
                 type="submit"
                 className={`flex-1 py-1.5 rounded-xl text-xs font-black cursor-pointer transition-all border ${
                   isDark
-                    ? 'bg-white text-zinc-950 border-white hover:bg-zinc-200'
-                    : 'bg-zinc-900 text-white border-zinc-900 hover:bg-zinc-800'
+                    ? 'bg-white !text-black text-black border-white hover:bg-zinc-200'
+                    : 'bg-black !text-white text-white border-black hover:bg-zinc-800'
                 }`}
               >
                 Guardar Enlace
@@ -264,8 +264,8 @@ export const ShareAppModal: React.FC<ShareAppModalProps> = ({
                   copied
                     ? 'bg-emerald-500/15 border-emerald-500/30 text-emerald-400'
                     : isDark
-                    ? 'bg-white text-zinc-950 border-white hover:bg-zinc-200'
-                    : 'bg-zinc-900 text-white border-zinc-900 hover:bg-zinc-800'
+                    ? 'bg-white !text-black text-black border-white hover:bg-zinc-200'
+                    : 'bg-black !text-white text-white border-black hover:bg-zinc-800'
                 }`}
               >
                 {copied ? <Check className="w-3.5 h-3.5 stroke-[3]" /> : <Copy className="w-3.5 h-3.5" />}
@@ -305,11 +305,11 @@ export const ShareAppModal: React.FC<ShareAppModalProps> = ({
             }}
             className={`w-full py-2.5 px-3 rounded-2xl border font-bold text-xs flex items-center justify-center gap-2 transition-all cursor-pointer active:scale-98 ${
               isDark
-                ? 'bg-white text-zinc-950 border-white hover:bg-zinc-200'
-                : 'bg-zinc-900 text-white border-zinc-900 hover:bg-zinc-800'
+                ? 'bg-white !text-black text-black border-white hover:bg-zinc-200'
+                : 'bg-black !text-white text-white border-black hover:bg-zinc-800'
             }`}
           >
-            <Smartphone className="w-4 h-4" />
+            <Smartphone className={`w-4 h-4 ${isDark ? '!text-black text-black' : '!text-white text-white'}`} />
             <span>Descargar APK Directo (Actualizado)</span>
           </button>
 

@@ -261,7 +261,7 @@ export const NotificationSettingsModal: React.FC<NotificationSettingsModalProps>
                 onClick={() => handleIntervalChange(opt.val)}
                 className={`py-2 px-1 text-xs font-bold rounded-xl border transition-all cursor-pointer ${
                   settings.intervalMinutes === opt.val
-                    ? 'bg-white text-zinc-950 border-white font-black shadow-sm'
+                    ? 'bg-white !text-black text-black border-white font-black shadow-sm'
                     : 'bg-white/[0.03] border-white/10 text-zinc-300 hover:bg-white/10 hover:text-white'
                 }`}
               >
@@ -303,7 +303,7 @@ export const NotificationSettingsModal: React.FC<NotificationSettingsModalProps>
             <button
               onClick={onTestNotification}
               type="button"
-              className="py-2.5 px-3 bg-white text-zinc-950 hover:bg-zinc-200 border border-white font-black text-xs rounded-xl transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-sm active:scale-98"
+              className="py-2.5 px-3 bg-white !text-black text-black hover:bg-zinc-200 border border-white font-black text-xs rounded-xl transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-sm active:scale-98"
             >
               <BellRing className="w-4 h-4" />
               <span>Enviar Alerta</span>

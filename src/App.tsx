@@ -1753,7 +1753,7 @@ export default function App() {
                     setToastMessage('Nota rápida actualizada con éxito ✨');
                   }}
                   className={`px-4 py-2 rounded-full text-xs font-bold transition-all shadow-xs active:scale-95 cursor-pointer ${
-                    isDark ? 'bg-white text-zinc-950 hover:bg-zinc-200' : 'bg-zinc-900 text-white hover:bg-zinc-800'
+                    isDark ? 'bg-white !text-black text-black hover:bg-zinc-200' : 'bg-black !text-white text-white hover:bg-zinc-800'
                   }`}
                 >
                   Guardar Nota
@@ -1914,7 +1914,7 @@ export default function App() {
 
               <div className="flex items-center gap-2.5">
                 <div className={`w-8 h-8 rounded-xl flex items-center justify-center font-black text-xs shadow-xs ${
-                  isDark ? 'bg-white text-zinc-950' : 'bg-zinc-900 text-white'
+                  isDark ? 'bg-white !text-black text-black' : 'bg-black !text-white text-white'
                 }`}>
                   <GraduationCap className="w-4 h-4" />
                 </div>
@@ -1946,11 +1946,11 @@ export default function App() {
                   className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer ${
                     currentView === 'dashboard' && !selectedSubjectId
                       ? isDark
-                        ? 'bg-white text-zinc-950 shadow-xs'
-                        : 'bg-zinc-900 text-white shadow-xs'
+                        ? 'bg-white !text-black text-black shadow-xs'
+                        : 'bg-black !text-white text-white shadow-xs'
                       : isDark
-                      ? 'text-zinc-400 hover:text-white'
-                      : 'text-zinc-600 hover:text-zinc-900'
+                      ? 'text-zinc-300 hover:text-white'
+                      : 'text-zinc-700 hover:text-black'
                   }`}
                 >
                   Dashboard
@@ -1960,11 +1960,11 @@ export default function App() {
                   className={`px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all cursor-pointer ${
                     currentView === 'schedule'
                       ? isDark
-                        ? 'bg-white text-zinc-950 shadow-xs'
-                        : 'bg-zinc-900 text-white shadow-xs'
+                        ? 'bg-white !text-black text-black shadow-xs'
+                        : 'bg-black !text-white text-white shadow-xs'
                       : isDark
-                      ? 'text-zinc-400 hover:text-white'
-                      : 'text-zinc-600 hover:text-zinc-900'
+                      ? 'text-zinc-300 hover:text-white'
+                      : 'text-zinc-700 hover:text-black'
                   }`}
                 >
                   Horario
@@ -1974,11 +1974,11 @@ export default function App() {
                   className={`px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all cursor-pointer ${
                     currentView === 'cloud'
                       ? isDark
-                        ? 'bg-white text-zinc-950 shadow-xs'
-                        : 'bg-zinc-900 text-white shadow-xs'
+                        ? 'bg-white !text-black text-black shadow-xs'
+                        : 'bg-black !text-white text-white shadow-xs'
                       : isDark
-                      ? 'text-zinc-400 hover:text-white'
-                      : 'text-zinc-600 hover:text-zinc-900'
+                      ? 'text-zinc-300 hover:text-white'
+                      : 'text-zinc-700 hover:text-black'
                   }`}
                 >
                   Nube Sync
@@ -2057,15 +2057,15 @@ export default function App() {
               {/* Weeks Selector Button */}
               <button
                 onClick={() => setShowDrawer(true)}
-                className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 shadow-xs active:scale-95 ${
+                className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 shadow-sm active:scale-95 ${
                   isDark
-                    ? 'bg-white text-zinc-950 hover:bg-zinc-200'
-                    : 'bg-zinc-900 text-white hover:bg-zinc-800'
+                    ? 'bg-white !text-black text-black hover:bg-zinc-200'
+                    : 'bg-black !text-white text-white hover:bg-zinc-800'
                 }`}
                 title="Seleccionar semana o dashboard"
               >
-                <CalendarDays className="w-3.5 h-3.5" />
-                <span>Semanas</span>
+                <CalendarDays className={`w-3.5 h-3.5 stroke-[2.2] ${isDark ? '!text-black text-black' : '!text-white text-white'}`} />
+                <span className="font-bold">Semanas</span>
               </button>
             </div>
           </header>
@@ -2214,8 +2214,8 @@ export default function App() {
                         <span className={`text-xs font-semibold ${isDark ? 'text-zinc-200' : 'text-zinc-700'}`}>Material de Estudio</span>
                         <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${
                           isDark
-                            ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
-                            : 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                            ? 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30'
+                            : 'bg-emerald-50 text-emerald-800 border-emerald-300'
                         }`}>
                           Listas
                         </span>
@@ -2277,8 +2277,12 @@ export default function App() {
                         <span className={`text-xs font-semibold ${isDark ? 'text-zinc-200' : 'text-zinc-700'}`}>Rendimiento UEES</span>
                         <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${
                           parseFloat(overallUeesAvg) >= 6.0
-                            ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
-                            : 'bg-amber-500/10 text-amber-400 border-amber-500/20'
+                            ? isDark
+                              ? 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30'
+                              : 'bg-emerald-50 text-emerald-800 border-emerald-300'
+                            : isDark
+                              ? 'bg-amber-500/15 text-amber-300 border-amber-500/30'
+                              : 'bg-amber-50 text-amber-800 border-amber-300'
                         }`}>
                           {parseFloat(overallUeesAvg) >= 6.0 ? '+ Aprobado' : 'En Curso'}
                         </span>
@@ -2341,10 +2345,10 @@ export default function App() {
                           setQuickNoteDraft(currentDashboard.quickNote || '');
                           setShowQuickNoteModal(true);
                         }}
-                        className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold border transition-all cursor-pointer ${
+                        className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-bold border transition-all cursor-pointer ${
                           isDark
-                            ? 'bg-white/5 hover:bg-white/10 border-white/10 text-zinc-300'
-                            : 'bg-zinc-100 hover:bg-zinc-200/80 border-zinc-200 text-zinc-700'
+                            ? 'bg-white/10 hover:bg-white/15 border-white/20 text-white'
+                            : 'bg-zinc-100 hover:bg-zinc-200 border-zinc-300 text-black'
                         }`}
                       >
                         <Plus className="w-3.5 h-3.5" />
@@ -2355,27 +2359,27 @@ export default function App() {
                     <div className="flex items-center gap-2">
                       <button
                         onClick={() => setShowUploadConfirm(true)}
-                        className={`inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer shadow-xs active:scale-95 ${
+                        className={`inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer shadow-sm active:scale-95 ${
                           isDark
-                            ? 'bg-white text-zinc-950 hover:bg-zinc-200'
-                            : 'bg-zinc-900 text-white hover:bg-zinc-800'
+                            ? 'bg-white !text-black text-black hover:bg-zinc-200'
+                            : 'bg-black !text-white text-white hover:bg-zinc-800'
                         }`}
                       >
-                        <Upload className="w-3.5 h-3.5" />
-                        <span>Subir Nube</span>
+                        <Upload className={`w-3.5 h-3.5 stroke-[2.2] ${isDark ? '!text-black text-black' : '!text-white text-white'}`} />
+                        <span className="font-bold">Subir Nube</span>
                       </button>
 
                       <button
                         onClick={handleTriggerCloudDownload}
-                        className={`inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-bold border transition-all cursor-pointer shadow-xs active:scale-95 ${
+                        className={`inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-bold border transition-all cursor-pointer shadow-sm active:scale-95 ${
                           isDark
-                            ? 'bg-zinc-900 hover:bg-zinc-800 border-white/10 text-zinc-200'
-                            : 'bg-zinc-100 hover:bg-zinc-200 border-zinc-200 text-zinc-800'
+                            ? 'bg-zinc-900 hover:bg-zinc-800 border-white/20 text-white'
+                            : 'bg-white hover:bg-zinc-100 border-zinc-300 text-black'
                         }`}
                         title="Descargar de la nube directamente"
                       >
-                        <Download className="w-3.5 h-3.5" />
-                        <span>Descargar Nube</span>
+                        <Download className="w-3.5 h-3.5 text-emerald-500 stroke-[2.2]" />
+                        <span className="font-bold">Descargar Nube</span>
                       </button>
                     </div>
                   </div>
@@ -2432,11 +2436,11 @@ export default function App() {
                   const statusLabel = isSubjectAllDone ? 'Lista ✓' : 'Pendiente';
                   const badgeColor = isSubjectAllDone
                     ? isDark
-                      ? 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30'
-                      : 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                      ? 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30 font-bold'
+                      : 'bg-emerald-50 text-emerald-800 border-emerald-300 font-bold'
                     : isDark
-                    ? 'bg-amber-500/15 text-amber-400 border-amber-500/30'
-                    : 'bg-amber-50 text-amber-700 border-amber-200';
+                    ? 'bg-amber-500/15 text-amber-300 border-amber-500/30 font-bold'
+                    : 'bg-amber-50 text-amber-800 border-amber-300 font-bold';
 
                   return (
                     <div
@@ -2509,8 +2513,8 @@ export default function App() {
                           }}
                           className={`text-[10px] font-mono font-bold px-2 py-0.5 rounded-lg border transition-all cursor-pointer flex items-center gap-1 shrink-0 ${
                             isDark
-                              ? 'bg-white/5 hover:bg-white/10 text-zinc-300 border-white/10'
-                              : 'bg-white hover:bg-zinc-100 text-zinc-700 border-zinc-200 shadow-2xs'
+                              ? 'bg-white/10 hover:bg-white/15 text-white border-white/20'
+                              : 'bg-white hover:bg-zinc-50 text-black border-zinc-300 shadow-xs'
                           }`}
                           title={`Ver cálculo oficial UEES y registros de ${subject.name}`}
                         >
@@ -2626,10 +2630,10 @@ export default function App() {
                       {/* Botón inferior + Agregar Tarea [Nombre Materia] */}
                       <button
                         onClick={() => handleOpenNewTaskModal(subject)}
-                        className={`w-full py-2 px-3 rounded-2xl border text-xs font-semibold transition-all flex items-center justify-center gap-1.5 cursor-pointer active:scale-98 ${
+                        className={`w-full py-2.5 px-3 rounded-2xl border text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer active:scale-98 ${
                           isDark
-                            ? 'bg-white/5 hover:bg-white/10 text-zinc-300 border-white/10'
-                            : 'bg-zinc-100 hover:bg-zinc-200/80 text-zinc-700 border-zinc-200'
+                            ? 'bg-white/5 hover:bg-white/10 text-white border-white/15'
+                            : 'bg-white hover:bg-zinc-50 text-black border-zinc-300 shadow-xs'
                         }`}
                       >
                         <Plus className="w-3.5 h-3.5" />
@@ -2673,14 +2677,14 @@ export default function App() {
                               className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer shrink-0 flex items-center gap-2 border ${
                                 isCurrent
                                   ? (isDark 
-                                      ? 'bg-white border-white text-zinc-950 shadow-md font-black' 
-                                      : 'bg-zinc-900 border-zinc-900 text-white shadow-md font-black')
+                                      ? 'bg-white border-white !text-black text-black shadow-md font-black' 
+                                      : 'bg-black border-black !text-white text-white shadow-md font-black')
                                   : (isDark
-                                      ? 'bg-white/5 border-white/10 text-zinc-400 hover:text-white hover:bg-white/10'
-                                      : 'bg-zinc-50 border-zinc-200 text-zinc-600 hover:text-zinc-900 hover:bg-zinc-100')
+                                      ? 'bg-white/5 border-white/10 text-zinc-300 hover:text-white hover:bg-white/10'
+                                      : 'bg-zinc-50 border-zinc-300 text-zinc-800 hover:text-black hover:bg-zinc-100')
                               }`}
                             >
-                              <span className={`font-mono text-[10px] ${isCurrent ? (isDark ? 'text-zinc-900' : 'text-zinc-200') : (isDark ? 'text-zinc-400' : 'text-zinc-500')}`}>
+                              <span className={`font-mono text-[10px] ${isCurrent ? (isDark ? '!text-black text-black font-black' : '!text-white text-white font-black') : (isDark ? 'text-zinc-400' : 'text-zinc-600')}`}>
                                 {idx % 3 === 0 ? '</>' : idx % 3 === 1 ? '√x' : '⚙'}
                               </span>
                               <span>{s.name}</span>
@@ -2757,8 +2761,8 @@ export default function App() {
                               onClick={() => setShowCompletedSubjects(!showCompletedSubjects)}
                               className={`text-xs font-bold flex items-center gap-1.5 px-3 py-1.5 rounded-xl border transition-all cursor-pointer ${
                                 isDark
-                                  ? 'text-zinc-300 hover:text-white bg-white/5 hover:bg-white/10 border-white/10'
-                                  : 'text-zinc-700 hover:text-zinc-900 bg-zinc-100 hover:bg-zinc-200 border-zinc-200'
+                                  ? 'text-white bg-white/10 hover:bg-white/15 border-white/20'
+                                  : 'text-black bg-white hover:bg-zinc-50 border-zinc-300 shadow-xs'
                               }`}
                             >
                               {showCompletedSubjects ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
@@ -2902,7 +2906,7 @@ export default function App() {
                   }`}
                 >
                   <div className={`w-10 h-10 rounded-2xl flex items-center justify-center mb-3 group-hover:scale-105 transition-transform ${
-                    isDark ? 'bg-white text-zinc-950 font-bold' : 'bg-zinc-900 text-white font-bold'
+                    isDark ? 'bg-white !text-black text-black font-bold' : 'bg-black !text-white text-white font-bold'
                   }`}>
                     <Upload className="w-5 h-5" />
                   </div>
@@ -2945,7 +2949,7 @@ export default function App() {
                 <button
                   onClick={handleCopyLink}
                   className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition-colors cursor-pointer shadow-xs ${
-                    isDark ? 'bg-white text-zinc-950 hover:bg-zinc-200' : 'bg-zinc-900 text-white hover:bg-zinc-800'
+                    isDark ? 'bg-white !text-black text-black hover:bg-zinc-200' : 'bg-black !text-white text-white hover:bg-zinc-800'
                   }`}
                 >
                   Copiar Enlace
@@ -3039,7 +3043,7 @@ export default function App() {
                 <button
                   onClick={handleSaveNewTask}
                   className={`px-4 py-2 rounded-full text-xs font-bold transition-all shadow-xs active:scale-95 cursor-pointer ${
-                    isDark ? 'bg-white text-zinc-950 hover:bg-zinc-200' : 'bg-zinc-900 text-white hover:bg-zinc-800'
+                    isDark ? 'bg-white !text-black text-black hover:bg-zinc-200' : 'bg-black !text-white text-white hover:bg-zinc-800'
                   }`}
                 >
                   Guardar Tarea
@@ -3276,8 +3280,8 @@ export default function App() {
         onClick={() => setShowAIAssistant(true)}
         className={`fixed bottom-5 right-5 sm:bottom-6 sm:right-6 z-40 p-3 sm:px-4 sm:py-2.5 rounded-full shadow-lg hover:scale-105 active:scale-95 transition-all flex items-center gap-2 cursor-pointer border ${
           isDark
-            ? 'bg-white text-zinc-950 border-white hover:bg-zinc-200'
-            : 'bg-zinc-900 text-white border-zinc-900 hover:bg-zinc-800'
+            ? 'bg-white !text-black text-black border-white hover:bg-zinc-200'
+            : 'bg-black !text-white text-white border-black hover:bg-zinc-800'
         }`}
         title="Abrir KALI • Copiloto IA UEES"
       >

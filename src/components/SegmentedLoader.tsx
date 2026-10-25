@@ -62,7 +62,7 @@ export const SegmentedLoader: React.FC<SegmentedLoaderProps> = ({ isOpen, onEnte
           disabled={!isReady}
           className={`w-full max-w-[320px] p-4 rounded-2xl border flex flex-col items-center gap-3 transition-all cursor-pointer ${
             isReady
-              ? 'bg-white text-zinc-950 border-white shadow-xl active:scale-95'
+              ? 'bg-white !text-black text-black border-white shadow-xl active:scale-95'
               : 'bg-[#131417] border-white/10 text-zinc-400 cursor-wait'
           }`}
         >

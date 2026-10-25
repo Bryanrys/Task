@@ -49,7 +49,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLoginSuccess }) => {
       >
         {/* Cabecera con Icono Monocromático */}
         <div className="text-center space-y-2">
-          <div className="w-14 h-14 mx-auto rounded-2xl bg-white text-zinc-950 flex items-center justify-center shadow-md">
+          <div className="w-14 h-14 mx-auto rounded-2xl bg-white !text-black text-black flex items-center justify-center shadow-md">
             <GraduationCap className="w-7 h-7" />
           </div>
           <h1 className="text-2xl font-black text-white tracking-widest uppercase">
@@ -126,7 +126,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLoginSuccess }) => {
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full py-3.5 rounded-xl bg-white hover:bg-zinc-200 text-zinc-950 text-xs font-black uppercase tracking-wider shadow-lg active:scale-[0.98] transition-all cursor-pointer flex items-center justify-center gap-2 disabled:opacity-50"
+            className="w-full py-3.5 rounded-xl bg-white hover:bg-zinc-200 !text-black text-black text-xs font-black uppercase tracking-wider shadow-lg active:scale-[0.98] transition-all cursor-pointer flex items-center justify-center gap-2 disabled:opacity-50"
           >
             {isLoading ? (
               <div className="w-4 h-4 border-2 border-zinc-950 border-t-transparent rounded-full animate-spin" />

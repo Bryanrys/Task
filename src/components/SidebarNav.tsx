@@ -99,7 +99,7 @@ export const SidebarNav: React.FC<SidebarNavProps> = ({
         {/* Brand / Logo Header */}
         <div className="flex items-center space-x-3">
           <div className={`w-9 h-9 rounded-2xl flex items-center justify-center shadow-xs shrink-0 ${
-            isDark ? 'bg-white text-zinc-950 font-black' : 'bg-zinc-900 text-white font-black'
+            isDark ? 'bg-white !text-black text-black font-black' : 'bg-black !text-white text-white font-black'
           }`}>
             <GraduationCap className="w-5 h-5" />
           </div>
@@ -123,18 +123,22 @@ export const SidebarNav: React.FC<SidebarNavProps> = ({
               if (onSelectSubject) onSelectSubject(null);
               if (onCloseMobileDrawer) onCloseMobileDrawer();
             }}
-            className={`w-full flex items-center space-x-3 px-3 py-2.5 rounded-2xl text-xs font-semibold transition-all cursor-pointer ${
+            className={`w-full flex items-center space-x-3 px-3 py-2.5 rounded-2xl text-xs font-bold transition-all cursor-pointer ${
               currentView === 'dashboard' && !selectedSubjectId
                 ? isDark
-                  ? 'text-zinc-950 bg-white font-bold shadow-xs'
-                  : 'text-white bg-zinc-900 font-bold shadow-xs'
+                  ? 'bg-white !text-black text-black shadow-sm'
+                  : 'bg-black !text-white text-white shadow-sm'
                 : isDark
-                ? 'text-zinc-400 hover:text-white hover:bg-white/5'
-                : 'text-zinc-600 hover:text-zinc-900 hover:bg-zinc-100'
+                ? 'text-zinc-300 hover:text-white hover:bg-white/10'
+                : 'text-zinc-700 hover:text-black hover:bg-zinc-100'
             }`}
           >
-            <PieChart className="w-4 h-4 shrink-0" />
-            <span>Dashboard Principal</span>
+            <PieChart className={`w-4 h-4 shrink-0 stroke-[2.2] ${
+              currentView === 'dashboard' && !selectedSubjectId
+                ? isDark ? '!text-black text-black' : '!text-white text-white'
+                : isDark ? 'text-zinc-300' : 'text-zinc-700'
+            }`} />
+            <span className="font-bold">Dashboard Principal</span>
           </button>
 
           <button
@@ -142,18 +146,22 @@ export const SidebarNav: React.FC<SidebarNavProps> = ({
               onSwitchView('schedule');
               if (onCloseMobileDrawer) onCloseMobileDrawer();
             }}
-            className={`w-full flex items-center space-x-3 px-3 py-2.5 rounded-2xl text-xs font-semibold transition-all cursor-pointer ${
+            className={`w-full flex items-center space-x-3 px-3 py-2.5 rounded-2xl text-xs font-bold transition-all cursor-pointer ${
               currentView === 'schedule'
                 ? isDark
-                  ? 'text-zinc-950 bg-white font-bold shadow-xs'
-                  : 'text-white bg-zinc-900 font-bold shadow-xs'
+                  ? 'bg-white !text-black text-black shadow-sm'
+                  : 'bg-black !text-white text-white shadow-sm'
                 : isDark
-                ? 'text-zinc-400 hover:text-white hover:bg-white/5'
-                : 'text-zinc-600 hover:text-zinc-900 hover:bg-zinc-100'
+                ? 'text-zinc-300 hover:text-white hover:bg-white/10'
+                : 'text-zinc-700 hover:text-black hover:bg-zinc-100'
             }`}
           >
-            <Calendar className="w-4 h-4 shrink-0" />
-            <span>Horario & Clases</span>
+            <Calendar className={`w-4 h-4 shrink-0 stroke-[2.2] ${
+              currentView === 'schedule'
+                ? isDark ? '!text-black text-black' : '!text-white text-white'
+                : isDark ? 'text-zinc-300' : 'text-zinc-700'
+            }`} />
+            <span className="font-bold">Horario & Clases</span>
           </button>
 
           <button
@@ -161,18 +169,22 @@ export const SidebarNav: React.FC<SidebarNavProps> = ({
               onSwitchView('cloud');
               if (onCloseMobileDrawer) onCloseMobileDrawer();
             }}
-            className={`w-full flex items-center space-x-3 px-3 py-2.5 rounded-2xl text-xs font-semibold transition-all cursor-pointer ${
+            className={`w-full flex items-center space-x-3 px-3 py-2.5 rounded-2xl text-xs font-bold transition-all cursor-pointer ${
               currentView === 'cloud'
                 ? isDark
-                  ? 'text-zinc-950 bg-white font-bold shadow-xs'
-                  : 'text-white bg-zinc-900 font-bold shadow-xs'
+                  ? 'bg-white !text-black text-black shadow-sm'
+                  : 'bg-black !text-white text-white shadow-sm'
                 : isDark
-                ? 'text-zinc-400 hover:text-white hover:bg-white/5'
-                : 'text-zinc-600 hover:text-zinc-900 hover:bg-zinc-100'
+                ? 'text-zinc-300 hover:text-white hover:bg-white/10'
+                : 'text-zinc-700 hover:text-black hover:bg-zinc-100'
             }`}
           >
-            <CloudUpload className="w-4 h-4 shrink-0" />
-            <span>Base de Datos Nube</span>
+            <CloudUpload className={`w-4 h-4 shrink-0 stroke-[2.2] ${
+              currentView === 'cloud'
+                ? isDark ? '!text-black text-black' : '!text-white text-white'
+                : isDark ? 'text-zinc-300' : 'text-zinc-700'
+            }`} />
+            <span className="font-bold">Base de Datos Nube</span>
           </button>
         </nav>
 
@@ -306,10 +318,10 @@ export const SidebarNav: React.FC<SidebarNavProps> = ({
         {onCycleTheme && (
           <button
             onClick={onCycleTheme}
-            className={`w-full py-2 px-3 rounded-xl border text-xs font-semibold flex items-center justify-between transition-all cursor-pointer ${
+            className={`w-full py-2 px-3 rounded-xl border text-xs font-bold flex items-center justify-between transition-all cursor-pointer ${
               isDark
-                ? 'bg-white/5 hover:bg-white/10 border-white/10 text-zinc-300'
-                : 'bg-white hover:bg-zinc-100 border-zinc-200 text-zinc-700 shadow-2xs'
+                ? 'bg-white/10 hover:bg-white/15 border-white/15 text-white'
+                : 'bg-white hover:bg-zinc-50 border-zinc-300 text-black shadow-xs'
             }`}
             title="Cambiar modo de tema (Sistema / Oscuro / Claro)"
           >
@@ -329,8 +341,8 @@ export const SidebarNav: React.FC<SidebarNavProps> = ({
                   : 'Tema: Modo Claro'}
               </span>
             </div>
-            <span className={`text-[10px] px-1.5 py-0.5 rounded-md font-mono ${
-              isDark ? 'bg-white/10 text-zinc-300' : 'bg-zinc-100 text-zinc-600'
+            <span className={`text-[10px] px-1.5 py-0.5 rounded-md font-mono font-bold ${
+              isDark ? 'bg-white/15 text-white' : 'bg-zinc-200 text-black'
             }`}>
               {themeMode === 'system' ? 'AUTO' : themeMode === 'dark' ? 'DARK' : 'LIGHT'}
             </span>
@@ -338,17 +350,17 @@ export const SidebarNav: React.FC<SidebarNavProps> = ({
         )}
 
         <div className={`p-2.5 rounded-2xl flex items-center justify-between border ${
-          isDark ? 'bg-[#131417] border-white/5' : 'bg-white border-zinc-200/80 shadow-2xs'
+          isDark ? 'bg-[#131417] border-white/10' : 'bg-white border-zinc-300 shadow-xs'
         }`}>
           <div className="flex items-center space-x-2.5 min-w-0">
             <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs shrink-0 ${
-              isDark ? 'bg-zinc-800 text-white' : 'bg-zinc-900 text-white'
+              isDark ? 'bg-zinc-800 text-white' : 'bg-black text-white'
             }`}>
               {loggedUser.charAt(0).toUpperCase()}
             </div>
             <div className="min-w-0">
-              <p className={`text-xs font-bold truncate ${isDark ? 'text-white' : 'text-zinc-900'}`}>{loggedUser}</p>
-              <p className="text-[10px] text-emerald-500 flex items-center font-medium">
+              <p className={`text-xs font-bold truncate ${isDark ? 'text-white' : 'text-black'}`}>{loggedUser}</p>
+              <p className="text-[10px] text-emerald-500 flex items-center font-bold">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 mr-1.5 inline-block animate-pulse shrink-0" />
                 En línea
               </p>
@@ -357,7 +369,7 @@ export const SidebarNav: React.FC<SidebarNavProps> = ({
           <button
             onClick={onTriggerCelebration}
             className={`p-1.5 rounded-lg transition-colors cursor-pointer shrink-0 ${
-              isDark ? 'text-zinc-400 hover:text-white' : 'text-zinc-500 hover:text-zinc-900'
+              isDark ? 'text-zinc-300 hover:text-white' : 'text-zinc-700 hover:text-black'
             }`}
             title="Celebrar logro académico"
           >
@@ -367,7 +379,11 @@ export const SidebarNav: React.FC<SidebarNavProps> = ({
 
         <button
           onClick={onLogout}
-          className={`w-full py-2 bg-red-500/10 hover:bg-red-500/20 text-red-500 border border-red-500/20 rounded-xl text-xs font-semibold transition-all flex items-center justify-center space-x-2 cursor-pointer active:scale-95`}
+          className={`w-full py-2.5 rounded-xl text-xs font-bold transition-all flex items-center justify-center space-x-2 cursor-pointer active:scale-95 ${
+            isDark
+              ? 'bg-red-500/15 hover:bg-red-500/25 text-red-200 border border-red-500/30'
+              : 'bg-red-50 hover:bg-red-100 text-red-800 border border-red-300'
+          }`}
         >
           <LogOut className="w-3.5 h-3.5" />
           <span>Cerrar Sesión</span>

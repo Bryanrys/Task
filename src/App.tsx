@@ -82,6 +82,7 @@ import { UniversityLinksModal } from './components/UniversityLinksModal';
 import { EditSubjectModal } from './components/EditSubjectModal';
 import { ShareAppModal } from './components/ShareAppModal';
 import { AIAssistantModal } from './components/AIAssistantModal';
+import { ThemeModal, THEME_PALETTES } from './components/ThemeModal';
 import { ToolsAndLinksView } from './components/ToolsAndLinksView';
 import { UnifiedDashboardHeader } from './components/UnifiedDashboardHeader';
 import { getDeadlineStatus } from './utils/deadline';
@@ -321,8 +322,28 @@ export default function App() {
   const [showScheduleModal, setShowScheduleModal] = useState<boolean>(false);
   const [showLinksModal, setShowLinksModal] = useState<boolean>(false);
   const [showShareModal, setShowShareModal] = useState<boolean>(false);
+  const [showThemeModal, setShowThemeModal] = useState<boolean>(false);
   const [editingSubject, setEditingSubject] = useState<SubjectItem | null>(null);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
+
+  // Paleta de temas personalizada (titanium, oled, nord, emerald, sepia)
+  const [activePalette, setActivePalette] = useState<string>(() => {
+    try {
+      return localStorage.getItem('uees_custom_palette') || 'titanium';
+    } catch {
+      return 'titanium';
+    }
+  });
+
+  const handleSelectPalette = (paletteId: string) => {
+    setActivePalette(paletteId);
+    try {
+      localStorage.setItem('uees_custom_palette', paletteId);
+      document.documentElement.setAttribute('data-palette', paletteId);
+    } catch {}
+    const pal = THEME_PALETTES.find((p) => p.id === paletteId);
+    setToastMessage(`🎨 Paleta aplicada: ${pal ? pal.name : paletteId.toUpperCase()}`);
+  };
 
   // View switcher (Dashboard Principal, Horario & Clases, Base de Datos Nube - Estilo Image 2)
   const [currentView, setCurrentView] = useState<'dashboard' | 'schedule' | 'cloud'>('dashboard');
@@ -525,6 +546,7 @@ export default function App() {
         document.documentElement.classList.remove('dark');
         document.documentElement.style.colorScheme = 'light';
       }
+      document.documentElement.setAttribute('data-palette', activePalette);
     };
 
     applyTheme();
@@ -578,7 +600,7 @@ export default function App() {
       window.removeEventListener('focus', handleVisibilityOrFocus);
       document.removeEventListener('visibilitychange', handleVisibilityOrFocus);
     };
-  }, [themeMode]);
+  }, [themeMode, activePalette]);
 
   // Deslizar el dedo para abrir/cerrar el panel lateral SOLO en la app nativa (APK / Capacitor)
   useEffect(() => {
@@ -1876,6 +1898,7 @@ export default function App() {
           loggedUser={loggedUser}
           onScrollToSubject={scrollToSubject}
           onOpenWeeks={() => setShowDrawer(true)}
+          onOpenThemes={() => setShowThemeModal(true)}
           onOpenPomodoro={() => setShowPomodoroModal(true)}
           onOpenCalculator={() => setShowGradesModal(true)}
           onOpenAIAssistant={() => setShowAIAssistant(true)}
@@ -1907,6 +1930,9 @@ export default function App() {
                 <div className="flex-1 overflow-y-auto">
                   <SidebarNav
                     currentView={currentView}
+                    isDark={isDark}
+                    themeMode={themeMode}
+                    onCycleTheme={cycleThemeMode}
                     onSwitchView={(view: 'dashboard' | 'schedule' | 'cloud') => {
                       setCurrentView(view);
                       setShowMobileSidebar(false);
@@ -1929,6 +1955,10 @@ export default function App() {
                       setShowDrawer(true);
                       setShowMobileSidebar(false);
                     }}
+                    onOpenThemes={() => {
+                      setShowThemeModal(true);
+                      setShowMobileSidebar(false);
+                    }}
                     onOpenPomodoro={() => {
                       setShowPomodoroModal(true);
                       setShowMobileSidebar(false);
@@ -1945,9 +1975,6 @@ export default function App() {
                     onLogout={handleLogout}
                     isMobileDrawer={true}
                     onCloseMobileDrawer={() => setShowMobileSidebar(false)}
-                    isDark={isDark}
-                    themeMode={themeMode}
-                    onCycleTheme={cycleThemeMode}
                   />
                 </div>
               </motion.div>
@@ -3394,6 +3421,17 @@ export default function App() {
         }}
         onExecuteAction={handleExecuteAgentAction}
         isDark={isDark}
+      />
+
+      {/* Selector de Temas & Apariencia */}
+      <ThemeModal
+        isOpen={showThemeModal}
+        onClose={() => setShowThemeModal(false)}
+        isDark={isDark}
+        themeMode={themeMode}
+        onSelectThemeMode={(mode) => setThemeMode(mode)}
+        activePalette={activePalette}
+        onSelectPalette={handleSelectPalette}
       />
 
       {/* Floating Action Button (FAB) para KALI IA */}

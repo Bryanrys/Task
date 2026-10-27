@@ -5,7 +5,6 @@ import {
   Calendar,
   CloudUpload,
   CalendarDays,
-  Timer,
   Calculator,
   Code2,
   Atom,
@@ -16,6 +15,7 @@ import {
   Sun,
   Moon,
   Laptop,
+  Palette,
 } from 'lucide-react';
 import { SubjectItem } from '../types';
 
@@ -30,7 +30,8 @@ interface SidebarNavProps {
   loggedUser?: string;
   onScrollToSubject: (subjectId: string) => void;
   onOpenWeeks: () => void;
-  onOpenPomodoro: () => void;
+  onOpenPomodoro?: () => void;
+  onOpenThemes?: () => void;
   onOpenCalculator: () => void;
   onOpenAIAssistant?: () => void;
   onTriggerCelebration: () => void;
@@ -54,6 +55,7 @@ export const SidebarNav: React.FC<SidebarNavProps> = ({
   onScrollToSubject,
   onOpenWeeks,
   onOpenPomodoro,
+  onOpenThemes,
   onOpenCalculator,
   onOpenAIAssistant,
   onTriggerCelebration,
@@ -270,15 +272,16 @@ export const SidebarNav: React.FC<SidebarNavProps> = ({
 
             <button
               onClick={() => {
-                onOpenPomodoro();
+                if (onOpenThemes) onOpenThemes();
+                else if (onOpenPomodoro) onOpenPomodoro();
                 if (onCloseMobileDrawer) onCloseMobileDrawer();
               }}
               className={`w-full text-left flex items-center space-x-3 px-3 py-2 rounded-xl text-xs transition-all cursor-pointer ${
                 isDark ? 'text-zinc-300 hover:text-white hover:bg-white/5' : 'text-zinc-600 hover:text-zinc-900 hover:bg-zinc-100'
               }`}
             >
-              <Timer className="w-4 h-4 text-emerald-500 shrink-0" />
-              <span>Pomodoro Timer</span>
+              <Palette className="w-4 h-4 text-zinc-400 shrink-0" />
+              <span>Temas & Apariencia</span>
             </button>
 
             <button

@@ -6,7 +6,7 @@
 
 | 🏷️ Versión | 📦 Tamaño | 📱 Requerimientos | 📅 Día y Fecha | 🕒 Hora (GMT-6) |
 | :---: | :---: | :---: | :---: | :---: |
-| **v2.0 (Debug)** | **45.16 MB** | **Android 7.0 - Android 13+** | **Lunes, 26 de Octubre de 2026** | **07:55 PM** |
+| **v2.0 (Debug)** | **45.16 MB** | **Android 7.0 - Android 13+** | **Lunes, 26 de Octubre de 2026** | **08:26 PM** |
 
 [![Descargar APK Directo](https://img.shields.io/badge/Descargar-APK%20Directo%20(45.16%20MB)-000000?style=for-the-badge&logo=android&logoColor=white)](https://github.com/Bryanrys/Task/raw/main/apk/app-debug.apk)
 
@@ -23,7 +23,7 @@
 
 | Versión | Archivo Físico | Tamaño | Requerimientos | Fecha y Hora de Compilación | Enlace de Descarga Inmediata |
 | :--- | :--- | :---: | :---: | :---: | :--- |
-| **Última Versión Oficial** | [`app-debug.apk`](./app-debug.apk) | **45.16 MB** | **Android 7.0 a 13+** | **26 Oct 2026 — 07:55 PM** | 📥 **[Descargar APK Directo (Sin 404)](https://github.com/Bryanrys/Task/raw/main/apk/app-debug.apk)** |
+| **Última Versión Oficial** | [`app-debug.apk`](./app-debug.apk) | **45.16 MB** | **Android 7.0 a 13+** | **26 Oct 2026 — 08:26 PM** | 📥 **[Descargar APK Directo (Sin 404)](https://github.com/Bryanrys/Task/raw/main/apk/app-debug.apk)** |
 | **Página de Releases** | Releases y Tags | N/A | Android | Ver historial | 📦 **[Ver Releases en GitHub](https://github.com/Bryanrys/Task/releases)** |
 
 ---

@@ -343,7 +343,7 @@ export const ShareAppModal: React.FC<ShareAppModalProps> = ({
               isDark ? 'border-white/10 bg-black/20 text-zinc-400' : 'border-zinc-200 bg-white/50 text-zinc-600'
             }`}>
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-              <span>Compilado: Lunes, 26 Oct 2026 • 07:55 PM (GMT-6)</span>
+              <span>Compilado: Lunes, 26 Oct 2026 • 08:26 PM (GMT-6)</span>
             </div>
           </div>
 

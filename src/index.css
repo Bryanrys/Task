@@ -195,4 +195,55 @@ html:not(.dark) {
   .dark ::-webkit-scrollbar-thumb {
     background: rgba(255, 255, 255, 0.15);
   }
+
+  /* ========================================================
+     PALETAS DE COLOR PERSONALIZADAS (THEME PALETTES)
+     ======================================================== */
+  :root[data-palette="oled"].dark body,
+  :root[data-palette="oled"] .bg-canvas-dark {
+    background-color: #000000 !important;
+  }
+  :root[data-palette="oled"] .neo-card-dark,
+  :root[data-palette="oled"] .bg-\[\#131417\],
+  :root[data-palette="oled"] .bg-\[\#18191e\],
+  :root[data-palette="oled"] .bg-\[\#0c0d10\] {
+    background-color: #0c0c0e !important;
+  }
+
+  :root[data-palette="nord"].dark body,
+  :root[data-palette="nord"] .bg-canvas-dark {
+    background-color: #0b111a !important;
+  }
+  :root[data-palette="nord"] .neo-card-dark,
+  :root[data-palette="nord"] .bg-\[\#131417\],
+  :root[data-palette="nord"] .bg-\[\#18191e\],
+  :root[data-palette="nord"] .bg-\[\#0c0d10\] {
+    background-color: #0f172a !important;
+  }
+
+  :root[data-palette="emerald"].dark body,
+  :root[data-palette="emerald"] .bg-canvas-dark {
+    background-color: #060c0a !important;
+  }
+  :root[data-palette="emerald"] .neo-card-dark,
+  :root[data-palette="emerald"] .bg-\[\#131417\],
+  :root[data-palette="emerald"] .bg-\[\#18191e\],
+  :root[data-palette="emerald"] .bg-\[\#0c0d10\] {
+    background-color: #0a1612 !important;
+  }
+
+  :root[data-palette="sepia"]:not(.dark) body,
+  :root[data-palette="sepia"] .bg-canvas-light {
+    background-color: #f7f4ed !important;
+  }
+  :root[data-palette="sepia"].dark body,
+  :root[data-palette="sepia"] .bg-canvas-dark {
+    background-color: #171513 !important;
+  }
+  :root[data-palette="sepia"] .neo-card-dark,
+  :root[data-palette="sepia"] .bg-\[\#131417\],
+  :root[data-palette="sepia"] .bg-\[\#18191e\],
+  :root[data-palette="sepia"] .bg-\[\#0c0d10\] {
+    background-color: #211d19 !important;
+  }
 }

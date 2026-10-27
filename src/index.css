@@ -213,6 +213,18 @@ html:not(.dark) {
   --pal-border-dark: rgba(255, 255, 255, 0.08);
 }
 
+:root[data-palette="aesthetic"] {
+  --pal-canvas-dark: #131022;
+  --pal-canvas-light: #faf7fd;
+  --pal-sidebar-dark: #1a162b;
+  --pal-sidebar-light: #f3eef9;
+  --pal-card-dark: #201b35;
+  --pal-card-inner-dark: #282242;
+  --pal-hero-from-dark: #322557;
+  --pal-hero-to-dark: #1e1738;
+  --pal-border-dark: rgba(192, 132, 252, 0.28);
+}
+
 :root[data-palette="oled"] {
   --pal-canvas-dark: #000000;
   --pal-sidebar-dark: #000000;
@@ -294,4 +306,54 @@ html.dark .bg-\[\#18191e\] {
 html.dark .neo-card-hero {
   background: linear-gradient(145deg, var(--pal-hero-from-dark) 0%, var(--pal-hero-to-dark) 100%) !important;
   border-color: var(--pal-border-dark) !important;
+}
+
+/* ========================================================
+   TRANSFORMACIÓN VISUAL TOTAL: TEMA AESTHETIC PASTEL
+   ======================================================== */
+html[data-palette="aesthetic"].dark .text-emerald-500,
+html[data-palette="aesthetic"].dark .text-emerald-400 {
+  color: #c084fc !important;
+}
+html[data-palette="aesthetic"]:not(.dark) .text-emerald-500,
+html[data-palette="aesthetic"]:not(.dark) .text-emerald-400,
+html[data-palette="aesthetic"]:not(.dark) .text-emerald-600 {
+  color: #9333ea !important;
+}
+
+html[data-palette="aesthetic"].dark .bg-emerald-500 {
+  background-color: #c084fc !important;
+}
+html[data-palette="aesthetic"]:not(.dark) .bg-emerald-500 {
+  background-color: #9333ea !important;
+}
+
+html[data-palette="aesthetic"].dark .border-emerald-500\/30 {
+  border-color: rgba(192, 132, 252, 0.35) !important;
+}
+
+html[data-palette="aesthetic"]:not(.dark) .neo-pill-container-light {
+  background-color: rgba(243, 238, 249, 0.9) !important;
+  border-color: rgba(216, 180, 254, 0.45) !important;
+}
+
+html[data-palette="aesthetic"].dark .neo-pill-container-dark {
+  background-color: rgba(32, 27, 53, 0.85) !important;
+  border-color: rgba(192, 132, 252, 0.25) !important;
+}
+
+html[data-palette="aesthetic"]:not(.dark) .border-zinc-200,
+html[data-palette="aesthetic"]:not(.dark) .border-zinc-200\/80 {
+  border-color: rgba(216, 180, 254, 0.45) !important;
+}
+
+html[data-palette="aesthetic"]:not(.dark) .neo-card-hero {
+  background: linear-gradient(145deg, #ede4fc 0%, #f7f2fe 100%) !important;
+  border-color: rgba(216, 180, 254, 0.6) !important;
+  color: #2e1065 !important;
+}
+html[data-palette="aesthetic"]:not(.dark) .neo-card-hero span,
+html[data-palette="aesthetic"]:not(.dark) .neo-card-hero div,
+html[data-palette="aesthetic"]:not(.dark) .neo-card-hero p {
+  color: #2e1065 !important;
 }

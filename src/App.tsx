@@ -991,6 +991,22 @@ export default function App() {
         })
       );
       setToastMessage(`✓ Tarea marcada como entregada por el Copiloto IA`);
+    } else if (action.action === 'open_pomodoro') {
+      setShowAIAssistant(false);
+      setShowPomodoroModal(true);
+      setToastMessage('⏱️ Temporizador Pomodoro abierto por KALI');
+    } else if (action.action === 'open_grades') {
+      setShowAIAssistant(false);
+      setShowGradesModal(true);
+      setToastMessage('📊 Calculadora de Notas UEES abierta por KALI');
+    } else if (action.action === 'open_schedule') {
+      setShowAIAssistant(false);
+      setShowScheduleModal(true);
+      setToastMessage('📅 Horario de Clases abierto por KALI');
+    } else if (action.action === 'open_links') {
+      setShowAIAssistant(false);
+      setShowLinksModal(true);
+      setToastMessage('🔗 Enlaces Universitarios abiertos por KALI');
     }
   };
 

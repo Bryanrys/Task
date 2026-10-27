@@ -313,6 +313,40 @@ export const ShareAppModal: React.FC<ShareAppModalProps> = ({
             <span>Descargar APK Directo (Actualizado)</span>
           </button>
 
+          {/* Ficha Técnica APK Estilo Cápsula (Captura) */}
+          <div className={`w-full rounded-2xl border overflow-hidden ${
+            isDark ? 'bg-black/30 border-white/10' : 'bg-zinc-100 border-zinc-200'
+          }`}>
+            <div className={`grid grid-cols-3 text-center divide-x ${
+              isDark ? 'divide-white/10 text-white' : 'divide-zinc-200 text-zinc-900'
+            }`}>
+              <div className="p-2 sm:p-2.5">
+                <span className={`block text-[10px] uppercase font-mono tracking-wider ${
+                  isDark ? 'text-zinc-400' : 'text-zinc-500'
+                }`}>Versión</span>
+                <span className="block text-xs sm:text-sm font-bold font-mono mt-0.5">2.0</span>
+              </div>
+              <div className={`p-2 sm:p-2.5 ${isDark ? 'bg-white/[0.02]' : 'bg-black/[0.02]'}`}>
+                <span className={`block text-[10px] uppercase font-mono tracking-wider ${
+                  isDark ? 'text-zinc-400' : 'text-zinc-500'
+                }`}>Tamaño</span>
+                <span className="block text-xs sm:text-sm font-bold font-mono mt-0.5">45.16 MB</span>
+              </div>
+              <div className="p-2 sm:p-2.5">
+                <span className={`block text-[10px] uppercase font-mono tracking-wider ${
+                  isDark ? 'text-zinc-400' : 'text-zinc-500'
+                }`}>Requisitos</span>
+                <span className="block text-xs sm:text-sm font-bold font-mono mt-0.5">Android 7.0+</span>
+              </div>
+            </div>
+            <div className={`px-2.5 py-1.5 border-t text-center flex items-center justify-center gap-1.5 text-[10px] font-mono ${
+              isDark ? 'border-white/10 bg-black/20 text-zinc-400' : 'border-zinc-200 bg-white/50 text-zinc-600'
+            }`}>
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+              <span>Compilado: Lunes, 26 Oct 2026 • 07:55 PM (GMT-6)</span>
+            </div>
+          </div>
+
           {/* Download APK from GitHub */}
           <div className="flex flex-col gap-1 w-full">
             <button
@@ -324,12 +358,8 @@ export const ShareAppModal: React.FC<ShareAppModalProps> = ({
               }`}
             >
               <Smartphone className="w-4 h-4 text-zinc-400" />
-              <span>Descargar APK (GitHub)</span>
+              <span>Descargar APK desde GitHub</span>
             </button>
-            <div className="flex items-center justify-center gap-1.5 text-[10px] font-mono text-zinc-400">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-              <span>Actualizado: 24 Oct 2026 • 11:24 PM (GMT-6)</span>
-            </div>
           </div>
 
           {/* WhatsApp Button */}

@@ -38,6 +38,7 @@ npm run build
 # 3. Sincronizar assets con Capacitor
 echo "🔄 2/4 Sincronizando assets web con Capacitor Android..."
 npx cap sync android
+rm -f android/app/src/main/assets/public/app-debug.apk
 
 # 4. Asegurar permisos de gradlew y compilar
 echo "🔨 3/4 Compilando APK nativo con Gradle..."

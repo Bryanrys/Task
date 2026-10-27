@@ -47,23 +47,31 @@ Write-Host "[2/5] Compilando frontend web con Vite..." -ForegroundColor Yellow
 Write-Host "[3/5] Sincronizando assets web con Capacitor Android..." -ForegroundColor Yellow
 & cmd.exe /c "npx cap sync android"
 
+# Eliminar APK anidado de los assets para evitar inflar el tamaño recursivamente
+$NestedApkInAssets = Join-Path $ProjectRoot "android\app\src\main\assets\public\app-debug.apk"
+if (Test-Path $NestedApkInAssets) {
+    Remove-Item $NestedApkInAssets -Force
+}
+
 # 4. Compilar con Gradle
 Write-Host "[4/5] Compilando APK nativo con Gradle..." -ForegroundColor Yellow
 Set-Location (Join-Path $ProjectRoot "android")
 .\gradlew.bat assembleDebug --no-daemon
 Set-Location $ProjectRoot
 
-# 5. Copiar APK a la carpeta publica apk/
-Write-Host "[5/5] Actualizando apk/app-debug.apk..." -ForegroundColor Yellow
+# 5. Copiar APK a las carpetas publicas apk/ y public/
+Write-Host "[5/5] Actualizando apk/app-debug.apk y public/app-debug.apk..." -ForegroundColor Yellow
 $SourceApk = Join-Path $ProjectRoot "android\app\build\outputs\apk\debug\app-debug.apk"
 $DestApk = Join-Path $ProjectRoot "apk\app-debug.apk"
+$PublicApk = Join-Path $ProjectRoot "public\app-debug.apk"
 
 if (Test-Path $SourceApk) {
     Copy-Item $SourceApk $DestApk -Force
+    Copy-Item $SourceApk $PublicApk -Force
     $SizeMB = [math]::Round((Get-Item $DestApk).Length / 1MB, 2)
     Write-Host "==========================================================" -ForegroundColor Green
     Write-Host "Compilacion completada exitosamente!" -ForegroundColor Green
-    Write-Host "APK generado en: apk\app-debug.apk ($SizeMB MB)" -ForegroundColor Green
+    Write-Host "APK generado en: apk\app-debug.apk y public\app-debug.apk ($SizeMB MB)" -ForegroundColor Green
     Write-Host "==========================================================" -ForegroundColor Green
 } else {
     Write-Host "Error: No se encontro el archivo APK generado." -ForegroundColor Red

@@ -6,6 +6,7 @@ import {
   findGradeDataForSubject,
   getSavedGradesData,
 } from '../utils/gradeCalculation';
+import { getDeadlineStatus } from '../utils/deadline';
 
 export const GEMINI_API_KEY_STORAGE = 'gemini_api_key_v1';
 
@@ -68,7 +69,7 @@ export async function validateGeminiApiKey(
   if (!cleanKey) return { valid: false, error: 'La clave está vacía.' };
 
   try {
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-lite-latest:generateContent?key=${cleanKey}`;
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${cleanKey}`;
     const res = await fetch(url, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -237,6 +238,64 @@ export function generateLocalFallbackResponse(
       });
     }
   });
+
+  // ----------------------------------------------------------------------
+  // PRIORIDAD: Entregas próximas / 48 horas / Urgentes
+  // ----------------------------------------------------------------------
+  const isAskingDeadlines =
+    p.includes('48') ||
+    p.includes('proximas entrega') ||
+    p.includes('proximas tareas') ||
+    p.includes('por vencer') ||
+    p.includes('mas urgente') ||
+    p.includes('urgente') ||
+    p.includes('entregar en');
+
+  if (isAskingDeadlines) {
+    const upcomingTasks: {
+      subjectName: string;
+      taskName: string;
+      deadlineText?: string;
+      isUrgent?: boolean;
+      note?: string;
+    }[] = [];
+
+    activeDashboard.subjects.forEach((s) => {
+      const tasks = currentWeek.subjectTasks[s.id] || [];
+      tasks.forEach((t) => {
+        if (!t.completed) {
+          const dl = getDeadlineStatus(t.deadlineISO);
+          upcomingTasks.push({
+            subjectName: s.name,
+            taskName: t.name,
+            deadlineText: dl ? dl.text : undefined,
+            isUrgent: dl ? dl.isUrgent : false,
+            note: t.note,
+          });
+        }
+      });
+    });
+
+    if (upcomingTasks.length === 0) {
+      return {
+        text: `🎉 **¡No tienes entregas pendientes en las próximas horas!**\n\nTodas las actividades registradas en la **Semana ${currentWeek.weekNumber}** están entregadas o al día. ¡Excelente momento para descansar o repasar!`,
+        action: null,
+      };
+    }
+
+    upcomingTasks.sort((a, b) => (b.isUrgent ? 1 : 0) - (a.isUrgent ? 1 : 0));
+
+    let msg = `⏰ **Entregas y Actividades Prioritarias (Semana ${currentWeek.weekNumber}):**\n\n`;
+    upcomingTasks.forEach((item, idx) => {
+      const badge = item.isUrgent ? '🚨 **[URGENTE]** ' : '📌 ';
+      const dlPart = item.deadlineText ? ` — *(${item.deadlineText})*` : '';
+      const notePart = item.note ? `\n   ↳ 📝 *Apunte: «${item.note}»*` : '';
+      msg += `${idx + 1}. ${badge}**${item.subjectName}**: ${item.taskName}${dlPart}${notePart}\n`;
+    });
+
+    msg += `\n💡 **Recomendación de KALI:** Te sugiero empezar por la materia más retadora en un bloque de 25 minutos con el Pomodoro.`;
+    return { text: msg, action: null };
+  }
 
   // ----------------------------------------------------------------------
   // PRIORIDAD 1: Plan de estudio / Qué estudiar hoy / Para no atrasarme
@@ -669,17 +728,22 @@ export async function sendAgentMessage(
       return { ok: res.ok, status: res.status, data };
     };
 
-    // Intento con modelos activos y estables de Gemini
-    let result = await makeRequest('gemini-flash-lite-latest');
+    // Intento con modelos activos y estables oficiales de Google Generative AI
+    let result = await makeRequest('gemini-2.0-flash');
 
     if (!result.ok && (result.status === 404 || result.status === 503)) {
-      console.warn('Reintentando con gemini-3.5-flash-lite...');
-      result = await makeRequest('gemini-3.5-flash-lite');
+      console.warn('Reintentando con gemini-1.5-flash...');
+      result = await makeRequest('gemini-1.5-flash');
     }
 
     if (!result.ok && (result.status === 404 || result.status === 503)) {
-      console.warn('Reintentando con gemini-flash-latest...');
-      result = await makeRequest('gemini-flash-latest');
+      console.warn('Reintentando con gemini-2.5-flash...');
+      result = await makeRequest('gemini-2.5-flash');
+    }
+
+    if (!result.ok && (result.status === 404 || result.status === 503)) {
+      console.warn('Reintentando con gemini-1.5-flash-latest...');
+      result = await makeRequest('gemini-1.5-flash-latest');
     }
 
     if (result.ok) {

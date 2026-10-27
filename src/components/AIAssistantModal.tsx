@@ -7,12 +7,15 @@ import {
   Key,
   Trash2,
   CheckCircle,
-  HelpCircle,
-  Cpu,
-  Zap,
-  ArrowRight,
   ExternalLink,
-  ChevronDown,
+  Copy,
+  Check,
+  Share2,
+  Timer,
+  Calculator,
+  Calendar,
+  Clock,
+  ArrowRight,
 } from 'lucide-react';
 import {
   ChatMessage,
@@ -36,28 +39,35 @@ const CHAT_STORAGE_KEY = 'academic_ai_chat_history_v1';
 
 /**
  * Renderizador de formato inline para negritas (**texto**), cursivas (*texto*) y código (`codigo`)
+ * con contraste dinámico matemáticamente perfecto (WCAG AAA) para modo oscuro y claro.
  */
-function renderFormattedLine(text: string): React.ReactNode {
+function renderFormattedLine(text: string, isBubbleLight: boolean): React.ReactNode {
   const parts: React.ReactNode[] = [];
   const regex = /(\*\*.*?\*\*|\*.*?\*|`.*?`)/g;
   const segments = text.split(regex);
 
+  const boldClass = isBubbleLight ? 'font-black text-black' : 'font-black text-white';
+  const italicClass = isBubbleLight ? 'italic text-zinc-700' : 'italic text-zinc-300';
+  const codeClass = isBubbleLight
+    ? 'font-mono bg-zinc-200 text-black px-1 py-0.5 rounded border border-zinc-300'
+    : 'font-mono bg-white/10 text-white px-1 py-0.5 rounded border border-white/15';
+
   segments.forEach((seg, idx) => {
     if (seg.startsWith('**') && seg.endsWith('**') && seg.length >= 4) {
       parts.push(
-        <strong key={idx} className="font-black text-white">
+        <strong key={idx} className={boldClass}>
           {seg.slice(2, -2)}
         </strong>
       );
     } else if (seg.startsWith('*') && seg.endsWith('*') && seg.length >= 2) {
       parts.push(
-        <em key={idx} className="italic text-zinc-300">
+        <em key={idx} className={italicClass}>
           {seg.slice(1, -1)}
         </em>
       );
     } else if (seg.startsWith('`') && seg.endsWith('`') && seg.length >= 2) {
       parts.push(
-        <code key={idx} className="font-mono bg-white/10 px-1 py-0.5 rounded text-white border border-white/15">
+        <code key={idx} className={codeClass}>
           {seg.slice(1, -1)}
         </code>
       );
@@ -82,7 +92,6 @@ export const AIAssistantModal: React.FC<AIAssistantModalProps> = ({
       if (saved) {
         const parsed: ChatMessage[] = JSON.parse(saved);
         if (Array.isArray(parsed) && parsed.length > 0) {
-          // Reemplazar nombre antiguo Apolo por KALI si existía
           return parsed.map((m) => ({
             ...m,
             text: m.text.replace(/Apolo/g, 'KALI'),
@@ -105,6 +114,7 @@ export const AIAssistantModal: React.FC<AIAssistantModalProps> = ({
   const [showKeySettings, setShowKeySettings] = useState<boolean>(false);
   const [apiKeyDraft, setApiKeyDraft] = useState<string>(() => getGeminiApiKey());
   const [hasApiKey, setHasApiKey] = useState<boolean>(() => !!getGeminiApiKey());
+  const [copiedMessageId, setCopiedMessageId] = useState<string | null>(null);
 
   const [isValidatingKey, setIsValidatingKey] = useState<boolean>(false);
   const [keyValidationFeedback, setKeyValidationFeedback] = useState<{
@@ -126,12 +136,58 @@ export const AIAssistantModal: React.FC<AIAssistantModalProps> = ({
     }
   }, [isOpen, messages]);
 
+  // Manejo de gesto Atrás en Android 13 (Swipe back / Back button)
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const handlePopState = () => {
+      onClose();
+    };
+
+    window.history.pushState({ modal: 'kali_ai_modal' }, '');
+    window.addEventListener('popstate', handlePopState);
+
+    return () => {
+      window.removeEventListener('popstate', handlePopState);
+    };
+  }, [isOpen, onClose]);
+
   // Persistir mensajes
   useEffect(() => {
     try {
       localStorage.setItem(CHAT_STORAGE_KEY, JSON.stringify(messages.slice(-30)));
     } catch {}
   }, [messages]);
+
+  const handleCopyMessage = (msgId: string, text: string) => {
+    try {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text);
+      } else {
+        const textarea = document.createElement('textarea');
+        textarea.value = text;
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand('copy');
+        textarea.remove();
+      }
+      setCopiedMessageId(msgId);
+      setTimeout(() => setCopiedMessageId(null), 2000);
+    } catch {}
+  };
+
+  const handleShareMessage = async (text: string) => {
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: 'KALI • IA Académica UEES',
+          text: `Plan y Consejo Académico de KALI (UEES):\n\n${text}`,
+        });
+        return;
+      } catch {}
+    }
+    handleCopyMessage('share-temp', text);
+  };
 
   const handleSaveApiKey = async () => {
     const clean = apiKeyDraft.trim();
@@ -161,7 +217,6 @@ export const AIAssistantModal: React.FC<AIAssistantModalProps> = ({
         setKeyValidationFeedback(null);
       }, 1200);
     } else {
-      // Guardar de todas formas por si es un tema transitorio, pero advertir al usuario claramente
       setGeminiApiKey(clean);
       setHasApiKey(true);
       setKeyValidationFeedback({
@@ -208,6 +263,10 @@ export const AIAssistantModal: React.FC<AIAssistantModalProps> = ({
           actionDesc = `✓ Actividad agregada a ${response.action.subjectName}: "${response.action.taskName}"`;
         } else if (response.action.action === 'complete_task') {
           actionDesc = `✓ Tarea marcada como entregada en ${response.action.subjectName}`;
+        } else if (response.action.action === 'open_pomodoro') {
+          actionDesc = `⏱️ Temporizador Pomodoro abierto`;
+        } else if (response.action.action === 'open_grades') {
+          actionDesc = `📊 Calculadora de Notas UEES abierta`;
         }
       }
 
@@ -220,7 +279,7 @@ export const AIAssistantModal: React.FC<AIAssistantModalProps> = ({
       };
 
       setMessages((prev) => [...prev, agentMsg]);
-    } catch (err) {
+    } catch {
       const errorMsg: ChatMessage = {
         id: `err-${Date.now()}`,
         sender: 'agent',
@@ -234,7 +293,9 @@ export const AIAssistantModal: React.FC<AIAssistantModalProps> = ({
   };
 
   const QUICK_PROMPTS = [
+    { label: '⏰ ¿Qué entregar en 48 horas?', prompt: '¿Qué tengo que entregar en las próximas 48 horas y cuáles son las actividades más urgentes?' },
     { label: '⚡ ¿Qué estudiar hoy?', prompt: 'Analiza mis materias y notas y dime qué debería estudiar hoy para no atrasarme.' },
+    { label: '⏱️ Iniciar Pomodoro', prompt: 'Recomiéndame una sesión de Pomodoro para estudiar hoy mi materia más apretada.' },
     { label: '📝 Notas de mis tareas', prompt: '¿Qué notas y apuntes rápidos tengo anotados en mis tareas de la semana?' },
     { label: '📋 ¿Qué materias tienen notas?', prompt: '¿Qué materias tienen notas?' },
     { label: '📊 ¿Cómo voy en mis materias?', prompt: '¿Cómo voy en mis notas oficiales y promedios de la UEES?' },
@@ -248,7 +309,7 @@ export const AIAssistantModal: React.FC<AIAssistantModalProps> = ({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-black/85 backdrop-blur-md animate-fadeIn">
       <div
-        className={`relative w-full max-w-2xl h-[90vh] sm:h-[85vh] flex flex-col rounded-3xl border shadow-2xl overflow-hidden transition-colors ${
+        className={`relative w-full max-w-2xl h-[94dvh] sm:h-[85vh] flex flex-col rounded-3xl border shadow-2xl overflow-hidden transition-colors ${
           isDark
             ? 'bg-[#131417] border-white/10 text-white'
             : 'bg-white border-zinc-200 text-zinc-900'
@@ -403,8 +464,10 @@ export const AIAssistantModal: React.FC<AIAssistantModalProps> = ({
           </div>
         )}
 
-        {/* Quick Prompts Bar */}
-        <div className="px-3 py-2 border-b border-white/5 bg-[#05070e] flex items-center gap-1.5 overflow-x-auto scrollbar-none shrink-0">
+        {/* Quick Prompts Bar (Adaptativo para Modo Claro y Oscuro) */}
+        <div className={`px-3 py-2 border-b flex items-center gap-1.5 overflow-x-auto scrollbar-none shrink-0 ${
+          isDark ? 'bg-[#0b0c10] border-white/10' : 'bg-zinc-100 border-zinc-200'
+        }`}>
           {QUICK_PROMPTS.map((item, idx) => (
             <button
               key={idx}
@@ -413,7 +476,7 @@ export const AIAssistantModal: React.FC<AIAssistantModalProps> = ({
               className={`py-1 px-2.5 rounded-lg text-[10px] font-mono font-bold whitespace-nowrap border transition-all cursor-pointer disabled:opacity-50 ${
                 isDark
                   ? 'bg-white/5 hover:bg-white/10 border-white/10 text-zinc-300 hover:text-white'
-                  : 'bg-zinc-100 hover:bg-zinc-200 border-zinc-200 text-zinc-700 hover:text-zinc-900'
+                  : 'bg-white hover:bg-zinc-200 border-zinc-300 text-zinc-800 hover:text-zinc-950 shadow-2xs'
               }`}
             >
               {item.label}
@@ -427,6 +490,12 @@ export const AIAssistantModal: React.FC<AIAssistantModalProps> = ({
         }`}>
           {messages.map((msg) => {
             const isUser = msg.sender === 'user';
+            // El fondo de la burbuja es claro si es usuario en modo oscuro O si es agente en modo claro
+            const isBubbleLight = (isDark && isUser) || (!isDark && !isUser);
+
+            const hasPomodoroMention = !isUser && msg.text.toLowerCase().includes('pomodoro');
+            const hasGradesMention = !isUser && (msg.text.toLowerCase().includes('promedio') || msg.text.toLowerCase().includes('registro 3') || msg.text.toLowerCase().includes('calculadora'));
+            const hasScheduleMention = !isUser && (msg.text.toLowerCase().includes('horario') || msg.text.toLowerCase().includes('docente') || msg.text.toLowerCase().includes('catedrático'));
 
             return (
               <div
@@ -442,17 +511,17 @@ export const AIAssistantModal: React.FC<AIAssistantModalProps> = ({
                 )}
 
                 <div
-                  className={`max-w-[85%] sm:max-w-[78%] rounded-2xl px-3.5 py-2.5 text-xs leading-relaxed ${
+                  className={`max-w-[88%] sm:max-w-[78%] rounded-2xl px-3.5 py-2.5 text-xs leading-relaxed group relative ${
                     isUser
                       ? isDark
                         ? 'bg-white !text-black text-black font-semibold shadow-md'
                         : 'bg-black !text-white text-white font-medium shadow-sm'
                       : isDark
                       ? 'bg-[#18191e] border border-white/10 text-zinc-200 shadow-xs'
-                      : 'bg-white border border-zinc-200 text-zinc-800 shadow-2xs'
+                      : 'bg-white border border-zinc-200 text-zinc-900 shadow-2xs'
                   }`}
                 >
-                  {/* Contenido del Mensaje con formato amigable y parseo Markdown */}
+                  {/* Contenido del Mensaje con formato amigable, negritas legibles y parseo de viñetas */}
                   <div className="space-y-1.5 break-words">
                     {msg.text.split('\n').map((line, i) => {
                       const trimmed = line.trim();
@@ -463,11 +532,11 @@ export const AIAssistantModal: React.FC<AIAssistantModalProps> = ({
                       // Sub-viñeta / flecha
                       if (trimmed.startsWith('↳') || trimmed.startsWith('• *') || trimmed.startsWith('•*')) {
                         return (
-                          <div key={i} className={`pl-3.5 text-[11px] flex items-start gap-1 ${
-                            isUser ? (isDark ? 'text-zinc-800' : 'text-zinc-200') : (isDark ? 'text-zinc-300' : 'text-zinc-600')
+                          <div key={i} className={`pl-3 text-[11px] flex items-start gap-1.5 ${
+                            isBubbleLight ? 'text-zinc-800' : 'text-zinc-300'
                           }`}>
                             <span className="shrink-0 font-bold">↳</span>
-                            <div>{renderFormattedLine(trimmed.replace(/^[↳•]\s*/, ''))}</div>
+                            <div>{renderFormattedLine(trimmed.replace(/^[↳•]\s*/, ''), isBubbleLight)}</div>
                           </div>
                         );
                       }
@@ -475,16 +544,58 @@ export const AIAssistantModal: React.FC<AIAssistantModalProps> = ({
                       // Viñeta principal
                       if (trimmed.startsWith('* ') || trimmed.startsWith('- ') || trimmed.startsWith('• ')) {
                         return (
-                          <div key={i} className="flex items-start gap-1.5 my-0.5 pl-1">
-                            <span className="shrink-0 mt-0.5">•</span>
-                            <div>{renderFormattedLine(trimmed.replace(/^[*|-|•]\s*/, ''))}</div>
+                          <div key={i} className="flex items-start gap-1.5 my-0.5 pl-0.5">
+                            <span className={`shrink-0 mt-0.5 ${isBubbleLight ? 'text-zinc-700' : 'text-zinc-400'}`}>•</span>
+                            <div>{renderFormattedLine(trimmed.replace(/^[*|-|•]\s*/, ''), isBubbleLight)}</div>
                           </div>
                         );
                       }
 
-                      return <p key={i}>{renderFormattedLine(line)}</p>;
+                      return <p key={i}>{renderFormattedLine(line, isBubbleLight)}</p>;
                     })}
                   </div>
+
+                  {/* Botones de Acción Rápida Contextuales sugeridos por KALI */}
+                  {!isUser && (hasPomodoroMention || hasGradesMention || hasScheduleMention) && (
+                    <div className="mt-2.5 pt-2 border-t border-zinc-200/40 dark:border-white/10 flex flex-wrap gap-1.5">
+                      {hasPomodoroMention && (
+                        <button
+                          onClick={() => onExecuteAction({ action: 'open_pomodoro' })}
+                          className={`px-2 py-1 rounded-lg text-[10px] font-mono font-bold flex items-center gap-1 border transition-all cursor-pointer ${
+                            isDark
+                              ? 'bg-white/10 hover:bg-white/20 text-white border-white/20'
+                              : 'bg-zinc-100 hover:bg-zinc-200 text-zinc-900 border-zinc-300'
+                          }`}
+                        >
+                          <Timer className="w-3 h-3" /> Iniciar Pomodoro
+                        </button>
+                      )}
+                      {hasGradesMention && (
+                        <button
+                          onClick={() => onExecuteAction({ action: 'open_grades' })}
+                          className={`px-2 py-1 rounded-lg text-[10px] font-mono font-bold flex items-center gap-1 border transition-all cursor-pointer ${
+                            isDark
+                              ? 'bg-white/10 hover:bg-white/20 text-white border-white/20'
+                              : 'bg-zinc-100 hover:bg-zinc-200 text-zinc-900 border-zinc-300'
+                          }`}
+                        >
+                          <Calculator className="w-3 h-3" /> Ver Calculadora UEES
+                        </button>
+                      )}
+                      {hasScheduleMention && (
+                        <button
+                          onClick={() => onExecuteAction({ action: 'open_schedule' })}
+                          className={`px-2 py-1 rounded-lg text-[10px] font-mono font-bold flex items-center gap-1 border transition-all cursor-pointer ${
+                            isDark
+                              ? 'bg-white/10 hover:bg-white/20 text-white border-white/20'
+                              : 'bg-zinc-100 hover:bg-zinc-200 text-zinc-900 border-zinc-300'
+                          }`}
+                        >
+                          <Calendar className="w-3 h-3" /> Ver Horario
+                        </button>
+                      )}
+                    </div>
+                  )}
 
                   {/* Tarjeta de Acción Ejecutada si aplica */}
                   {msg.actionExecuted && (
@@ -494,15 +605,54 @@ export const AIAssistantModal: React.FC<AIAssistantModalProps> = ({
                     </div>
                   )}
 
-                  <span
-                    className={`block text-[9px] mt-1 text-right font-mono ${
-                      isUser
-                        ? isDark ? 'text-zinc-600' : 'text-zinc-400'
-                        : isDark ? 'text-zinc-500' : 'text-zinc-400'
-                    }`}
-                  >
-                    {msg.timestamp}
-                  </span>
+                  {/* Barra de pie de mensaje: timestamp + botones de Copiar y Compartir */}
+                  <div className="mt-1.5 flex items-center justify-between gap-2">
+                    {!isUser ? (
+                      <div className="flex items-center gap-1">
+                        <button
+                          onClick={() => handleCopyMessage(msg.id, msg.text)}
+                          title="Copiar respuesta"
+                          className={`p-1 rounded-md text-[10px] flex items-center gap-1 font-mono transition-colors cursor-pointer ${
+                            isDark ? 'text-zinc-400 hover:text-white bg-white/5' : 'text-zinc-600 hover:text-black bg-zinc-100'
+                          }`}
+                        >
+                          {copiedMessageId === msg.id ? (
+                            <>
+                              <Check className="w-3 h-3 text-emerald-500" />
+                              <span className="text-emerald-500 text-[9px]">Copiado</span>
+                            </>
+                          ) : (
+                            <>
+                              <Copy className="w-3 h-3" />
+                              <span className="text-[9px]">Copiar</span>
+                            </>
+                          )}
+                        </button>
+
+                        <button
+                          onClick={() => handleShareMessage(msg.text)}
+                          title="Compartir"
+                          className={`p-1 rounded-md text-[10px] flex items-center gap-1 font-mono transition-colors cursor-pointer ${
+                            isDark ? 'text-zinc-400 hover:text-white bg-white/5' : 'text-zinc-600 hover:text-black bg-zinc-100'
+                          }`}
+                        >
+                          <Share2 className="w-3 h-3" />
+                        </button>
+                      </div>
+                    ) : (
+                      <div />
+                    )}
+
+                    <span
+                      className={`text-[9px] font-mono ${
+                        isUser
+                          ? isDark ? 'text-zinc-600' : 'text-zinc-400'
+                          : isDark ? 'text-zinc-500' : 'text-zinc-500'
+                      }`}
+                    >
+                      {msg.timestamp}
+                    </span>
+                  </div>
                 </div>
               </div>
             );
@@ -529,8 +679,8 @@ export const AIAssistantModal: React.FC<AIAssistantModalProps> = ({
           <div ref={messagesEndRef} />
         </div>
 
-        {/* Input Bar */}
-        <div className={`p-3 sm:p-4 border-t shrink-0 ${
+        {/* Input Bar con soporte de teclado y Safe Area de Android 13 */}
+        <div className={`p-3 sm:p-4 border-t shrink-0 pb-[max(0.75rem,env(safe-area-inset-bottom))] ${
           isDark ? 'border-white/10 bg-[#131417]' : 'border-zinc-200 bg-white'
         }`}>
           <form

@@ -1,19 +1,30 @@
 # 📱 Apartado APK - Descarga Oficial para Android
 
-> 🕒 **Última Compilación / Actualización:** Sábado, 24 de Octubre de 2026 — 11:24 PM (GMT-6)  
-> 🏷️ **Versión:** `v1.0.0-debug` | **Identidad APK:** `0` (`com.uees.dashboard`)  
-> 📦 **Archivo:** [`apk/app-debug.apk`](./app-debug.apk) (37 MB) — **Modo Edge-to-Edge Puro (Barra Transparente sin Muesca)**
+<div align="center">
 
-En este apartado puedes acceder a las descargas directas del instalador APK para dispositivos Android de la aplicación **Dashboard Académico UEES**.
+### 🚀 Ficha Técnica del Instalador Oficial
+
+| 🏷️ Versión | 📦 Tamaño | 📱 Requerimientos | 📅 Día y Fecha | 🕒 Hora (GMT-6) |
+| :---: | :---: | :---: | :---: | :---: |
+| **v2.0 (Debug)** | **45.16 MB** | **Android 7.0 - Android 13+** | **Lunes, 26 de Octubre de 2026** | **07:55 PM** |
+
+[![Descargar APK Directo](https://img.shields.io/badge/Descargar-APK%20Directo%20(45.16%20MB)-000000?style=for-the-badge&logo=android&logoColor=white)](https://github.com/Bryanrys/Task/raw/main/apk/app-debug.apk)
+
+</div>
+
+> ℹ️ **Identidad APK Multi-Dispositivo:** `0` (`com.uees.dashboard`)  
+> 📦 **Archivo:** [`apk/app-debug.apk`](./app-debug.apk)  
+> ✨ **Visualización:** Modo Edge-to-Edge Puro (Barra transparente sin cortes de muesca / notch)  
+> 🛡️ **Seguridad:** Compatible para actualización directa entre PC de escritorio y laptop sin requerir desinstalación.
 
 ---
 
 ## 📥 Enlaces de Descarga Directa
 
-| Versión | Archivo Físico en Repositorio | Plataforma | Última Actualización | Enlace de Descarga Inmediata |
-| :--- | :--- | :--- | :--- | :--- |
-| **Última Versión (Debug)** | [`app-debug.apk`](./app-debug.apk) | Android 7.0+ (Universal) | **24 Oct 2026 - 11:24 PM** | 📥 **[Descargar APK Directo (Sin 404)](https://github.com/Bryanrys/Task/raw/main/apk/app-debug.apk)** |
-| **Página de Releases** | Releases y tags | Android | Ver historial | 📦 **[Ver Releases en GitHub](https://github.com/Bryanrys/Task/releases)** |
+| Versión | Archivo Físico | Tamaño | Requerimientos | Fecha y Hora de Compilación | Enlace de Descarga Inmediata |
+| :--- | :--- | :---: | :---: | :---: | :--- |
+| **Última Versión Oficial** | [`app-debug.apk`](./app-debug.apk) | **45.16 MB** | **Android 7.0 a 13+** | **26 Oct 2026 — 07:55 PM** | 📥 **[Descargar APK Directo (Sin 404)](https://github.com/Bryanrys/Task/raw/main/apk/app-debug.apk)** |
+| **Página de Releases** | Releases y Tags | N/A | Android | Ver historial | 📦 **[Ver Releases en GitHub](https://github.com/Bryanrys/Task/releases)** |
 
 ---
 
@@ -31,7 +42,9 @@ En este apartado puedes acceder a las descargas directas del instalador APK para
 - **Nombre de la Aplicación**: `0`
 - **Nombre del Paquete**: `com.uees.dashboard`
 - **Nombre del Archivo**: `app-debug.apk`
-- **Framework**: Capacitor 8.5 + Android Native Wrapper
+- **Tamaño del Archivo**: `45.16 MB`
+- **Fecha de Compilación**: Lunes, 26 de Octubre de 2026 a las 07:55 PM (GMT-6)
+- **Framework**: Capacitor 8.5 + Android Native Bridge
 - **Compilador**: Gradle con Java 21 / OpenJDK
 - **Canal de Notificaciones**: Alertas heads-up con timbre y vibración para recordatorios de entregas académicas.
 - **Regla Multi-Dispositivo**: La aplicación se mantiene con el nombre interno `0` para actualización cruzada directa entre PC de escritorio y laptop sin requerir desinstalación.

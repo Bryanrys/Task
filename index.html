@@ -30,6 +30,9 @@
             document.documentElement.style.colorScheme = 'light';
           }
 
+          var palette = localStorage.getItem('uees_custom_palette') || 'titanium';
+          document.documentElement.setAttribute('data-palette', palette);
+
           // Listener temprano para eventos nativos de Android
           window.addEventListener('androidThemeChange', function(e) {
             if (localStorage.getItem('uees_theme_mode') === 'system' || !localStorage.getItem('uees_theme_mode')) {

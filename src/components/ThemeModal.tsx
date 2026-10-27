@@ -103,8 +103,12 @@ export const ThemeModal: React.FC<ThemeModalProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/85 backdrop-blur-md animate-fadeIn">
+    <div
+      onClick={onClose}
+      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/60 backdrop-blur-sm animate-fadeIn"
+    >
       <div
+        onClick={(e) => e.stopPropagation()}
         className={`relative w-full max-w-lg rounded-3xl border shadow-2xl overflow-hidden flex flex-col max-h-[90dvh] transition-colors ${
           isDark
             ? 'bg-[#131417] border-white/10 text-white'

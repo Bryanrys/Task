@@ -196,54 +196,102 @@ html:not(.dark) {
     background: rgba(255, 255, 255, 0.15);
   }
 
-  /* ========================================================
-     PALETAS DE COLOR PERSONALIZADAS (THEME PALETTES)
-     ======================================================== */
-  :root[data-palette="oled"].dark body,
-  :root[data-palette="oled"] .bg-canvas-dark {
-    background-color: #000000 !important;
-  }
-  :root[data-palette="oled"] .neo-card-dark,
-  :root[data-palette="oled"] .bg-\[\#131417\],
-  :root[data-palette="oled"] .bg-\[\#18191e\],
-  :root[data-palette="oled"] .bg-\[\#0c0d10\] {
-    background-color: #0c0c0e !important;
-  }
+}
 
-  :root[data-palette="nord"].dark body,
-  :root[data-palette="nord"] .bg-canvas-dark {
-    background-color: #0b111a !important;
-  }
-  :root[data-palette="nord"] .neo-card-dark,
-  :root[data-palette="nord"] .bg-\[\#131417\],
-  :root[data-palette="nord"] .bg-\[\#18191e\],
-  :root[data-palette="nord"] .bg-\[\#0c0d10\] {
-    background-color: #0f172a !important;
-  }
+/* ========================================================
+   PALETAS DE COLOR PERSONALIZADAS (THEME PALETTES)
+   ======================================================== */
+:root {
+  --pal-canvas-dark: #09090b;
+  --pal-canvas-light: #f4f4f2;
+  --pal-sidebar-dark: #0c0d10;
+  --pal-sidebar-light: #fbfbf9;
+  --pal-card-dark: #131417;
+  --pal-card-inner-dark: #18191e;
+  --pal-hero-from-dark: #16171c;
+  --pal-hero-to-dark: #0f1013;
+  --pal-border-dark: rgba(255, 255, 255, 0.08);
+}
 
-  :root[data-palette="emerald"].dark body,
-  :root[data-palette="emerald"] .bg-canvas-dark {
-    background-color: #060c0a !important;
-  }
-  :root[data-palette="emerald"] .neo-card-dark,
-  :root[data-palette="emerald"] .bg-\[\#131417\],
-  :root[data-palette="emerald"] .bg-\[\#18191e\],
-  :root[data-palette="emerald"] .bg-\[\#0c0d10\] {
-    background-color: #0a1612 !important;
-  }
+:root[data-palette="oled"] {
+  --pal-canvas-dark: #000000;
+  --pal-sidebar-dark: #000000;
+  --pal-card-dark: #070709;
+  --pal-card-inner-dark: #0d0d10;
+  --pal-hero-from-dark: #0e0e11;
+  --pal-hero-to-dark: #000000;
+  --pal-border-dark: rgba(255, 255, 255, 0.16);
+}
 
-  :root[data-palette="sepia"]:not(.dark) body,
-  :root[data-palette="sepia"] .bg-canvas-light {
-    background-color: #f7f4ed !important;
-  }
-  :root[data-palette="sepia"].dark body,
-  :root[data-palette="sepia"] .bg-canvas-dark {
-    background-color: #171513 !important;
-  }
-  :root[data-palette="sepia"] .neo-card-dark,
-  :root[data-palette="sepia"] .bg-\[\#131417\],
-  :root[data-palette="sepia"] .bg-\[\#18191e\],
-  :root[data-palette="sepia"] .bg-\[\#0c0d10\] {
-    background-color: #211d19 !important;
-  }
+:root[data-palette="nord"] {
+  --pal-canvas-dark: #0a0f1d;
+  --pal-canvas-light: #edf3f9;
+  --pal-sidebar-dark: #070d18;
+  --pal-sidebar-light: #f1f5f9;
+  --pal-card-dark: #0f172a;
+  --pal-card-inner-dark: #162238;
+  --pal-hero-from-dark: #1e293b;
+  --pal-hero-to-dark: #0f172a;
+  --pal-border-dark: rgba(56, 189, 248, 0.22);
+}
+
+:root[data-palette="emerald"] {
+  --pal-canvas-dark: #030c08;
+  --pal-canvas-light: #f0fdf4;
+  --pal-sidebar-dark: #020906;
+  --pal-sidebar-light: #ecfdf5;
+  --pal-card-dark: #071a13;
+  --pal-card-inner-dark: #0c241b;
+  --pal-hero-from-dark: #0d2e22;
+  --pal-hero-to-dark: #061811;
+  --pal-border-dark: rgba(16, 185, 129, 0.25);
+}
+
+:root[data-palette="sepia"] {
+  --pal-canvas-dark: #1a1614;
+  --pal-canvas-light: #f5efe6;
+  --pal-sidebar-dark: #14110f;
+  --pal-sidebar-light: #ede5d8;
+  --pal-card-dark: #231e1a;
+  --pal-card-inner-dark: #2c2520;
+  --pal-hero-from-dark: #312821;
+  --pal-hero-to-dark: #1a1614;
+  --pal-border-dark: rgba(217, 119, 6, 0.22);
+}
+
+/* Aplicación Universal de Colores por Paleta */
+html.dark,
+html.dark body,
+html.dark .bg-canvas-dark {
+  background-color: var(--pal-canvas-dark) !important;
+}
+
+html:not(.dark),
+html:not(.dark) body,
+html:not(.dark) .bg-canvas-light {
+  background-color: var(--pal-canvas-light) !important;
+}
+
+html.dark aside,
+html.dark .bg-\[\#0c0d10\] {
+  background-color: var(--pal-sidebar-dark) !important;
+}
+
+html:not(.dark) aside {
+  background-color: var(--pal-sidebar-light) !important;
+}
+
+html.dark .neo-card-dark,
+html.dark .bg-\[\#131417\] {
+  background-color: var(--pal-card-dark) !important;
+  border-color: var(--pal-border-dark) !important;
+}
+
+html.dark .bg-\[\#18191e\] {
+  background-color: var(--pal-card-inner-dark) !important;
+}
+
+html.dark .neo-card-hero {
+  background: linear-gradient(145deg, var(--pal-hero-from-dark) 0%, var(--pal-hero-to-dark) 100%) !important;
+  border-color: var(--pal-border-dark) !important;
 }

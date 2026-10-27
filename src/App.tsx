@@ -163,12 +163,28 @@ export default function App() {
     }
   });
 
+  const handleSelectThemeMode = (mode: ThemeMode) => {
+    setThemeMode(mode);
+    try {
+      localStorage.setItem('uees_theme_mode', mode);
+      localStorage.setItem(THEME_KEY, mode);
+      const mediaQuery = typeof window !== 'undefined' && window.matchMedia ? window.matchMedia('(prefers-color-scheme: dark)') : null;
+      const willBeDark = mode === 'system' ? (mediaQuery ? mediaQuery.matches : true) : mode === 'dark';
+      setIsDark(willBeDark);
+      if (willBeDark) {
+        document.documentElement.classList.add('dark');
+        document.documentElement.style.colorScheme = 'dark';
+      } else {
+        document.documentElement.classList.remove('dark');
+        document.documentElement.style.colorScheme = 'light';
+      }
+    } catch {}
+    setToastMessage(`🌓 Modo cambiado a: ${mode === 'system' ? 'AUTOMÁTICO' : mode === 'dark' ? 'OSCURO' : 'CLARO'}`);
+  };
+
   const cycleThemeMode = () => {
-    setThemeMode((prev) => {
-      if (prev === 'system') return 'dark';
-      if (prev === 'dark') return 'light';
-      return 'system';
-    });
+    const nextMode: ThemeMode = themeMode === 'system' ? 'dark' : themeMode === 'dark' ? 'light' : 'system';
+    handleSelectThemeMode(nextMode);
   };
 
   // Authentication & Session state (Login Screen Pro UEES)
@@ -3429,7 +3445,7 @@ export default function App() {
         onClose={() => setShowThemeModal(false)}
         isDark={isDark}
         themeMode={themeMode}
-        onSelectThemeMode={(mode) => setThemeMode(mode)}
+        onSelectThemeMode={handleSelectThemeMode}
         activePalette={activePalette}
         onSelectPalette={handleSelectPalette}
       />

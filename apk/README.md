@@ -6,15 +6,15 @@
 
 | 🏷️ Versión | 📦 Tamaño | 📱 Requerimientos | 📅 Día y Fecha | 🕒 Hora (GMT-6) |
 | :---: | :---: | :---: | :---: | :---: |
-| **v2.0 (Debug)** | **45.16 MB** | **Android 7.0 - Android 13+** | **Lunes, 26 de Octubre de 2026** | **08:26 PM** |
+| **v2.1 (Debug)** | **8.8 MB** | **Android 7.0 - Android 14+** | **Martes, 27 de Octubre de 2026** | **09:12 PM** |
 
-[![Descargar APK Directo](https://img.shields.io/badge/Descargar-APK%20Directo%20(45.16%20MB)-000000?style=for-the-badge&logo=android&logoColor=white)](https://github.com/Bryanrys/Task/raw/main/apk/app-debug.apk)
+[![Descargar APK Directo](https://img.shields.io/badge/Descargar-APK%20Directo%20(8.8%20MB)-000000?style=for-the-badge&logo=android&logoColor=white)](https://github.com/Bryanrys/Task/raw/main/apk/app-debug.apk)
 
 </div>
 
 > ℹ️ **Identidad APK Multi-Dispositivo:** `0` (`com.uees.dashboard`)  
 > 📦 **Archivo:** [`apk/app-debug.apk`](./app-debug.apk)  
-> ✨ **Visualización:** Modo Edge-to-Edge Puro (Barra transparente sin cortes de muesca / notch)  
+> ✨ **Novedades v2.1:** Autenticación por huella dactilar nativa (`BiometricPrompt`), cierre de ventanas emergentes por deslizamiento hacia abajo (swipe down to dismiss) y vibración háptica.  
 > 🛡️ **Seguridad:** Compatible para actualización directa entre PC de escritorio y laptop sin requerir desinstalación.
 
 ---
@@ -23,7 +23,7 @@
 
 | Versión | Archivo Físico | Tamaño | Requerimientos | Fecha y Hora de Compilación | Enlace de Descarga Inmediata |
 | :--- | :--- | :---: | :---: | :---: | :--- |
-| **Última Versión Oficial** | [`app-debug.apk`](./app-debug.apk) | **45.16 MB** | **Android 7.0 a 13+** | **26 Oct 2026 — 08:26 PM** | 📥 **[Descargar APK Directo (Sin 404)](https://github.com/Bryanrys/Task/raw/main/apk/app-debug.apk)** |
+| **Última Versión Oficial (v2.1)** | [`app-debug.apk`](./app-debug.apk) | **8.8 MB** | **Android 7.0 a 14+** | **27 Oct 2026 — 09:12 PM** | 📥 **[Descargar APK Directo (Sin 404)](https://github.com/Bryanrys/Task/raw/main/apk/app-debug.apk)** |
 | **Página de Releases** | Releases y Tags | N/A | Android | Ver historial | 📦 **[Ver Releases en GitHub](https://github.com/Bryanrys/Task/releases)** |
 
 ---
@@ -42,8 +42,8 @@
 - **Nombre de la Aplicación**: `0`
 - **Nombre del Paquete**: `com.uees.dashboard`
 - **Nombre del Archivo**: `app-debug.apk`
-- **Tamaño del Archivo**: `45.16 MB`
-- **Fecha de Compilación**: Lunes, 26 de Octubre de 2026 a las 07:55 PM (GMT-6)
+- **Tamaño del Archivo**: `8.8 MB`
+- **Fecha de Compilación**: Martes, 27 de Octubre de 2026 a las 09:12 PM (GMT-6)
 - **Framework**: Capacitor 8.5 + Android Native Bridge
 - **Compilador**: Gradle con Java 21 / OpenJDK
 - **Canal de Notificaciones**: Alertas heads-up con timbre y vibración para recordatorios de entregas académicas.

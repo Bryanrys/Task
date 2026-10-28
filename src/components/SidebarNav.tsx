@@ -313,7 +313,7 @@ export const SidebarNav: React.FC<SidebarNavProps> = ({
               >
                 <span className="flex items-center space-x-3">
                   <GraduationCap className="w-4 h-4 text-emerald-500 shrink-0" />
-                  <span>Widget de Pensum (Android)</span>
+                  <span>Widget de Tareas (Android)</span>
                 </span>
                 <span className="text-[10px] font-mono px-1.5 py-0.5 rounded-md bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-bold">
                   Widget

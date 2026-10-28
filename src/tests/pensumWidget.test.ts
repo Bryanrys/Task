@@ -3,35 +3,28 @@ import assert from 'node:assert';
 import fs from 'node:fs';
 import path from 'node:path';
 
-describe('Pruebas Unitarias - Widget Nativo de Pensum para Android', () => {
+describe('Pruebas Unitarias - Widget Nativo de Tareas para Android', () => {
   const root = process.cwd();
 
-  it('el cálculo de materias faltantes y porcentaje de avance debe ser matemáticamente exacto', () => {
-    const total = 45;
-    const aprobadas = 28;
-    const enCurso = 5;
+  it('el cálculo de tareas pendientes y porcentaje de entregas semanales debe ser matemáticamente exacto', () => {
+    const total = 11;
+    const completadas = 10;
+    const pendientes = 1;
 
-    const faltantes = Math.max(0, total - aprobadas - enCurso);
-    assert.strictEqual(faltantes, 12, 'Deben faltar exactamente 12 materias');
+    assert.strictEqual(total - completadas, pendientes, 'Las tareas pendientes deben ser exactamente 1');
 
-    // Avance con peso de 0.5 para materias en curso
-    const porcentaje = Math.round(((aprobadas + (enCurso * 0.5)) / total) * 100);
-    assert.strictEqual(porcentaje, 68, 'El porcentaje debe ser 68%');
-
-    const ciclosRestantes = (faltantes / enCurso).toFixed(1);
-    assert.strictEqual(ciclosRestantes, '2.4', 'Los ciclos estimados deben ser 2.4');
+    const porcentaje = Math.round((completadas / total) * 100);
+    assert.strictEqual(porcentaje, 91, 'El porcentaje de entrega semanal debe ser 91%');
   });
 
-  it('el cálculo debe manejar límites seguros (cuando ya se aprobaron todas las materias)', () => {
-    const total = 45;
-    const aprobadas = 45;
-    const enCurso = 2;
+  it('el cálculo debe manejar límites seguros (cuando todas las tareas están entregadas)', () => {
+    const total = 10;
+    const completadas = 10;
+    const pendientes = 0;
 
-    const faltantes = Math.max(0, total - aprobadas - enCurso);
-    assert.strictEqual(faltantes, 0, 'No pueden faltar materias negativas');
-
-    const porcentaje = Math.min(100, Math.round(((aprobadas + (enCurso * 0.5)) / total) * 100));
-    assert.strictEqual(porcentaje, 100, 'El porcentaje máximo debe estar acotado a 100%');
+    assert.strictEqual(Math.max(0, total - completadas), pendientes, 'No pueden faltar tareas negativas');
+    const porcentaje = total > 0 ? Math.round((completadas / total) * 100) : 100;
+    assert.strictEqual(porcentaje, 100, 'El porcentaje debe ser 100%');
   });
 
   it('AndroidManifest.xml debe registrar el Receiver PensumWidgetProvider con widget_pensum_info', () => {
@@ -48,14 +41,17 @@ describe('Pruebas Unitarias - Widget Nativo de Pensum para Android', () => {
     );
   });
 
-  it('el layout XML del widget debe contener los elementos de UI requeridos', () => {
+  it('el layout XML del widget debe contener los elementos de UI requeridos para tareas pendientes', () => {
     const layoutPath = path.join(root, 'android/app/src/main/res/layout/widget_pensum.xml');
     const content = fs.readFileSync(layoutPath, 'utf8');
 
+    assert.ok(content.includes('widget_title'), 'Debe incluir el TextView widget_title');
     assert.ok(content.includes('widget_faltantes'), 'Debe incluir el TextView widget_faltantes');
     assert.ok(content.includes('widget_progress'), 'Debe incluir la ProgressBar widget_progress');
-    assert.ok(content.includes('widget_aprobadas'), 'Debe incluir el TextView widget_aprobadas');
-    assert.ok(content.includes('widget_en_curso'), 'Debe incluir el TextView widget_en_curso');
+    assert.ok(content.includes('widget_pendientes_count'), 'Debe incluir el TextView widget_pendientes_count');
+    assert.ok(content.includes('widget_completadas_count'), 'Debe incluir el TextView widget_completadas_count');
+    assert.ok(content.includes('widget_materias_count'), 'Debe incluir el TextView widget_materias_count');
+    assert.ok(content.includes('widget_proxima_tarea'), 'Debe incluir el TextView widget_proxima_tarea');
     assert.ok(content.includes('widget_pct_badge'), 'Debe incluir el TextView widget_pct_badge');
   });
 

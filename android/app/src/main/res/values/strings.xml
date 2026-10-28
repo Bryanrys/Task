@@ -4,6 +4,6 @@
     <string name="title_activity_main">0</string>
     <string name="package_name">com.uees.dashboard</string>
     <string name="custom_url_scheme">com.uees.dashboard</string>
-    <string name="widget_pensum_name">Avance de Pensum</string>
-    <string name="widget_pensum_description">Muestra cuántas materias te faltan para graduarte y el avance de tu carrera.</string>
+    <string name="widget_pensum_name">Tareas Pendientes UEES</string>
+    <string name="widget_pensum_description">Muestra cuántas tareas te hacen falta entregar en la semana actual.</string>
 </resources>

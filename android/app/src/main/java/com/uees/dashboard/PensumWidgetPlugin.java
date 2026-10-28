@@ -1,5 +1,7 @@
 package com.uees.dashboard;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import com.getcapacitor.JSObject;
 import com.getcapacitor.Plugin;
 import com.getcapacitor.PluginCall;
@@ -25,37 +27,35 @@ public class PensumWidgetPlugin extends Plugin {
         return res != null ? res : fallback;
     }
 
-    @PluginMethod
-    public void getPensumData(PluginCall call) {
+    private String extractString(PluginCall call, String key, String fallback) {
         try {
-            int[] data = PensumWidgetProvider.getSavedData(getContext());
-            JSObject ret = new JSObject();
-            ret.put("total", data[0]);
-            ret.put("aprobadas", data[1]);
-            ret.put("enCurso", data[2]);
-            call.resolve(ret);
-        } catch (Exception e) {
-            call.reject("Error obteniendo datos del widget: " + e.getMessage());
-        }
+            JSObject data = call.getData();
+            if (data != null && data.has(key)) {
+                String val = data.getString(key);
+                if (val != null) return val;
+            }
+        } catch (Exception ignored) {}
+        return fallback;
     }
 
     @PluginMethod
-    public void updatePensumData(PluginCall call) {
+    public void updateTaskWidgetData(PluginCall call) {
         try {
-            int total = extractInt(call, "total", 45);
-            int aprobadas = extractInt(call, "aprobadas", 28);
-            int enCurso = extractInt(call, "enCurso", 5);
+            int semana = extractInt(call, "semana", 15);
+            int pendientes = extractInt(call, "pendientes", 1);
+            int completadas = extractInt(call, "completadas", 10);
+            int total = extractInt(call, "total", 11);
+            int materias = extractInt(call, "materias", 5);
+            int porcentaje = extractInt(call, "porcentaje", 91);
+            String proxima = extractString(call, "proximaTarea", "BASES DE DATOS • Tarea entregada");
 
-            PensumWidgetProvider.saveAndRefresh(getContext(), total, aprobadas, enCurso);
+            PensumWidgetProvider.saveAndRefreshTasks(getContext(), semana, pendientes, completadas, total, materias, porcentaje, proxima);
 
             JSObject ret = new JSObject();
             ret.put("success", true);
-            ret.put("total", total);
-            ret.put("aprobadas", aprobadas);
-            ret.put("enCurso", enCurso);
             call.resolve(ret);
         } catch (Exception e) {
-            call.reject("Error actualizando widget: " + e.getMessage());
+            call.reject("Error actualizando widget de tareas: " + e.getMessage());
         }
     }
 }

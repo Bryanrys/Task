@@ -573,9 +573,9 @@ export const ToolsAndLinksView: React.FC<ToolsAndLinksViewProps> = ({
                 Widget Android
               </span>
             </div>
-            <div className="font-extrabold text-xs uppercase">Avance de Pensum</div>
+            <div className="font-extrabold text-xs uppercase">Widget de Tareas UEES</div>
             <p className={`text-[10px] mt-0.5 ${isDark ? 'text-zinc-400' : 'text-zinc-500'}`}>
-              Configura cuántas materias te faltan y sincronízalo con tu celular
+              Consulta y sincroniza tus tareas pendientes en la pantalla de tu celular
             </p>
           </button>
         )}

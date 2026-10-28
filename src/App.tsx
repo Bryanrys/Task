@@ -84,7 +84,7 @@ import { ShareAppModal } from './components/ShareAppModal';
 import { AIAssistantModal } from './components/AIAssistantModal';
 import { ThemeModal, THEME_PALETTES } from './components/ThemeModal';
 import { PensumConfigModal } from './components/PensumConfigModal';
-import { syncCurrentCycleSubjects } from './services/pensumWidgetService';
+import { syncTaskWidget } from './services/pensumWidgetService';
 import { ToolsAndLinksView } from './components/ToolsAndLinksView';
 import { UnifiedDashboardHeader } from './components/UnifiedDashboardHeader';
 import { triggerHaptic } from './services/hapticsService';
@@ -786,13 +786,6 @@ export default function App() {
     return dashboards.find((d) => d.id === activeDashId) || dashboards[0];
   }, [dashboards, activeDashId]);
 
-  // Sincronizar materias activas del ciclo actual con el Widget de Android
-  useEffect(() => {
-    if (currentDashboard && currentDashboard.subjects && currentDashboard.subjects.length > 0) {
-      syncCurrentCycleSubjects(currentDashboard.subjects.length);
-    }
-  }, [currentDashboard?.subjects?.length]);
-
   // Current active week
   const currentWeek = useMemo(() => {
     if (!currentDashboard) return null;
@@ -858,6 +851,33 @@ export default function App() {
       pendingSubjectNames,
     };
   }, [currentWeek, currentDashboard]);
+
+  // Sincronizar en tiempo real el Widget de Android con las tareas que hacen falta
+  useEffect(() => {
+    if (!currentWeek || !currentDashboard) return;
+
+    let nextPending = '¡Al día! No tienes pendientes 🎉';
+    if (weekStats.pendingTasks > 0) {
+      for (const subj of currentDashboard.subjects) {
+        const tasks = currentWeek.subjectTasks[subj.id] || [];
+        const pending = tasks.find((t) => !t.completed);
+        if (pending) {
+          nextPending = `${subj.name} • ${pending.name}`;
+          break;
+        }
+      }
+    }
+
+    syncTaskWidget({
+      semana: currentWeek.weekNumber,
+      pendientes: weekStats.pendingTasks,
+      completadas: weekStats.completedTasks,
+      total: weekStats.totalTasks,
+      materias: currentDashboard.subjects.length,
+      porcentaje: weekStats.completionRate,
+      proximaTarea: nextPending,
+    });
+  }, [currentWeek, currentDashboard, weekStats]);
 
   // Filter subjects: automatically hides a card when all of its tasks are completed!
   const visibleSubjects = useMemo(() => {

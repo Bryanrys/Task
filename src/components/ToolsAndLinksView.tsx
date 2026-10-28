@@ -48,6 +48,7 @@ interface ToolsAndLinksViewProps {
   onOpenSchedule: () => void;
   onOpenLinks: () => void;
   onOpenGrades: () => void;
+  onOpenPensumWidget?: () => void;
   onOpenAIAssistant?: () => void;
   onOpenPomodoro: () => void;
   onOpenStartDate: () => void;
@@ -66,6 +67,7 @@ export const ToolsAndLinksView: React.FC<ToolsAndLinksViewProps> = ({
   onOpenSchedule,
   onOpenLinks,
   onOpenGrades,
+  onOpenPensumWidget,
   onOpenAIAssistant,
   onOpenPomodoro,
   onOpenStartDate,
@@ -540,6 +542,43 @@ export const ToolsAndLinksView: React.FC<ToolsAndLinksViewProps> = ({
             Consulta notas oficiales, registros (30%-30%-40%) y promedios
           </p>
         </button>
+
+        {/* Pensum Widget Android */}
+        {onOpenPensumWidget && (
+          <button
+            onClick={onOpenPensumWidget}
+            className={`p-4 rounded-3xl border text-left transition-all cursor-pointer active:scale-95 ${
+              isDark
+                ? 'bg-[#131417] border-white/10 hover:border-white/20 shadow-md text-white'
+                : 'bg-white border-zinc-200/80 hover:border-zinc-300 shadow-xs text-zinc-900'
+            }`}
+          >
+            <div className="flex items-center justify-between mb-2">
+              <div
+                className={`p-2 rounded-xl border ${
+                  isDark
+                    ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400'
+                    : 'bg-emerald-50 border-emerald-200 text-emerald-700'
+                }`}
+              >
+                <GraduationCap className="w-4 h-4" />
+              </div>
+              <span
+                className={`text-[10px] font-mono uppercase font-bold border px-1.5 py-0.5 rounded-md ${
+                  isDark
+                    ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400'
+                    : 'bg-emerald-50 border-emerald-200 text-emerald-700'
+                }`}
+              >
+                Widget Android
+              </span>
+            </div>
+            <div className="font-extrabold text-xs uppercase">Avance de Pensum</div>
+            <p className={`text-[10px] mt-0.5 ${isDark ? 'text-zinc-400' : 'text-zinc-500'}`}>
+              Configura cuántas materias te faltan y sincronízalo con tu celular
+            </p>
+          </button>
+        )}
 
         {/* Pomodoro */}
         <button

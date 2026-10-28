@@ -35,6 +35,7 @@ interface SidebarNavProps {
   onOpenPomodoro?: () => void;
   onOpenThemes?: () => void;
   onOpenCalculator: () => void;
+  onOpenPensumWidget?: () => void;
   onOpenAIAssistant?: () => void;
   onTriggerCelebration: () => void;
   onLogout: () => void;
@@ -59,6 +60,7 @@ export const SidebarNav: React.FC<SidebarNavProps> = ({
   onOpenPomodoro,
   onOpenThemes,
   onOpenCalculator,
+  onOpenPensumWidget,
   onOpenAIAssistant,
   onTriggerCelebration,
   onLogout,
@@ -298,6 +300,26 @@ export const SidebarNav: React.FC<SidebarNavProps> = ({
               <Calculator className="w-4 h-4 text-blue-500 shrink-0" />
               <span>Notas y Promedios UEES</span>
             </button>
+
+            {onOpenPensumWidget && (
+              <button
+                onClick={() => {
+                  onOpenPensumWidget();
+                  if (onCloseMobileDrawer) onCloseMobileDrawer();
+                }}
+                className={`w-full text-left flex items-center justify-between px-3 py-2 rounded-xl text-xs transition-all cursor-pointer ${
+                  isDark ? 'text-zinc-300 hover:text-white hover:bg-white/5' : 'text-zinc-600 hover:text-zinc-900 hover:bg-zinc-100'
+                }`}
+              >
+                <span className="flex items-center space-x-3">
+                  <GraduationCap className="w-4 h-4 text-emerald-500 shrink-0" />
+                  <span>Widget de Pensum (Android)</span>
+                </span>
+                <span className="text-[10px] font-mono px-1.5 py-0.5 rounded-md bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-bold">
+                  Widget
+                </span>
+              </button>
+            )}
 
             <button
               onClick={() => {

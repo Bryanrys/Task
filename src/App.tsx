@@ -83,6 +83,8 @@ import { EditSubjectModal } from './components/EditSubjectModal';
 import { ShareAppModal } from './components/ShareAppModal';
 import { AIAssistantModal } from './components/AIAssistantModal';
 import { ThemeModal, THEME_PALETTES } from './components/ThemeModal';
+import { PensumConfigModal } from './components/PensumConfigModal';
+import { syncCurrentCycleSubjects } from './services/pensumWidgetService';
 import { ToolsAndLinksView } from './components/ToolsAndLinksView';
 import { UnifiedDashboardHeader } from './components/UnifiedDashboardHeader';
 import { triggerHaptic } from './services/hapticsService';
@@ -340,6 +342,7 @@ export default function App() {
   const [showLinksModal, setShowLinksModal] = useState<boolean>(false);
   const [showShareModal, setShowShareModal] = useState<boolean>(false);
   const [showThemeModal, setShowThemeModal] = useState<boolean>(false);
+  const [showPensumModal, setShowPensumModal] = useState<boolean>(false);
   const [editingSubject, setEditingSubject] = useState<SubjectItem | null>(null);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
@@ -782,6 +785,13 @@ export default function App() {
   const currentDashboard = useMemo(() => {
     return dashboards.find((d) => d.id === activeDashId) || dashboards[0];
   }, [dashboards, activeDashId]);
+
+  // Sincronizar materias activas del ciclo actual con el Widget de Android
+  useEffect(() => {
+    if (currentDashboard && currentDashboard.subjects && currentDashboard.subjects.length > 0) {
+      syncCurrentCycleSubjects(currentDashboard.subjects.length);
+    }
+  }, [currentDashboard?.subjects?.length]);
 
   // Current active week
   const currentWeek = useMemo(() => {
@@ -1924,6 +1934,7 @@ export default function App() {
           onOpenThemes={() => setShowThemeModal(true)}
           onOpenPomodoro={() => setShowPomodoroModal(true)}
           onOpenCalculator={() => setShowGradesModal(true)}
+          onOpenPensumWidget={() => setShowPensumModal(true)}
           onOpenAIAssistant={() => setShowAIAssistant(true)}
           onTriggerCelebration={handleTriggerCelebration}
           onLogout={handleLogout}
@@ -1988,6 +1999,10 @@ export default function App() {
                     }}
                     onOpenCalculator={() => {
                       setShowGradesModal(true);
+                      setShowMobileSidebar(false);
+                    }}
+                    onOpenPensumWidget={() => {
+                      setShowPensumModal(true);
                       setShowMobileSidebar(false);
                     }}
                     onOpenAIAssistant={() => {
@@ -2902,6 +2917,7 @@ export default function App() {
                         onOpenSchedule={() => setShowScheduleModal(true)}
                         onOpenLinks={() => setShowLinksModal(true)}
                         onOpenGrades={() => setShowGradesModal(true)}
+                        onOpenPensumWidget={() => setShowPensumModal(true)}
                         onOpenAIAssistant={() => setShowAIAssistant(true)}
                         onOpenPomodoro={() => setShowPomodoroModal(true)}
                         onOpenStartDate={() => setShowStartDateModal(true)}
@@ -3027,6 +3043,7 @@ export default function App() {
                 onOpenSchedule={() => setShowScheduleModal(true)}
                 onOpenLinks={() => setShowLinksModal(true)}
                 onOpenGrades={() => setShowGradesModal(true)}
+                onOpenPensumWidget={() => setShowPensumModal(true)}
                 onOpenAIAssistant={() => setShowAIAssistant(true)}
                 onOpenPomodoro={() => setShowPomodoroModal(true)}
                 onOpenStartDate={() => setShowStartDateModal(true)}
@@ -3455,6 +3472,15 @@ export default function App() {
         onSelectThemeMode={handleSelectThemeMode}
         activePalette={activePalette}
         onSelectPalette={handleSelectPalette}
+      />
+
+      {/* Modal de Configuración del Widget de Pensum (Android) */}
+      <PensumConfigModal
+        isOpen={showPensumModal}
+        onClose={() => setShowPensumModal(false)}
+        isDark={isDark}
+        activeSubjectsCount={currentDashboard.subjects.length}
+        onShowToast={setToastMessage}
       />
 
       {/* Floating Action Button (FAB) para KALI IA */}

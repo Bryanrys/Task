@@ -1,4 +1,5 @@
 import React from 'react';
+import { motion } from 'motion/react';
 import {
   X,
   Palette,
@@ -10,6 +11,7 @@ import {
   Smartphone,
   Eye,
 } from 'lucide-react';
+import { triggerHaptic } from '../services/hapticsService';
 
 export interface ThemePalette {
   id: string;
@@ -107,7 +109,16 @@ export const ThemeModal: React.FC<ThemeModalProps> = ({
       onClick={onClose}
       className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/60 backdrop-blur-sm animate-fadeIn"
     >
-      <div
+      <motion.div
+        drag="y"
+        dragConstraints={{ top: 0, bottom: 0 }}
+        dragElastic={{ top: 0, bottom: 0.6 }}
+        onDragEnd={(_, info) => {
+          if (info.offset.y > 90 || info.velocity.y > 350) {
+            triggerHaptic('light');
+            onClose();
+          }
+        }}
         onClick={(e) => e.stopPropagation()}
         className={`relative w-full max-w-lg rounded-3xl border shadow-2xl overflow-hidden flex flex-col max-h-[90dvh] transition-colors ${
           isDark
@@ -115,6 +126,9 @@ export const ThemeModal: React.FC<ThemeModalProps> = ({
             : 'bg-white border-zinc-200 text-zinc-900'
         }`}
       >
+        {/* Barra superior visual de agarre (Pill Handle para arrastrar hacia abajo) */}
+        <div className="w-12 h-1.5 rounded-full bg-zinc-400/40 dark:bg-white/20 mx-auto mt-2.5 -mb-1 cursor-grab active:cursor-grabbing shrink-0 select-none" />
+
         {/* Header */}
         <div className={`p-4 border-b flex items-center justify-between shrink-0 ${
           isDark ? 'border-white/10 bg-[#18191e]' : 'border-zinc-200 bg-zinc-50'
@@ -220,7 +234,7 @@ export const ThemeModal: React.FC<ThemeModalProps> = ({
               }`}>
                 Paleta de Color
               </label>
-              <span className={`text-[10px] font-mono ${isDark ? 'text-zinc-500' : 'text-zinc-400'}`}>
+              <span className={`text-[10px] font-mono ${isDark ? 'text-zinc-400' : 'text-zinc-500'}`}>
                 {THEME_PALETTES.length} estilos
               </span>
             </div>
@@ -325,7 +339,7 @@ export const ThemeModal: React.FC<ThemeModalProps> = ({
             Listo
           </button>
         </div>
-      </div>
+      </motion.div>
     </div>
   );
 };

@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import { motion } from 'motion/react';
+import { triggerHaptic } from '../services/hapticsService';
 
 interface PromptModalProps {
   isOpen: boolean;
@@ -32,10 +34,28 @@ export const PromptModal: React.FC<PromptModalProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fadeIn">
-      <div className={`relative w-full max-w-[360px] rounded-3xl p-6 shadow-2xl border transition-all ${
-        isDark ? 'bg-[#131417] border-white/10 text-white' : 'bg-white border-zinc-200 text-zinc-900'
-      }`}>
+    <div
+      onClick={onCancel}
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fadeIn"
+    >
+      <motion.div
+        drag="y"
+        dragConstraints={{ top: 0, bottom: 0 }}
+        dragElastic={{ top: 0, bottom: 0.6 }}
+        onDragEnd={(_, info) => {
+          if (info.offset.y > 90 || info.velocity.y > 350) {
+            triggerHaptic('light');
+            onCancel();
+          }
+        }}
+        onClick={(e) => e.stopPropagation()}
+        className={`relative w-full max-w-[360px] rounded-3xl p-6 shadow-2xl border transition-all ${
+          isDark ? 'bg-[#131417] border-white/10 text-white' : 'bg-white border-zinc-200 text-zinc-900'
+        }`}
+      >
+        {/* Barra superior de arrastre */}
+        <div className="w-10 h-1 rounded-full bg-zinc-400/40 dark:bg-white/20 mx-auto -mt-2 mb-3 cursor-grab active:cursor-grabbing select-none" />
+
         <p className={`text-xs font-semibold mb-1 ${isDark ? 'text-zinc-400' : 'text-zinc-500'}`}>{title}</p>
         <p className="text-sm font-bold mb-4">{message}</p>
 
@@ -78,7 +98,7 @@ export const PromptModal: React.FC<PromptModalProps> = ({
             Aceptar
           </button>
         </div>
-      </div>
+      </motion.div>
     </div>
   );
 };
@@ -109,10 +129,28 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fadeIn">
-      <div className={`relative w-full max-w-[340px] rounded-3xl p-6 text-center shadow-2xl border transition-all ${
-        isDark ? 'bg-[#131417] border-white/10 text-white' : 'bg-white border-zinc-200 text-zinc-900'
-      }`}>
+    <div
+      onClick={onCancel}
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fadeIn"
+    >
+      <motion.div
+        drag="y"
+        dragConstraints={{ top: 0, bottom: 0 }}
+        dragElastic={{ top: 0, bottom: 0.6 }}
+        onDragEnd={(_, info) => {
+          if (info.offset.y > 90 || info.velocity.y > 350) {
+            triggerHaptic('light');
+            onCancel();
+          }
+        }}
+        onClick={(e) => e.stopPropagation()}
+        className={`relative w-full max-w-[340px] rounded-3xl p-6 text-center shadow-2xl border transition-all ${
+          isDark ? 'bg-[#131417] border-white/10 text-white' : 'bg-white border-zinc-200 text-zinc-900'
+        }`}
+      >
+        {/* Barra superior de arrastre */}
+        <div className="w-10 h-1 rounded-full bg-zinc-400/40 dark:bg-white/20 mx-auto -mt-2 mb-3 cursor-grab active:cursor-grabbing select-none" />
+
         <h3 className="text-base font-extrabold mb-1 tracking-tight">{title}</h3>
         {subtitle && <p className={`text-xs font-medium mb-6 ${isDark ? 'text-zinc-400' : 'text-zinc-500'}`}>{subtitle}</p>}
 
@@ -138,7 +176,7 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
             {cancelText}
           </button>
         </div>
-      </div>
+      </motion.div>
     </div>
   );
 };

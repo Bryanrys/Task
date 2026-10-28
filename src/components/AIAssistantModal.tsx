@@ -1,4 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { motion } from 'motion/react';
+import { triggerHaptic } from '../services/hapticsService';
 import {
   X,
   Sparkles,
@@ -307,14 +309,30 @@ export const AIAssistantModal: React.FC<AIAssistantModalProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-black/85 backdrop-blur-md animate-fadeIn">
-      <div
+    <div
+      onClick={onClose}
+      className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-black/85 backdrop-blur-md animate-fadeIn"
+    >
+      <motion.div
+        drag="y"
+        dragConstraints={{ top: 0, bottom: 0 }}
+        dragElastic={{ top: 0, bottom: 0.6 }}
+        onDragEnd={(_, info) => {
+          if (info.offset.y > 90 || info.velocity.y > 350) {
+            triggerHaptic('light');
+            onClose();
+          }
+        }}
+        onClick={(e) => e.stopPropagation()}
         className={`relative w-full max-w-2xl h-[94dvh] sm:h-[85vh] flex flex-col rounded-3xl border shadow-2xl overflow-hidden transition-colors ${
           isDark
             ? 'bg-[#131417] border-white/10 text-white'
             : 'bg-white border-zinc-200 text-zinc-900'
         }`}
       >
+        {/* Barra superior visual de agarre (Pill Handle para arrastrar hacia abajo) */}
+        <div className="w-12 h-1.5 rounded-full bg-zinc-400/40 dark:bg-white/20 mx-auto mt-2.5 -mb-1 cursor-grab active:cursor-grabbing shrink-0 select-none" />
+
         {/* Header KALI */}
         <div className={`p-3.5 sm:p-4 border-b flex items-center justify-between shrink-0 ${
           isDark ? 'border-white/10 bg-[#18191e]' : 'border-zinc-200 bg-zinc-50'
@@ -458,7 +476,7 @@ export const AIAssistantModal: React.FC<AIAssistantModalProps> = ({
               </div>
             )}
 
-            <p className="text-[10px] text-stone-500">
+            <p className={`text-[10px] ${isDark ? 'text-zinc-400' : 'text-zinc-500'}`}>
               Tu clave se almacena únicamente en tu navegador/dispositivo y no se comparte con nadie.
             </p>
           </div>
@@ -647,7 +665,7 @@ export const AIAssistantModal: React.FC<AIAssistantModalProps> = ({
                       className={`text-[9px] font-mono ${
                         isUser
                           ? isDark ? 'text-zinc-600' : 'text-zinc-400'
-                          : isDark ? 'text-zinc-500' : 'text-zinc-500'
+                          : isDark ? 'text-zinc-400' : 'text-zinc-500'
                       }`}
                     >
                       {msg.timestamp}
@@ -715,7 +733,7 @@ export const AIAssistantModal: React.FC<AIAssistantModalProps> = ({
             </button>
           </form>
         </div>
-      </div>
+      </motion.div>
     </div>
   );
 };

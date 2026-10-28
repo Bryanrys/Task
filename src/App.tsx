@@ -85,6 +85,7 @@ import { AIAssistantModal } from './components/AIAssistantModal';
 import { ThemeModal, THEME_PALETTES } from './components/ThemeModal';
 import { ToolsAndLinksView } from './components/ToolsAndLinksView';
 import { UnifiedDashboardHeader } from './components/UnifiedDashboardHeader';
+import { triggerHaptic } from './services/hapticsService';
 import { getDeadlineStatus } from './utils/deadline';
 import { formatOrResolveWeekDateRange, computeWeekRangeFromDate } from './utils/dateRange';
 import {
@@ -1052,6 +1053,12 @@ export default function App() {
   const handleToggleTask = (subjectId: string, taskId: string) => {
     if (!currentDashboard || !currentWeek) return;
 
+    const currentTasksForHaptic = currentWeek.subjectTasks[subjectId] || [];
+    const taskTarget = currentTasksForHaptic.find((t) => t.id === taskId);
+    if (taskTarget) {
+      triggerHaptic(!taskTarget.completed ? 'success' : 'light');
+    }
+
     setDashboards((prev) =>
       prev.map((dash) => {
         if (dash.id !== currentDashboard.id) return dash;
@@ -1998,8 +2005,8 @@ export default function App() {
           )}
         </AnimatePresence>
 
-        {/* Main Content Area (Right side, scrollable) con soporte Edge-to-Edge puro */}
-        <main className="flex-1 flex flex-col min-w-0 overflow-y-auto min-h-screen px-4 md:px-8 py-5 pt-[max(env(safe-area-inset-top),1.25rem)] pb-[max(env(safe-area-inset-bottom),1.25rem)]">
+        {/* Main Content Area (Right side, scrollable) con soporte Edge-to-Edge puro y espacio inferior para FAB */}
+        <main className="flex-1 flex flex-col min-w-0 overflow-y-auto min-h-screen px-4 md:px-8 py-5 pt-[max(env(safe-area-inset-top),1.25rem)] pb-[max(env(safe-area-inset-bottom),5.5rem)]">
           {/* Top Header Bar matching Neo-Fintech / Carbal Minimalist Style */}
           <header className={`flex flex-wrap items-center justify-between gap-3 mb-6 pb-4 border-b transition-colors ${
             isDark ? 'border-white/5' : 'border-zinc-200/80'
@@ -2031,7 +2038,7 @@ export default function App() {
                     Dashboard Académico
                   </h1>
                   <p className={`text-[10px] font-mono -mt-0.5 ${
-                    isDark ? 'text-zinc-500' : 'text-zinc-400'
+                    isDark ? 'text-zinc-400' : 'text-zinc-500'
                   }`}>
                     UEES • Ciclo {currentDashboard.startDate || '2026'}
                   </p>
@@ -2522,7 +2529,7 @@ export default function App() {
                             setToastMessage('Nota rápida eliminada');
                           }}
                           className={`p-1 rounded transition-colors cursor-pointer ${
-                            isDark ? 'text-zinc-500 hover:text-white' : 'text-zinc-400 hover:text-zinc-900'
+                            isDark ? 'text-zinc-400 hover:text-white' : 'text-zinc-500 hover:text-zinc-900'
                           }`}
                           title="Eliminar nota"
                         >
@@ -2583,7 +2590,7 @@ export default function App() {
                             onClick={() => setEditingSubject(subject)}
                             title={`Editar nombre de "${subject.name}"`}
                             className={`p-1 rounded transition-colors cursor-pointer shrink-0 ${
-                              isDark ? 'text-zinc-500 hover:text-white' : 'text-zinc-400 hover:text-zinc-900'
+                              isDark ? 'text-zinc-400 hover:text-white' : 'text-zinc-500 hover:text-zinc-900'
                             }`}
                           >
                             <Edit2 className="w-3 h-3" />

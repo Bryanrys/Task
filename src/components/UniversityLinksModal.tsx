@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
+import { motion } from 'motion/react';
 import { X, ExternalLink, Plus, Trash2, Globe, GraduationCap, FolderGit2, Mail, MessageSquare } from 'lucide-react';
+import { triggerHaptic } from '../services/hapticsService';
 
 export interface UniversityLinkItem {
   id: string;
@@ -139,14 +141,30 @@ export const UniversityLinksModal: React.FC<UniversityLinksModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-sm animate-fadeIn">
-      <div
+    <div
+      onClick={onClose}
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-sm animate-fadeIn"
+    >
+      <motion.div
+        drag="y"
+        dragConstraints={{ top: 0, bottom: 0 }}
+        dragElastic={{ top: 0, bottom: 0.6 }}
+        onDragEnd={(_, info) => {
+          if (info.offset.y > 90 || info.velocity.y > 350) {
+            triggerHaptic('light');
+            onClose();
+          }
+        }}
+        onClick={(e) => e.stopPropagation()}
         className={`relative w-full max-w-sm rounded-3xl p-6 border shadow-2xl transition-colors ${
           isDark
             ? 'bg-[#0a0d17] border-white/10 text-stone-100'
             : 'bg-white border-stone-200 text-stone-900'
         }`}
       >
+        {/* Barra superior de arrastre */}
+        <div className="w-10 h-1 rounded-full bg-zinc-400/40 dark:bg-white/20 mx-auto -mt-2 mb-3 cursor-grab active:cursor-grabbing select-none" />
+
         {/* Header */}
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
@@ -266,7 +284,7 @@ export const UniversityLinksModal: React.FC<UniversityLinksModalProps> = ({
         >
           Cerrar
         </button>
-      </div>
+      </motion.div>
     </div>
   );
 };

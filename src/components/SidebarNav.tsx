@@ -16,7 +16,9 @@ import {
   Moon,
   Laptop,
   Palette,
+  Fingerprint,
 } from 'lucide-react';
+import { isBiometricUnlockEnabled } from '../services/biometricService';
 import { SubjectItem } from '../types';
 
 interface SidebarNavProps {
@@ -367,10 +369,20 @@ export const SidebarNav: React.FC<SidebarNavProps> = ({
             </div>
             <div className="min-w-0">
               <p className={`text-xs font-bold truncate ${isDark ? 'text-white' : 'text-black'}`}>{loggedUser}</p>
-              <p className="text-[10px] text-emerald-500 flex items-center font-bold">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 mr-1.5 inline-block animate-pulse shrink-0" />
-                En línea
-              </p>
+              <div className="flex items-center gap-2">
+                <p className="text-[10px] text-emerald-500 flex items-center font-bold">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 mr-1.5 inline-block animate-pulse shrink-0" />
+                  En línea
+                </p>
+                {isBiometricUnlockEnabled() && (
+                  <span className={`text-[9px] font-mono px-1 rounded flex items-center gap-0.5 border ${
+                    isDark ? 'bg-white/10 text-zinc-300 border-white/15' : 'bg-zinc-100 text-zinc-700 border-zinc-200'
+                  }`} title="Desbloqueo biométrico activo">
+                    <Fingerprint className="w-2.5 h-2.5 text-emerald-400" />
+                    <span>Huella</span>
+                  </span>
+                )}
+              </div>
             </div>
           </div>
           <button

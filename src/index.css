@@ -47,12 +47,16 @@ button.bg-white svg,
 
 /* Asegurar que botones oscuros activos tengan texto blanco legible */
 button.bg-zinc-950,
+button.bg-zinc-900,
 button.bg-black,
 a.bg-zinc-950,
+a.bg-zinc-900,
 a.bg-black,
 button.bg-zinc-950 span,
+button.bg-zinc-900 span,
 button.bg-black span,
 button.bg-zinc-950 svg,
+button.bg-zinc-900 svg,
 button.bg-black svg {
   color: #ffffff !important;
 }
@@ -354,6 +358,16 @@ html[data-palette="aesthetic"]:not(.dark) .neo-card-hero {
 }
 html[data-palette="aesthetic"]:not(.dark) .neo-card-hero span,
 html[data-palette="aesthetic"]:not(.dark) .neo-card-hero div,
-html[data-palette="aesthetic"]:not(.dark) .neo-card-hero p {
+html[data-palette="aesthetic"]:not(.dark) .neo-card-hero p,
+html[data-palette="aesthetic"]:not(.dark) .neo-card-hero button,
+html[data-palette="aesthetic"]:not(.dark) .neo-card-hero a,
+html[data-palette="aesthetic"]:not(.dark) .neo-card-hero .text-white {
   color: #2e1065 !important;
+}
+html[data-palette="aesthetic"]:not(.dark) .neo-card-hero .bg-white {
+  background-color: #9333ea !important;
+}
+html[data-palette="aesthetic"]:not(.dark) .neo-card-hero .border-white\/10,
+html[data-palette="aesthetic"]:not(.dark) .neo-card-hero .border-white\/20 {
+  border-color: rgba(147, 51, 234, 0.25) !important;
 }

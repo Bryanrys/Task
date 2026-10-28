@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
+import { motion } from 'motion/react';
 import { X, Copy, Check, Share2, Globe, ExternalLink, MessageCircle, Edit3, Sparkles, CheckCircle2, Smartphone } from 'lucide-react';
+import { triggerHaptic } from '../services/hapticsService';
 
 export const PRESET_HOSTING_OPTIONS = [
   {
@@ -113,14 +115,30 @@ export const ShareAppModal: React.FC<ShareAppModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-xs animate-fadeIn">
-      <div
+    <div
+      onClick={onClose}
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-xs animate-fadeIn"
+    >
+      <motion.div
+        drag="y"
+        dragConstraints={{ top: 0, bottom: 0 }}
+        dragElastic={{ top: 0, bottom: 0.6 }}
+        onDragEnd={(_, info) => {
+          if (info.offset.y > 90 || info.velocity.y > 350) {
+            triggerHaptic('light');
+            onClose();
+          }
+        }}
+        onClick={(e) => e.stopPropagation()}
         className={`relative w-full max-w-sm rounded-3xl p-6 border shadow-2xl transition-all ${
           isDark
             ? 'bg-[#131417] border-white/10 text-white'
             : 'bg-white border-zinc-200 text-zinc-900'
         }`}
       >
+        {/* Barra superior de arrastre */}
+        <div className="w-10 h-1 rounded-full bg-zinc-400/40 dark:bg-white/20 mx-auto -mt-2 mb-3 cursor-grab active:cursor-grabbing select-none" />
+
         {/* Close Button */}
         <button
           onClick={onClose}
@@ -330,7 +348,7 @@ export const ShareAppModal: React.FC<ShareAppModalProps> = ({
                 <span className={`block text-[10px] uppercase font-mono tracking-wider ${
                   isDark ? 'text-zinc-400' : 'text-zinc-500'
                 }`}>Tamaño</span>
-                <span className="block text-xs sm:text-sm font-bold font-mono mt-0.5">45.16 MB</span>
+                <span className="block text-xs sm:text-sm font-bold font-mono mt-0.5">4.4 MB</span>
               </div>
               <div className="p-2 sm:p-2.5">
                 <span className={`block text-[10px] uppercase font-mono tracking-wider ${
@@ -343,7 +361,7 @@ export const ShareAppModal: React.FC<ShareAppModalProps> = ({
               isDark ? 'border-white/10 bg-black/20 text-zinc-400' : 'border-zinc-200 bg-white/50 text-zinc-600'
             }`}>
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-              <span>Compilado: Lunes, 26 Oct 2026 • 08:26 PM (GMT-6)</span>
+              <span>Compilación Oficial Actualizada (GMT-6)</span>
             </div>
           </div>
 
@@ -399,10 +417,10 @@ export const ShareAppModal: React.FC<ShareAppModalProps> = ({
         </div>
 
         {/* Footer info note */}
-        <p className={`text-[10px] text-center mt-3 font-mono ${isDark ? 'text-zinc-500' : 'text-zinc-400'}`}>
+        <p className={`text-[10px] text-center mt-3 font-mono ${isDark ? 'text-zinc-400' : 'text-zinc-500'}`}>
           Tip: Puedes modificar el enlace arriba en cualquier momento pulsando &quot;Cambiar enlace&quot;.
         </p>
-      </div>
+      </motion.div>
     </div>
   );
 };

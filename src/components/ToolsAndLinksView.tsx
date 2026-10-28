@@ -329,7 +329,7 @@ export const ToolsAndLinksView: React.FC<ToolsAndLinksViewProps> = ({
             })
           ) : (
             <div className={`p-3 text-center rounded-2xl border text-xs italic ${
-              isDark ? 'border-white/5 text-zinc-500 bg-white/[0.02]' : 'border-zinc-200 text-zinc-400 bg-zinc-50'
+              isDark ? 'border-white/5 text-zinc-400 bg-white/[0.02]' : 'border-zinc-200 text-zinc-500 bg-zinc-50'
             }`}>
               🎉 ¡Día libre o sin clases registradas para {currentDayName}! Toca "Ver Todo / Editar" para configurar tu horario semanal.
             </div>

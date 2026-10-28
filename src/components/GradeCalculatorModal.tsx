@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import { motion } from 'motion/react';
+import { triggerHaptic } from '../services/hapticsService';
 import {
   X,
   Calculator,
@@ -130,14 +132,30 @@ export const GradeCalculatorModal: React.FC<GradeCalculatorModalProps> = ({
   const currentCalc = calculateUeesGrade(currentGrade, passingGrade);
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/85 backdrop-blur-sm animate-fadeIn">
-      <div
+    <div
+      onClick={onClose}
+      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/85 backdrop-blur-sm animate-fadeIn"
+    >
+      <motion.div
+        drag="y"
+        dragConstraints={{ top: 0, bottom: 0 }}
+        dragElastic={{ top: 0, bottom: 0.6 }}
+        onDragEnd={(_, info) => {
+          if (info.offset.y > 90 || info.velocity.y > 350) {
+            triggerHaptic('light');
+            onClose();
+          }
+        }}
+        onClick={(e) => e.stopPropagation()}
         className={`relative w-full max-w-4xl max-h-[92vh] flex flex-col rounded-3xl border shadow-2xl overflow-hidden transition-colors ${
           isDark
             ? 'bg-[#0a0d17] border-white/10 text-stone-100'
             : 'bg-white border-stone-200 text-stone-900'
         }`}
       >
+        {/* Barra superior de arrastre */}
+        <div className="w-12 h-1.5 rounded-full bg-zinc-400/40 dark:bg-white/20 mx-auto mt-2.5 -mb-1 cursor-grab active:cursor-grabbing shrink-0 select-none" />
+
         {/* Header Modal */}
         <div className={`p-4 sm:p-5 border-b flex items-center justify-between shrink-0 ${
           isDark ? 'border-white/10 bg-[#16171c]' : 'border-zinc-200 bg-zinc-50'
@@ -504,7 +522,7 @@ export const GradeCalculatorModal: React.FC<GradeCalculatorModalProps> = ({
                         : 'bg-white border-zinc-300 text-zinc-900 focus:border-zinc-900'
                     }`}
                   />
-                  <span className={`text-[10px] block text-center mt-1 ${isDark ? 'text-zinc-500' : 'text-zinc-400'}`}>Primer cómputo</span>
+                  <span className={`text-[10px] block text-center mt-1 ${isDark ? 'text-zinc-400' : 'text-zinc-500'}`}>Primer cómputo</span>
                 </div>
 
                 {/* Registro 2 */}
@@ -539,7 +557,7 @@ export const GradeCalculatorModal: React.FC<GradeCalculatorModalProps> = ({
                         : 'bg-white border-zinc-300 text-zinc-900 focus:border-zinc-900'
                     }`}
                   />
-                  <span className={`text-[10px] block text-center mt-1 ${isDark ? 'text-zinc-500' : 'text-zinc-400'}`}>Segundo cómputo</span>
+                  <span className={`text-[10px] block text-center mt-1 ${isDark ? 'text-zinc-400' : 'text-zinc-500'}`}>Segundo cómputo</span>
                 </div>
 
                 {/* Registro 3 */}
@@ -574,7 +592,7 @@ export const GradeCalculatorModal: React.FC<GradeCalculatorModalProps> = ({
                         : 'bg-white border-zinc-300 text-zinc-900 focus:border-zinc-900'
                     }`}
                   />
-                  <span className={`text-[10px] block text-center mt-1 ${isDark ? 'text-zinc-500' : 'text-zinc-400'}`}>Evaluación final</span>
+                  <span className={`text-[10px] block text-center mt-1 ${isDark ? 'text-zinc-400' : 'text-zinc-500'}`}>Evaluación final</span>
                 </div>
               </div>
 
@@ -730,7 +748,7 @@ export const GradeCalculatorModal: React.FC<GradeCalculatorModalProps> = ({
             Cerrar y Aplicar ✓
           </button>
         </div>
-      </div>
+      </motion.div>
     </div>
   );
 };

@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
+import { motion } from 'motion/react';
 import { Calendar, Clock, Check } from 'lucide-react';
+import { triggerHaptic } from '../services/hapticsService';
 
 interface StartDateModalProps {
   isOpen: boolean;
@@ -51,8 +53,26 @@ export const StartDateModal: React.FC<StartDateModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-xs animate-fadeIn">
-      <div className="relative w-full max-w-[340px] bg-[#131417] border border-white/10 rounded-3xl p-6 shadow-2xl text-white">
+    <div
+      onClick={onClose}
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-xs animate-fadeIn"
+    >
+      <motion.div
+        drag="y"
+        dragConstraints={{ top: 0, bottom: 0 }}
+        dragElastic={{ top: 0, bottom: 0.6 }}
+        onDragEnd={(_, info) => {
+          if (info.offset.y > 90 || info.velocity.y > 350) {
+            triggerHaptic('light');
+            onClose();
+          }
+        }}
+        onClick={(e) => e.stopPropagation()}
+        className="relative w-full max-w-[340px] bg-[#131417] border border-white/10 rounded-3xl p-6 shadow-2xl text-white"
+      >
+        {/* Barra superior de arrastre */}
+        <div className="w-10 h-1 rounded-full bg-zinc-400/40 dark:bg-white/20 mx-auto -mt-2 mb-3 cursor-grab active:cursor-grabbing select-none" />
+
         <div className="flex items-center gap-2 mb-3">
           <div className="p-2 rounded-xl bg-white/5 border border-white/10 text-white">
             <Calendar className="w-5 h-5" />
@@ -109,7 +129,7 @@ export const StartDateModal: React.FC<StartDateModalProps> = ({
             </button>
           </div>
         </form>
-      </div>
+      </motion.div>
     </div>
   );
 };

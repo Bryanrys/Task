@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
+import { motion } from 'motion/react';
 import { X, Calendar, Clock, MapPin, Plus, Trash2, Video, Pencil, ExternalLink, ClipboardPaste } from 'lucide-react';
+import { triggerHaptic } from '../services/hapticsService';
 
 export interface ClassSlot {
   id: string;
@@ -223,14 +225,30 @@ export const ClassScheduleModal: React.FC<ClassScheduleModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-xs animate-fadeIn">
-      <div
+    <div
+      onClick={onClose}
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-xs animate-fadeIn"
+    >
+      <motion.div
+        drag="y"
+        dragConstraints={{ top: 0, bottom: 0 }}
+        dragElastic={{ top: 0, bottom: 0.6 }}
+        onDragEnd={(_, info) => {
+          if (info.offset.y > 90 || info.velocity.y > 350) {
+            triggerHaptic('light');
+            onClose();
+          }
+        }}
+        onClick={(e) => e.stopPropagation()}
         className={`relative w-full max-w-md rounded-3xl p-6 border shadow-2xl transition-colors max-h-[90vh] flex flex-col ${
           isDark
             ? 'bg-[#131417] border-white/10 text-white'
             : 'bg-white border-zinc-200 text-zinc-900'
         }`}
       >
+        {/* Barra superior de arrastre */}
+        <div className="w-10 h-1 rounded-full bg-zinc-400/40 dark:bg-white/20 mx-auto -mt-2 mb-3 cursor-grab active:cursor-grabbing select-none" />
+
         {/* Header */}
         <div className="flex items-center justify-between mb-4 shrink-0">
           <div className="flex items-center gap-2">
@@ -335,7 +353,7 @@ export const ClassScheduleModal: React.FC<ClassScheduleModalProps> = ({
                         : 'bg-white border-zinc-200 text-zinc-900 focus:border-zinc-900'
                     }`}
                   />
-                  <Clock className={`w-3.5 h-3.5 absolute left-2.5 top-2 ${isDark ? 'text-zinc-500' : 'text-zinc-400'}`} />
+                  <Clock className={`w-3.5 h-3.5 absolute left-2.5 top-2 ${isDark ? 'text-zinc-400' : 'text-zinc-500'}`} />
                 </div>
               </div>
 
@@ -353,7 +371,7 @@ export const ClassScheduleModal: React.FC<ClassScheduleModalProps> = ({
                         : 'bg-white border-zinc-200 text-zinc-900 focus:border-zinc-900'
                     }`}
                   />
-                  <MapPin className={`w-3.5 h-3.5 absolute left-2.5 top-2 ${isDark ? 'text-zinc-500' : 'text-zinc-400'}`} />
+                  <MapPin className={`w-3.5 h-3.5 absolute left-2.5 top-2 ${isDark ? 'text-zinc-400' : 'text-zinc-500'}`} />
                 </div>
               </div>
 
@@ -386,7 +404,7 @@ export const ClassScheduleModal: React.FC<ClassScheduleModalProps> = ({
                         : 'bg-white border-zinc-200 text-zinc-900 focus:border-zinc-900'
                     }`}
                   />
-                  <Video className={`w-3.5 h-3.5 absolute left-2.5 top-2 ${isDark ? 'text-zinc-500' : 'text-zinc-400'}`} />
+                  <Video className={`w-3.5 h-3.5 absolute left-2.5 top-2 ${isDark ? 'text-zinc-400' : 'text-zinc-500'}`} />
                 </div>
               </div>
 
@@ -421,7 +439,7 @@ export const ClassScheduleModal: React.FC<ClassScheduleModalProps> = ({
           <div className="space-y-2.5 font-mono">
             {currentDayClasses.length === 0 ? (
               <div className={`p-6 text-center text-xs italic rounded-2xl border ${
-                isDark ? 'border-white/5 text-zinc-500 bg-white/[0.01]' : 'border-zinc-200 text-zinc-400 bg-zinc-50'
+                isDark ? 'border-white/5 text-zinc-400 bg-white/[0.01]' : 'border-zinc-200 text-zinc-500 bg-zinc-50'
               }`}>
                 No tienes clases programadas para el {activeDay.toLowerCase()}.
               </div>
@@ -558,7 +576,7 @@ export const ClassScheduleModal: React.FC<ClassScheduleModalProps> = ({
             Cerrar
           </button>
         </div>
-      </div>
+      </motion.div>
     </div>
   );
 };

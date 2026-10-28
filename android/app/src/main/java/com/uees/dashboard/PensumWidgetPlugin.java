@@ -9,6 +9,22 @@ import com.getcapacitor.annotation.CapacitorPlugin;
 @CapacitorPlugin(name = "PensumWidget")
 public class PensumWidgetPlugin extends Plugin {
 
+    private int extractInt(PluginCall call, String key, int fallback) {
+        try {
+            JSObject data = call.getData();
+            if (data != null && data.has(key)) {
+                Object val = data.opt(key);
+                if (val instanceof Number) {
+                    return ((Number) val).intValue();
+                } else if (val instanceof String) {
+                    return Integer.parseInt((String) val);
+                }
+            }
+        } catch (Exception ignored) {}
+        Integer res = call.getInt(key, fallback);
+        return res != null ? res : fallback;
+    }
+
     @PluginMethod
     public void getPensumData(PluginCall call) {
         try {
@@ -26,9 +42,9 @@ public class PensumWidgetPlugin extends Plugin {
     @PluginMethod
     public void updatePensumData(PluginCall call) {
         try {
-            int total = call.getInt("total", 45);
-            int aprobadas = call.getInt("aprobadas", 28);
-            int enCurso = call.getInt("enCurso", 5);
+            int total = extractInt(call, "total", 45);
+            int aprobadas = extractInt(call, "aprobadas", 28);
+            int enCurso = extractInt(call, "enCurso", 5);
 
             PensumWidgetProvider.saveAndRefresh(getContext(), total, aprobadas, enCurso);
 

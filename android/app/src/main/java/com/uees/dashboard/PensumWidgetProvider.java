@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
+import android.os.Bundle;
 import android.widget.RemoteViews;
 
 import java.util.Locale;
@@ -21,8 +22,34 @@ public class PensumWidgetProvider extends AppWidgetProvider {
 
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
+        if (appWidgetIds == null) return;
         for (int appWidgetId : appWidgetIds) {
             updateAppWidget(context, appWidgetManager, appWidgetId);
+        }
+    }
+
+    @Override
+    public void onAppWidgetOptionsChanged(Context context, AppWidgetManager appWidgetManager, int appWidgetId, Bundle newOptions) {
+        super.onAppWidgetOptionsChanged(context, appWidgetManager, appWidgetId, newOptions);
+        updateAppWidget(context, appWidgetManager, appWidgetId);
+    }
+
+    @Override
+    public void onReceive(Context context, Intent intent) {
+        super.onReceive(context, intent);
+        String action = intent != null ? intent.getAction() : null;
+        if (AppWidgetManager.ACTION_APPWIDGET_UPDATE.equals(action) ||
+            "android.appwidget.action.APPWIDGET_ENABLED".equals(action)) {
+            AppWidgetManager manager = AppWidgetManager.getInstance(context);
+            if (manager != null) {
+                ComponentName widgetComponent = new ComponentName(context, PensumWidgetProvider.class);
+                int[] widgetIds = manager.getAppWidgetIds(widgetComponent);
+                if (widgetIds != null) {
+                    for (int id : widgetIds) {
+                        updateAppWidget(context, manager, id);
+                    }
+                }
+            }
         }
     }
 
@@ -50,7 +77,7 @@ public class PensumWidgetProvider extends AppWidgetProvider {
 
         // Click en cualquier parte del widget abre la aplicación
         Intent intent = new Intent(context, MainActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
         int flags = PendingIntent.FLAG_UPDATE_CURRENT;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             flags |= PendingIntent.FLAG_IMMUTABLE;
@@ -77,6 +104,13 @@ public class PensumWidgetProvider extends AppWidgetProvider {
                 for (int id : widgetIds) {
                     updateAppWidget(context, manager, id);
                 }
+                // Enviar broadcast del sistema para sincronizar cualquier launcher
+                try {
+                    Intent updateIntent = new Intent(context, PensumWidgetProvider.class);
+                    updateIntent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
+                    updateIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, widgetIds);
+                    context.sendBroadcast(updateIntent);
+                } catch (Exception ignored) {}
             }
         }
     }

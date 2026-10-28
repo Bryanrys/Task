@@ -50,7 +50,7 @@ export const getPensumData = async (defaultEnCurso = 5): Promise<PensumData> => 
 
   if (aprobadas > total) aprobadas = total;
   const faltantes = Math.max(0, total - aprobadas - enCurso);
-  const porcentaje = total > 0 ? Math.round(((aprobadas + (enCurso * 0.5)) / total) * 100) : 0;
+  const porcentaje = total > 0 ? Math.min(100, Math.max(0, Math.round(((aprobadas + (enCurso * 0.5)) / total) * 100))) : 0;
   const ciclos = enCurso > 0 ? (faltantes / enCurso).toFixed(1) : '--';
 
   return {
@@ -79,7 +79,7 @@ export const savePensumData = async (
   }
 
   const faltantes = Math.max(0, total - aprobadas - enCurso);
-  const porcentaje = total > 0 ? Math.round(((aprobadas + (enCurso * 0.5)) / total) * 100) : 0;
+  const porcentaje = total > 0 ? Math.min(100, Math.max(0, Math.round(((aprobadas + (enCurso * 0.5)) / total) * 100))) : 0;
   const ciclos = enCurso > 0 ? (faltantes / enCurso).toFixed(1) : '--';
 
   return {

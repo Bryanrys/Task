@@ -37,7 +37,7 @@ export const PensumConfigModal: React.FC<PensumConfigModalProps> = ({
   if (!isOpen) return null;
 
   const faltantes = Math.max(0, total - aprobadas - enCurso);
-  const porcentaje = total > 0 ? Math.round(((aprobadas + (enCurso * 0.5)) / total) * 100) : 0;
+  const porcentaje = total > 0 ? Math.min(100, Math.max(0, Math.round(((aprobadas + (enCurso * 0.5)) / total) * 100))) : 0;
   const ciclosRest = enCurso > 0 ? (faltantes / enCurso).toFixed(1) : '--';
 
   const handleSave = async (e?: React.FormEvent) => {

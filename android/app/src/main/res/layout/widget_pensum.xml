@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:background="@drawable/widget_bg"
     android:orientation="vertical"
-    android:padding="14dp">
+    android:padding="10dp">
 
     <!-- Fila Superior: Encabezado e Insignia -->
     <LinearLayout
@@ -18,23 +18,23 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:fontFamily="sans-serif-black"
             android:text="🎓 PENSUM UEES"
             android:textColor="#FFFFFF"
-            android:textSize="11sp" />
+            android:textSize="10sp"
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/widget_pct_badge"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/widget_badge_bg"
-            android:paddingStart="8dp"
-            android:paddingTop="3dp"
-            android:paddingEnd="8dp"
-            android:paddingBottom="3dp"
+            android:paddingStart="6dp"
+            android:paddingTop="2dp"
+            android:paddingEnd="6dp"
+            android:paddingBottom="2dp"
             android:text="68% completado"
             android:textColor="#34D399"
-            android:textSize="10sp"
+            android:textSize="9sp"
             android:textStyle="bold" />
     </LinearLayout>
 
@@ -42,12 +42,10 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:fontFamily="sans-serif-medium"
-        android:letterSpacing="0.05"
+        android:layout_marginTop="4dp"
         android:text="META DE GRADUACIÓN"
         android:textColor="#9CA3AF"
-        android:textSize="9sp" />
+        android:textSize="8sp" />
 
     <!-- Fila de Métrica Principal -->
     <LinearLayout
@@ -60,33 +58,33 @@
             android:id="@+id/widget_faltantes"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:fontFamily="sans-serif-black"
             android:text="12"
             android:textColor="#FFFFFF"
-            android:textSize="24sp"
+            android:textSize="20sp"
             android:textStyle="bold" />
 
         <TextView
             android:id="@+id/widget_faltantes_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="6dp"
-            android:fontFamily="sans-serif"
+            android:layout_marginStart="5dp"
             android:text="materias por cursar"
             android:textColor="#D1D5DB"
-            android:textSize="12sp" />
+            android:textSize="11sp" />
     </LinearLayout>
 
-    <!-- Barra de Progreso -->
+    <!-- Barra de Progreso Segura -->
     <ProgressBar
         android:id="@+id/widget_progress"
-        style="?android:attr/progressBarStyleHorizontal"
+        style="@android:style/Widget.ProgressBar.Horizontal"
         android:layout_width="match_parent"
-        android:layout_height="6dp"
-        android:layout_marginTop="6dp"
-        android:layout_marginBottom="8dp"
+        android:layout_height="5dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginBottom="6dp"
         android:indeterminate="false"
         android:max="100"
+        android:maxHeight="6dp"
+        android:minHeight="3dp"
         android:progress="68"
         android:progressDrawable="@drawable/widget_progress_bar" />
 
@@ -100,19 +98,19 @@
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="4dp"
+            android:layout_marginEnd="3dp"
             android:layout_weight="1"
             android:background="@drawable/widget_capsule_bg"
             android:gravity="center"
             android:orientation="vertical"
-            android:padding="5dp">
+            android:padding="4dp">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="APROBADAS"
                 android:textColor="#9CA3AF"
-                android:textSize="8sp" />
+                android:textSize="7.5sp" />
 
             <TextView
                 android:id="@+id/widget_aprobadas"
@@ -120,7 +118,7 @@
                 android:layout_height="wrap_content"
                 android:text="28"
                 android:textColor="#34D399"
-                android:textSize="12sp"
+                android:textSize="11sp"
                 android:textStyle="bold" />
         </LinearLayout>
 
@@ -128,19 +126,19 @@
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="4dp"
+            android:layout_marginEnd="3dp"
             android:layout_weight="1"
             android:background="@drawable/widget_capsule_bg"
             android:gravity="center"
             android:orientation="vertical"
-            android:padding="5dp">
+            android:padding="4dp">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="EN CURSO"
                 android:textColor="#9CA3AF"
-                android:textSize="8sp" />
+                android:textSize="7.5sp" />
 
             <TextView
                 android:id="@+id/widget_en_curso"
@@ -148,7 +146,7 @@
                 android:layout_height="wrap_content"
                 android:text="5"
                 android:textColor="#60A5FA"
-                android:textSize="12sp"
+                android:textSize="11sp"
                 android:textStyle="bold" />
         </LinearLayout>
 
@@ -160,14 +158,14 @@
             android:background="@drawable/widget_capsule_bg"
             android:gravity="center"
             android:orientation="vertical"
-            android:padding="5dp">
+            android:padding="4dp">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="ESTIMADO"
                 android:textColor="#9CA3AF"
-                android:textSize="8sp" />
+                android:textSize="7.5sp" />
 
             <TextView
                 android:id="@+id/widget_ciclos"
@@ -175,7 +173,7 @@
                 android:layout_height="wrap_content"
                 android:text="~2.4 cic"
                 android:textColor="#FBBF24"
-                android:textSize="12sp"
+                android:textSize="11sp"
                 android:textStyle="bold" />
         </LinearLayout>
     </LinearLayout>
@@ -185,10 +183,10 @@
         android:id="@+id/widget_footer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="6dp"
+        android:layout_marginTop="4dp"
         android:gravity="center"
         android:text="Ciclo II / 2026 • Toca para abrir Dashboard"
         android:textColor="#6B7280"
-        android:textSize="9sp" />
+        android:textSize="8sp" />
 
 </LinearLayout>

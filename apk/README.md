@@ -6,7 +6,7 @@
 
 | 🏷️ Versión | 📦 Tamaño | 📱 Requerimientos | 📅 Día y Fecha | 🕒 Hora (GMT-6) |
 | :---: | :---: | :---: | :---: | :---: |
-| **v2.3 (Clásica Estable)** | **15.0 MB** | **Android 7.0 - Android 14+** | **Jueves, 29 de Octubre de 2026** | **09:38 PM** |
+| **v2.4 (Liquid Glass & Tono Nativo)** | **15.0 MB** | **Android 7.0 - Android 14+** | **Jueves, 29 de Octubre de 2026** | **09:55 PM** |
 
 [![Descargar APK Directo](https://img.shields.io/badge/Descargar-APK%20Directo%20(15.0%20MB)-000000?style=for-the-badge&logo=android&logoColor=white)](https://github.com/Bryanrys/Task/raw/main/apk/app-debug.apk)
 
@@ -14,7 +14,10 @@
 
 > ℹ️ **Identidad APK Multi-Dispositivo:** `0` (`com.uees.dashboard`)  
 > 📦 **Archivo:** [`apk/app-debug.apk`](./app-debug.apk)  
-> ✨ **Novedades v2.3 (Clásica Estable):** Versión clásica probada y estable restaurada al 100%. Mantiene el Widget Nativo para la Pantalla Principal de Android enfocado en **"Tareas que me hacen falta"** (muestra tareas pendientes, porcentaje de entregas, materias activas y detalle del próximo pendiente sin espacios vacíos), Autenticación por huella dactilar nativa (`BiometricPrompt`), cierre de modales por deslizamiento hacia abajo y retroalimentación háptica.  
+> ✨ **Novedades v2.4:**  
+> 1. **Sonido de Notificación Nativo del Celular:** Se configuró el canal de Android para usar el tono de notificación predeterminado del sistema (`Settings.System.DEFAULT_NOTIFICATION_URI`), eliminando pitidos sintéticos para que suene con el tono real asignado en tu smartphone.  
+> 2. **Nuevo Tema "Liquid Glass (Spatial)":** Añadido directamente en el selector de temas (`ThemeModal.tsx`), con fondos translúcidos líquidos, atmósfera bioluminiscente sutil y **botones activos en blanco liquid glass** con reflejo especular animado (Dashboard, semana activa, pestañas).  
+> 3. **Conservación de Funciones:** Widget nativo en pantalla de inicio de Android ("Tareas que me hacen falta"), biometría por huella dactilar, háptica y sincronización con Supabase.  
 > 🛡️ **Seguridad:** Compatible para actualización directa entre PC de escritorio y laptop sin requerir desinstalación.
 
 ---
@@ -23,7 +26,7 @@
 
 | Versión | Archivo Físico | Tamaño | Requerimientos | Fecha y Hora de Compilación | Enlace de Descarga Inmediata |
 | :--- | :--- | :---: | :---: | :---: | :--- |
-| **Última Versión Oficial (v2.3)** | [`app-debug.apk`](./app-debug.apk) | **15.0 MB** | **Android 7.0 a 14+** | **29 Oct 2026 — 09:38 PM** | 📥 **[Descargar APK Directo (Sin 404)](https://github.com/Bryanrys/Task/raw/main/apk/app-debug.apk)** |
+| **Última Versión Oficial (v2.4)** | [`app-debug.apk`](./app-debug.apk) | **15.0 MB** | **Android 7.0 a 14+** | **29 Oct 2026 — 09:55 PM** | 📥 **[Descargar APK Directo (Sin 404)](https://github.com/Bryanrys/Task/raw/main/apk/app-debug.apk)** |
 | **Página de Releases** | Releases y Tags | N/A | Android | Ver historial | 📦 **[Ver Releases en GitHub](https://github.com/Bryanrys/Task/releases)** |
 
 ---

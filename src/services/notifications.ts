@@ -55,27 +55,28 @@ export function getRemainingMsUntilNextReminder(): number {
   return Math.max(0, remaining);
 }
 
-// Ensure high-priority notification channel for Android (Heads-up banner like WhatsApp)
-export const ANDROID_CHANNEL_ID = 'academic_reminders_v2';
+// Ensure high-priority notification channel for Android (Heads-up banner like WhatsApp with System Default Sound)
+export const ANDROID_CHANNEL_ID = 'academic_system_sound_v1';
 let channelInitialized = false;
 
 export async function ensureAndroidChannel() {
   if (channelInitialized) return;
   try {
     if (Capacitor.isNativePlatform()) {
-      // Clean up previous channel that may have been created without sound resource
+      // Clean up previous channels that had hardcoded beep sound
+      await LocalNotifications.deleteChannel({ id: 'academic_reminders_v2' }).catch(() => { });
       await LocalNotifications.deleteChannel({ id: 'academic_high_priority' }).catch(() => { });
 
+      // Create new channel using device's default notification ringtone
       await LocalNotifications.createChannel({
         id: ANDROID_CHANNEL_ID,
         name: 'Recordatorios de Entregas',
-        description: 'Avisos destacados estilo banner emergente con timbre para entregas pendientes',
+        description: 'Avisos destacados con el tono de notificación nativo configurado en tu celular',
         importance: 5, // 5 = IMPORTANCE_HIGH / HEADS_UP
         visibility: 1, // VISIBILITY_PUBLIC (Shows on lockscreen)
-        sound: 'beep.wav',
         vibration: true,
         lights: true,
-        lightColor: '#facc15',
+        lightColor: '#38bdf8',
       });
       channelInitialized = true;
     }
@@ -227,7 +228,6 @@ export async function syncAndroidBackgroundSchedule(
           allowWhileIdle: true, // CRITICAL: Wakes up phone even in Android Doze Mode
         },
         channelId: ANDROID_CHANNEL_ID,
-        sound: 'beep.wav',
         smallIcon: 'ic_stat_icon_config_sample',
         actionTypeId: '',
         extra: null,
@@ -244,9 +244,6 @@ export async function syncAndroidBackgroundSchedule(
 
 // Immediate notification trigger (Web & Native Android)
 export async function sendSystemNotification(title: string, body: string) {
-  // Sound feedback
-  playNotificationSound();
-
   // 1. If running as native Android APK (Capacitor Local Notifications)
   if (Capacitor.isNativePlatform()) {
     try {
@@ -260,7 +257,6 @@ export async function sendSystemNotification(title: string, body: string) {
             body,
             schedule: { at: new Date(Date.now() + 200) },
             channelId: ANDROID_CHANNEL_ID,
-            sound: 'beep.wav',
             smallIcon: 'ic_stat_icon_config_sample',
             actionTypeId: '',
             extra: null,
@@ -272,6 +268,9 @@ export async function sendSystemNotification(title: string, body: string) {
       console.warn('Capacitor native notification warning:', e);
     }
   }
+
+  // Sound feedback for Web only
+  playNotificationSound();
 
   // 2. Web / Browser fallback
   if (!('Notification' in window)) return;

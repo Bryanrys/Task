@@ -67,7 +67,6 @@ import { AnalyticsSection } from './components/AnalyticsSection';
 import { WelcomeModal } from './components/WelcomeModal';
 import { WizardModal } from './components/WizardModal';
 import { DrawerDashboards } from './components/DrawerDashboards';
-import { GlassyAcademicDashboard } from './components/GlassyAcademicDashboard';
 import { PromptModal, ConfirmModal } from './components/ActionModals';
 import { StartDateModal } from './components/StartDateModal';
 import { TaskNoteModal } from './components/TaskNoteModal';
@@ -225,24 +224,6 @@ export default function App() {
 
   const handleTriggerCelebration = () => {
     setToastMessage('✨ ¡Excelente trabajo manteniéndote al día con tus estudios! 🎉');
-  };
-
-  // Layout Mode: 'glassy' (Glassy Dashboard V5) vs 'classic' (Vista Clásica)
-  const [layoutMode, setLayoutMode] = useState<'glassy' | 'classic'>(() => {
-    try {
-      const saved = localStorage.getItem('uees_layout_mode');
-      if (saved === 'classic' || saved === 'glassy') return saved;
-    } catch {}
-    return 'glassy';
-  });
-
-  const handleToggleLayoutMode = () => {
-    const next = layoutMode === 'glassy' ? 'classic' : 'glassy';
-    setLayoutMode(next);
-    try {
-      localStorage.setItem('uees_layout_mode', next);
-    } catch {}
-    setToastMessage(`Modo cambiado a: ${next === 'glassy' ? '💎 GLASSY V5' : '🏛️ CLÁSICO'}`);
   };
 
   // Modal de Nota Rápida del Dashboard
@@ -1948,35 +1929,8 @@ export default function App() {
         )}
       </AnimatePresence>
 
-      {/* Main Workspace Layout: Dual-Mode Architecture (Glassy Dashboard V5 vs Classic Layout) */}
-      {layoutMode === 'glassy' ? (
-        <GlassyAcademicDashboard
-          currentDashboard={currentDashboard}
-          dashboards={dashboards}
-          currentWeek={currentWeek ?? null}
-          isParcialWeek={isParcialWeek}
-          loggedUser={loggedUser}
-          isSyncing={isSyncing}
-          layoutMode={layoutMode}
-          onToggleLayoutMode={handleToggleLayoutMode}
-          onSelectWeek={handleSelectWeek}
-          onAddWeek={handleAddWeek}
-          onToggleTask={handleToggleTask}
-          onOpenDrawer={() => setShowDrawer(true)}
-          onOpenPensum={() => setShowPensumModal(true)}
-          onOpenGradeCalculator={() => setShowGradesModal(true)}
-          onOpenPomodoro={() => setShowPomodoroModal(true)}
-          onOpenAI={() => setShowAIAssistant(true)}
-          onOpenSchedule={() => setShowScheduleModal(true)}
-          onOpenLinks={() => setShowLinksModal(true)}
-          onOpenSettings={() => setShowThemeModal(true)}
-          onOpenShare={() => setShowShareModal(true)}
-          onSyncCloud={handleConfirmUpload}
-          onLogout={handleLogout}
-          daysElapsed={daysTranscurridos}
-        />
-      ) : (
-        <div className="flex-1 flex flex-col md:flex-row min-w-0 w-full overflow-hidden">
+      {/* Main Workspace Layout with Sidebar (Left) and Scrollable Dashboard (Right) - Image 2 Match */}
+      <div className="flex-1 flex flex-col md:flex-row min-w-0 w-full overflow-hidden">
         {/* Desktop Sidebar (Left side, permanent sticky) */}
         <SidebarNav
           currentView={currentView}
@@ -2249,17 +2203,6 @@ export default function App() {
                 <Bell className="w-3.5 h-3.5 text-zinc-400" />
                 <span>{weekStats.pendingTasks}</span>
                 <span className="hidden sm:inline">Pendientes</span>
-              </button>
-
-              {/* Botón para alternar a Vista Glassy Dashboard V5 */}
-              <button
-                onClick={handleToggleLayoutMode}
-                className="px-3 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 shadow-sm bg-gradient-to-r from-cyan-500/20 via-sky-500/20 to-blue-600/20 border border-sky-400/40 text-sky-400 hover:text-sky-300 hover:scale-105 active:scale-95"
-                title="Cambiar a Vista Glassy Dashboard V5 (Liquid Glass)"
-              >
-                <Sparkles className="w-3.5 h-3.5 text-cyan-400 animate-pulse" />
-                <span className="hidden sm:inline font-bold">Modo Glassy</span>
-                <span className="sm:hidden font-bold">Glassy</span>
               </button>
 
               {/* Weeks Selector Button */}
@@ -3221,7 +3164,6 @@ export default function App() {
           )}
         </main>
       </div>
-      )}
 
       {/* Modal para Agregar Tarea a Materia */}
       <AnimatePresence>

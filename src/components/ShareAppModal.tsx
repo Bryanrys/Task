@@ -342,7 +342,7 @@ export const ShareAppModal: React.FC<ShareAppModalProps> = ({
                 <span className={`block text-[10px] uppercase font-mono tracking-wider ${
                   isDark ? 'text-zinc-400' : 'text-zinc-500'
                 }`}>Versión</span>
-                <span className="block text-xs sm:text-sm font-bold font-mono mt-0.5">2.4</span>
+                <span className="block text-xs sm:text-sm font-bold font-mono mt-0.5">2.3</span>
               </div>
               <div className={`p-2 sm:p-2.5 ${isDark ? 'bg-white/[0.02]' : 'bg-black/[0.02]'}`}>
                 <span className={`block text-[10px] uppercase font-mono tracking-wider ${

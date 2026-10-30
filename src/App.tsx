@@ -349,7 +349,9 @@ export default function App() {
   // Paleta de temas personalizada (titanium, oled, nord, emerald, sepia)
   const [activePalette, setActivePalette] = useState<string>(() => {
     try {
-      return localStorage.getItem('uees_custom_palette') || 'titanium';
+      const saved = localStorage.getItem('uees_custom_palette');
+      if (saved && saved !== 'liquid-glass') return saved;
+      return 'titanium';
     } catch {
       return 'titanium';
     }
@@ -1804,7 +1806,7 @@ export default function App() {
   }, [currentDashboard.subjects, gradesTracker]);
 
   return (
-    <div className={`min-h-screen flex flex-col md:flex-row relative transition-colors duration-200 font-sans select-none overflow-x-hidden ${
+    <div className={`min-h-screen flex flex-col relative transition-colors duration-200 font-sans select-none overflow-x-hidden ${
       isDark ? 'bg-canvas-dark text-zinc-100' : 'bg-canvas-light text-zinc-900'
     }`}>
       {/* Toast Alert */}

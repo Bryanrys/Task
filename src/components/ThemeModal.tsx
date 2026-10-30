@@ -27,17 +27,6 @@ export interface ThemePalette {
 
 export const THEME_PALETTES: ThemePalette[] = [
   {
-    id: 'liquid-glass',
-    name: 'Liquid Glass (Spatial)',
-    description: 'Cristal translúcido líquido, atmósfera espacial y botones activos en blanco liquid glass',
-    tag: 'Liquid Glass 💎',
-    bgDark: '#07090e',
-    cardDark: 'rgba(17, 24, 39, 0.65)',
-    bgLight: '#f0f5fa',
-    cardLight: 'rgba(255, 255, 255, 0.8)',
-    accent: '#38bdf8',
-  },
-  {
     id: 'aesthetic',
     name: 'Aesthetic Pastel',
     description: 'Lila suave, crema pastel y lavanda relajante estilo Notion / Pinterest',

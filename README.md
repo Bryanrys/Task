@@ -16,16 +16,16 @@ Plataforma integral y moderna de organización académica universitaria (Ciclo I
 
 | 🏷️ Versión | 📦 Tamaño | 📱 Requerimientos | 📅 Día y Fecha | 🕒 Hora (GMT-6) |
 | :---: | :---: | :---: | :---: | :---: |
-| **v2.3 (Debug)** | **8.8 MB** | **Android 7.0 - Android 14+** | **Martes, 27 de Octubre de 2026** | **10:48 PM** |
+| **v2.4 (Glassy V5)** | **15.0 MB** | **Android 7.0 - Android 14+** | **Jueves, 29 de Octubre de 2026** | **09:30 PM** |
 
-[![Descargar APK Directo](https://img.shields.io/badge/Descargar-APK%20Directo%20(8.8%20MB)-000000?style=for-the-badge&logo=android&logoColor=white)](https://github.com/Bryanrys/Task/raw/main/apk/app-debug.apk)
+[![Descargar APK Directo](https://img.shields.io/badge/Descargar-APK%20Directo%20(15.0%20MB)-000000?style=for-the-badge&logo=android&logoColor=white)](https://github.com/Bryanrys/Task/raw/main/apk/app-debug.apk)
 
 </div>
 
 Puedes descargar e instalar la versión para Android directamente en tu teléfono móvil desde cualquiera de los siguientes enlaces:
 
 ### 📥 Enlaces de Descarga:
-- 🚀 **[Descarga Directa del APK (`app-debug.apk`)](https://github.com/Bryanrys/Task/raw/main/apk/app-debug.apk)** *(Compilado el 27 de Octubre de 2026 a las 10:48 PM • 8.8 MB • Widget Nativo de Tareas Pendientes en Pantalla Principal, Huella Dactilar y Háptica)*
+- 🚀 **[Descarga Directa del APK (`app-debug.apk`)](https://github.com/Bryanrys/Task/raw/main/apk/app-debug.apk)** *(Compilado el 29 de Octubre de 2026 a las 09:30 PM • 15.0 MB • Interfaz Espacial Glassy Dashboard V5, Selector de Modo Dual Glassy/Clásico, Widget Nativo de Tareas Pendientes, Huella Dactilar y Háptica)*
 - 📂 **[Ver carpeta de APK en el Repositorio (con ficha técnica y detalles)](./apk)**
 - 📦 **[Ver todas las versiones y Releases en GitHub](https://github.com/Bryanrys/Task/releases)**
 

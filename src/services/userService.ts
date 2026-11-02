@@ -6,6 +6,9 @@
  * UEES Academic Dashboard
  */
 
+import { Dashboard, SubjectItem, WeekItem, TaskItem } from '../types';
+import { computeWeekRangeFromDate } from '../utils/dateRange';
+
 export interface RegisteredUser {
   username: string;
   displayName: string;
@@ -220,4 +223,67 @@ export function isUserAdmin(): boolean {
   } catch {
     return false;
   }
+}
+
+/**
+ * Genera un Dashboard completo y robusto de 20 semanas para un nuevo usuario registrado
+ */
+export function createInitialDashboardForUser(rawUsername: string, rawDisplayName?: string): Dashboard {
+  const username = (rawUsername || 'estudiante').trim().toLowerCase();
+  const displayName = (rawDisplayName || username).trim();
+  const dashId = `dash-user-${username}`;
+  const startDateISO = '2026-07-06';
+  const startDate = '06 JUL 2026';
+
+  const subjects: SubjectItem[] = [
+    { id: `subj-${username}-1`, name: 'Bases de Datos' },
+    { id: `subj-${username}-2`, name: 'Programación' },
+    { id: `subj-${username}-3`, name: 'Matemática' },
+    { id: `subj-${username}-4`, name: 'Física / Redes' },
+  ];
+
+  const defaultTaskNames = ['Foro entregado', 'Tarea entregada'];
+  const totalWeeks = 20;
+  const weeks: WeekItem[] = [];
+
+  for (let w = 1; w <= totalWeeks; w++) {
+    const isParcial = w === 6 || w === 12 || w === 18;
+    const taskNames = isParcial ? ['Examen Parcial entregado'] : defaultTaskNames;
+    const subjectTasks: Record<string, TaskItem[]> = {};
+
+    subjects.forEach((subj) => {
+      subjectTasks[subj.id] = taskNames.map((tName, tIdx) => ({
+        id: `task-${w}-${subj.id}-${tIdx}`,
+        name: tName,
+        completed: false,
+      }));
+    });
+
+    weeks.push({
+      id: `week-${w}-${dashId}`,
+      weekNumber: w,
+      dateRange: computeWeekRangeFromDate(w, startDateISO),
+      status: w === 1 ? 'EN PROCESO' : 'PENDIENTE',
+      subjectTasks,
+      bloqueTareas: [],
+    });
+  }
+
+  const activeWeekId = weeks[0].id;
+  const now = new Date();
+  const lastUpdated = `${now.getDate()} ${now.toLocaleString('es-ES', { month: 'short' })} ${now.getFullYear()}`;
+
+  return {
+    id: dashId,
+    name: `Ciclo Académico - ${displayName}`,
+    startDate,
+    startDateISO,
+    lastUpdated,
+    subjects,
+    defaultTaskNames,
+    weeks,
+    activeWeekId,
+    accessCode: 'oo',
+    quickNote: '¡Bienvenido a tu ciclo académico personal!',
+  };
 }

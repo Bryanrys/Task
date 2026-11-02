@@ -16,7 +16,7 @@ Plataforma integral y moderna de organización académica universitaria (Ciclo I
 
 | 🏷️ Versión | 📦 Tamaño | 📱 Requerimientos | 📅 Día y Fecha | 🕒 Hora (GMT-6) |
 | :---: | :---: | :---: | :---: | :---: |
-| **v2.5 (Registro Multi-Usuario & Control de Acceso BD)** | **8.8 MB** | **Android 7.0 - Android 14+** | **Lunes, 02 de Noviembre de 2026** | **11:34 AM** |
+| **v2.6 (Corrección Flujo Registro & Estabilidad)** | **8.8 MB** | **Android 7.0 - Android 14+** | **Lunes, 02 de Noviembre de 2026** | **12:10 PM** |
 
 [![Descargar APK Directo](https://img.shields.io/badge/Descargar-APK%20Directo%20(8.8%20MB)-000000?style=for-the-badge&logo=android&logoColor=white)](https://github.com/Bryanrys/Task/raw/main/apk/app-debug.apk)
 
@@ -25,7 +25,7 @@ Plataforma integral y moderna de organización académica universitaria (Ciclo I
 Puedes descargar e instalar la versión para Android directamente en tu teléfono móvil desde cualquiera de los siguientes enlaces:
 
 ### 📥 Enlaces de Descarga:
-- 🚀 **[Descarga Directa del APK (`app-debug.apk`)](https://github.com/Bryanrys/Task/raw/main/apk/app-debug.apk)** *(Compilado el 02 de Noviembre de 2026 a las 11:34 AM • 8.8 MB • Registro para Nuevos Estudiantes, Bloqueo de Base de Datos para No-Admin, Flujo de Configuración Limpio y Rendimiento Óptimo)*
+- 🚀 **[Descarga Directa del APK (`app-debug.apk`)](https://github.com/Bryanrys/Task/raw/main/apk/app-debug.apk)** *(Compilado el 02 de Noviembre de 2026 a las 12:10 PM • 8.8 MB • Corrección de Registro para Nuevos Estudiantes, Solución a Pantalla Negra, ErrorBoundary Protector y Transición Directa al Dashboard)*
 - 📂 **[Ver carpeta de APK en el Repositorio (con ficha técnica y detalles)](./apk)**
 - 📦 **[Ver todas las versiones y Releases en GitHub](https://github.com/Bryanrys/Task/releases)**
 

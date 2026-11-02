@@ -81,21 +81,30 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLoginSuccess }) => {
     setIsLoading(true);
 
     setTimeout(async () => {
-      const res = authenticateUser(username, password);
+      try {
+        const res = authenticateUser(username, password);
 
-      if (res.success && res.user) {
-        if (enableBiometricsCheckbox && isBiometricAvailable) {
-          await saveBiometricCredentials(res.user.displayName, password.trim());
+        if (res.success && res.user) {
+          if (enableBiometricsCheckbox && isBiometricAvailable) {
+            try {
+              await saveBiometricCredentials(res.user.displayName, password.trim());
+            } catch (bioErr) {
+              console.warn('No se pudo guardar credencial biométrica:', bioErr);
+            }
+          }
+
+          await triggerHaptic('success').catch(() => {});
+          onLoginSuccess(res.user.displayName, res.user.role, res.user.isNew || false);
+        } else {
+          setIsLoading(false);
+          await triggerHaptic('warning').catch(() => {});
+          setErrorMessage(res.error || 'Usuario o contraseña incorrectos.');
         }
-
-        await triggerHaptic('success');
-        onLoginSuccess(res.user.displayName, res.user.role, res.user.isNew || false);
-      } else {
+      } catch (err: any) {
         setIsLoading(false);
-        await triggerHaptic('warning');
-        setErrorMessage(res.error || 'Usuario o contraseña incorrectos.');
+        setErrorMessage(err?.message || 'Error al iniciar sesión.');
       }
-    }, 300);
+    }, 200);
   };
 
   const handleRegisterSubmit = (e: React.FormEvent) => {
@@ -105,32 +114,34 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLoginSuccess }) => {
 
     if (regPassword !== regConfirmPassword) {
       setErrorMessage('Las contraseñas no coinciden. Por favor verifícalas.');
-      triggerHaptic('warning');
+      triggerHaptic('warning').catch(() => {});
       return;
     }
 
     setIsLoading(true);
 
     setTimeout(async () => {
-      const res = registerNewUser(regUsername, regDisplayName, regPassword);
+      try {
+        const res = registerNewUser(regUsername, regDisplayName, regPassword);
 
-      if (res.success && res.user) {
-        if (enableBiometricsCheckbox && isBiometricAvailable) {
-          await saveBiometricCredentials(res.user.displayName, regPassword.trim());
+        if (res.success && res.user) {
+          await triggerHaptic('success').catch(() => {});
+          setSuccessMessage('¡Cuenta creada con éxito! Entrando a tu espacio...');
+
+          setTimeout(() => {
+            onLoginSuccess(res.user!.displayName, 'user', true);
+          }, 250);
+        } else {
+          setIsLoading(false);
+          await triggerHaptic('warning').catch(() => {});
+          setErrorMessage(res.error || 'No se pudo crear la cuenta.');
         }
-
-        setSuccessMessage('¡Cuenta creada con éxito! Inicializando tu entorno...');
-        await triggerHaptic('success');
-
-        setTimeout(() => {
-          onLoginSuccess(res.user!.displayName, 'user', true);
-        }, 600);
-      } else {
+      } catch (err: any) {
         setIsLoading(false);
-        await triggerHaptic('warning');
-        setErrorMessage(res.error || 'No se pudo crear la cuenta.');
+        await triggerHaptic('warning').catch(() => {});
+        setErrorMessage(err?.message || 'Ocurrió un error al registrar la cuenta.');
       }
-    }, 350);
+    }, 200);
   };
 
   return (

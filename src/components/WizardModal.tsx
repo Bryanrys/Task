@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Calendar } from 'lucide-react';
+import { Calendar, X } from 'lucide-react';
 import { Dashboard, SubjectItem, WeekItem } from '../types';
 import { computeWeekRangeFromDate } from '../utils/dateRange';
 
@@ -135,14 +135,27 @@ export const WizardModal: React.FC<WizardModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-sm">
+    <div
+      onClick={onClose}
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-sm select-none"
+    >
       <motion.div
+        onClick={(e) => e.stopPropagation()}
         initial={{ opacity: 0, scale: 0.92, y: 15 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.95 }}
         transition={{ duration: 0.25, ease: 'easeOut' }}
         className="relative w-full max-w-[370px] bg-[#05070e] border border-white/10 rounded-3xl p-6 shadow-2xl"
       >
+        {/* Botón de Cerrar */}
+        <button
+          type="button"
+          onClick={onClose}
+          className="absolute top-4 right-4 p-1.5 rounded-xl text-zinc-400 hover:text-white hover:bg-white/10 transition-colors cursor-pointer z-20"
+          title="Cerrar"
+        >
+          <X className="w-4 h-4" />
+        </button>
         <AnimatePresence mode="wait">
           {/* Step 1 */}
           {step === 1 && (

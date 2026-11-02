@@ -6,7 +6,7 @@
 
 | 🏷️ Versión | 📦 Tamaño | 📱 Requerimientos | 📅 Día y Fecha | 🕒 Hora (GMT-6) |
 | :---: | :---: | :---: | :---: | :---: |
-| **v2.5 (Registro Multi-Usuario & Control de Acceso BD)** | **8.8 MB** | **Android 7.0 - Android 14+** | **Lunes, 02 de Noviembre de 2026** | **11:34 AM** |
+| **v2.6 (Corrección Flujo Registro & Estabilidad)** | **8.8 MB** | **Android 7.0 - Android 14+** | **Lunes, 02 de Noviembre de 2026** | **12:10 PM** |
 
 [![Descargar APK Directo](https://img.shields.io/badge/Descargar-APK%20Directo%20(8.8%20MB)-000000?style=for-the-badge&logo=android&logoColor=white)](https://github.com/Bryanrys/Task/raw/main/apk/app-debug.apk)
 
@@ -14,11 +14,12 @@
 
 > ℹ️ **Identidad APK Multi-Dispositivo:** `0` (`com.uees.dashboard`)  
 > 📦 **Archivo:** [`apk/app-debug.apk`](./app-debug.apk)  
-> ✨ **Novedades v2.5:**  
-> 1. **Opción de Registro para Nuevos Estudiantes:** Pantalla de login mejorada con pestañas de alternancia "Iniciar Sesión" y "Registrarse", permitiendo a cualquier estudiante crear su cuenta propia con usuario y contraseña.  
-> 2. **Bloqueo Seguro de la Base de Datos Central:** Acceso a Supabase (subida/descarga en la nube) protegido exclusivamente para el Administrador (`oo` / `00`). Los usuarios disfrutan de todos los ajustes, herramientas, calculadora y horario con almacenamiento local privado e independiente.  
-> 3. **Flujo de Usuario Nuevo y Wizard Asistente:** Al registrarse, el estudiante nuevo inicializa su propio entorno limpio con el asistente de 3 pasos (nombre del ciclo, fecha de inicio, nombres de materias y actividades semanales).  
-> 4. **Optimización Extrema de Peso:** Reducción del tamaño final del instalador a tan solo 8.8 MB para descargas ultrarrápidas y menor consumo de memoria.  
+> ✨ **Novedades v2.6:**  
+> 1. **Solución a Pantalla Negra en Registro de Usuario Nuevo:** Se corrigió el flujo asíncrono y los manejadores de estado tras cerrar sesión. El nuevo estudiante recibe inmediatamente una plantilla robusta de 20 semanas inicializadas con todas sus materias y tareas.  
+> 2. **Manejo Defensivo y Blindaje Asíncrono en LoginScreen:** Se envolvieron todas las llamadas de autenticación y registro en bloques `try/catch` seguros, evitando que posibles excepciones en el subsistema biométrico bloqueen la interfaz.  
+> 3. **Incorporación de ErrorBoundary de Nivel Superior:** Protección visual completa en React para capturar cualquier anomalía y permitir restablecer o recargar la vista sin requerir borrar los datos de la app.  
+> 4. **Salida y Control Flexible en WizardModal:** Botón de cierre visible para todos los usuarios y transición fluida al dashboard.  
+> 5. **Bloqueo Seguro de la Base de Datos Central:** Acceso a Supabase (subida/descarga en la nube) protegido exclusivamente para el Administrador (`oo` / `00`).  
 > 🛡️ **Seguridad:** Compatible para actualización directa entre PC de escritorio y laptop sin requerir desinstalación.
 
 ---
@@ -27,7 +28,7 @@
 
 | Versión | Archivo Físico | Tamaño | Requerimientos | Fecha y Hora de Compilación | Enlace de Descarga Inmediata |
 | :--- | :--- | :---: | :---: | :---: | :--- |
-| **Última Versión Oficial (v2.5)** | [`app-debug.apk`](./app-debug.apk) | **8.8 MB** | **Android 7.0 a 14+** | **02 Nov 2026 — 11:34 AM** | 📥 **[Descargar APK Directo (Sin 404)](https://github.com/Bryanrys/Task/raw/main/apk/app-debug.apk)** |
+| **Última Versión Oficial (v2.6)** | [`app-debug.apk`](./app-debug.apk) | **8.8 MB** | **Android 7.0 a 14+** | **02 Nov 2026 — 12:10 PM** | 📥 **[Descargar APK Directo (Sin 404)](https://github.com/Bryanrys/Task/raw/main/apk/app-debug.apk)** |
 | **Página de Releases** | Releases y Tags | N/A | Android | Ver historial | 📦 **[Ver Releases en GitHub](https://github.com/Bryanrys/Task/releases)** |
 
 ---

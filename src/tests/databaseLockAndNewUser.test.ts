@@ -69,4 +69,35 @@ describe('Pruebas Unitarias - Bloqueo de Base de Datos y Optimización Multi-Usu
     const headerContent = fs.readFileSync(headerPath, 'utf-8');
     assert.ok(headerContent.includes('isAdmin'), 'UnifiedDashboardHeader debe declarar prop isAdmin');
   });
+
+  it('createInitialDashboardForUser debe generar 20 semanas con tareas inicializadas y activeWeekId exacto', async () => {
+    const { createInitialDashboardForUser } = await import('../services/userService');
+    const dash = createInitialDashboardForUser('usuario_prueba', 'Estudiante Prueba');
+
+    assert.equal(dash.weeks.length, 20, 'Debe contener exactamente 20 semanas');
+    assert.equal(dash.activeWeekId, dash.weeks[0].id, 'activeWeekId debe coincidir exactamente con el id de semana 1');
+    assert.equal(dash.subjects.length, 4, 'Debe contener 4 materias por defecto');
+
+    dash.weeks.forEach((w) => {
+      dash.subjects.forEach((s) => {
+        const tasks = w.subjectTasks[s.id];
+        assert.ok(Array.isArray(tasks) && tasks.length > 0, `Cada materia debe tener tareas en semana ${w.weekNumber}`);
+      });
+    });
+  });
+
+  it('LoginScreen debe contener manejo defensivo de errores try/catch en registro y login', () => {
+    const loginPath = path.join(srcDir, 'components', 'LoginScreen.tsx');
+    const content = fs.readFileSync(loginPath, 'utf-8');
+
+    assert.ok(content.includes('try {'), 'Debe contener bloques try/catch defensivos');
+    assert.ok(content.includes('catch (err'), 'Debe capturar errores para evitar bloqueos de pantalla');
+  });
+
+  it('ErrorBoundary debe proteger el montaje principal en main.tsx', () => {
+    const mainPath = path.join(srcDir, 'main.tsx');
+    const content = fs.readFileSync(mainPath, 'utf-8');
+
+    assert.ok(content.includes('<ErrorBoundary>'), 'main.tsx debe envolver App con ErrorBoundary');
+  });
 });

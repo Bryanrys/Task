@@ -103,6 +103,7 @@ import {
   getUserDashboardStorageKey,
   USER_ROLE_KEY,
   ACTIVE_USERNAME_KEY,
+  createInitialDashboardForUser,
 } from './services/userService';
 import { Capacitor } from '@capacitor/core';
 import {
@@ -236,38 +237,13 @@ export default function App() {
     const storageKey = getUserDashboardStorageKey(activeU, role);
 
     if (isNewUser) {
-      setShowWizard(true);
-      const now = new Date();
-      const todayISO = now.toISOString().split('T')[0];
-      const initialUserDash: Dashboard = {
-        id: `dash-${Date.now()}`,
-        name: `Ciclo Académico - ${user}`,
-        startDate: '06 JUL 2026',
-        startDateISO: todayISO,
-        lastUpdated: `${now.getDate()} ${now.toLocaleString('es-ES', { month: 'short' })} ${now.getFullYear()}`,
-        subjects: [
-          { id: `subj-${Date.now()}-1`, name: 'Materia 1' },
-          { id: `subj-${Date.now()}-2`, name: 'Materia 2' },
-          { id: `subj-${Date.now()}-3`, name: 'Materia 3' },
-          { id: `subj-${Date.now()}-4`, name: 'Materia 4' },
-        ],
-        defaultTaskNames: ['Foro entregado', 'Tarea entregada'],
-        weeks: [
-          {
-            id: `week-1-${Date.now()}`,
-            weekNumber: 1,
-            dateRange: computeWeekRangeFromDate(1, todayISO),
-            status: 'EN PROCESO',
-            subjectTasks: {},
-            bloqueTareas: [],
-          },
-        ],
-        activeWeekId: `week-1-${Date.now()}`,
-        accessCode: 'oo',
-      };
+      setShowWizard(false);
+      const initialUserDash = createInitialDashboardForUser(activeU, user);
       setDashboards([initialUserDash]);
       setActiveDashId(initialUserDash.id);
-      localStorage.setItem(storageKey, JSON.stringify([initialUserDash]));
+      try {
+        localStorage.setItem(storageKey, JSON.stringify([initialUserDash]));
+      } catch {}
     } else {
       const stored = localStorage.getItem(storageKey) || (role === 'admin' ? localStorage.getItem(STORAGE_KEY) : null);
       if (stored) {
@@ -276,11 +252,21 @@ export default function App() {
           if (Array.isArray(parsed) && parsed.length > 0) {
             setDashboards(parsed);
             setActiveDashId(parsed[0].id);
+            return;
           }
         } catch {}
-      } else if (role === 'admin') {
+      }
+
+      if (role === 'admin') {
         setDashboards(INITIAL_DASHBOARDS);
         setActiveDashId(INITIAL_DASHBOARDS[0].id);
+      } else {
+        const userDash = createInitialDashboardForUser(activeU, user);
+        setDashboards([userDash]);
+        setActiveDashId(userDash.id);
+        try {
+          localStorage.setItem(storageKey, JSON.stringify([userDash]));
+        } catch {}
       }
     }
   };
@@ -289,9 +275,14 @@ export default function App() {
     try {
       localStorage.removeItem('uees_academic_auth_v1');
       localStorage.removeItem(ACTIVE_USERNAME_KEY);
+      localStorage.removeItem('uees_logged_user');
+      localStorage.removeItem(USER_ROLE_KEY);
     } catch { }
     setIsAuthenticated(false);
+    setUserRole('user');
+    setLoggedUser('');
     setShowDrawer(false);
+    setShowWizard(false);
     setToastMessage('Sesión cerrada correctamente');
   };
 
@@ -370,6 +361,9 @@ export default function App() {
             };
           });
         }
+      }
+      if (userRole !== 'admin') {
+        return [createInitialDashboardForUser(activeU, loggedUser)];
       }
     } catch { }
     return INITIAL_DASHBOARDS;

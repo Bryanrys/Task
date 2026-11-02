@@ -9,6 +9,7 @@ interface WizardModalProps {
   onClose: () => void;
   onFinish: (dashboard: Dashboard) => void;
   onOpenAccessCode: () => void;
+  isAdmin?: boolean;
 }
 
 export const WizardModal: React.FC<WizardModalProps> = ({
@@ -16,6 +17,7 @@ export const WizardModal: React.FC<WizardModalProps> = ({
   onClose,
   onFinish,
   onOpenAccessCode,
+  isAdmin = false,
 }) => {
   const [step, setStep] = useState<1 | 2 | 3>(1);
 
@@ -212,16 +214,18 @@ export const WizardModal: React.FC<WizardModalProps> = ({
                 Siguiente Paso 👏
               </button>
 
-              <button
-                type="button"
-                onClick={() => {
-                  onClose();
-                  onOpenAccessCode();
-                }}
-                className="w-full text-center text-xs font-semibold text-zinc-400 hover:text-white transition-colors py-1 flex items-center justify-center gap-1 cursor-pointer font-mono"
-              >
-                🔗 ¡Ya tengo dashboard, entrar directo!
-              </button>
+              {isAdmin && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    onClose();
+                    onOpenAccessCode();
+                  }}
+                  className="w-full text-center text-xs font-semibold text-zinc-400 hover:text-white transition-colors py-1 flex items-center justify-center gap-1 cursor-pointer font-mono"
+                >
+                  🔗 ¡Ya tengo dashboard, entrar directo!
+                </button>
+              )}
             </motion.form>
           )}
 

@@ -19,6 +19,7 @@ interface DrawerDashboardsProps {
   onDeleteWeek: (weekId: string) => void;
   onTriggerCelebration?: () => void;
   onLogout?: () => void;
+  isAdmin?: boolean;
 }
 
 export const DrawerDashboards: React.FC<DrawerDashboardsProps> = ({
@@ -36,6 +37,7 @@ export const DrawerDashboards: React.FC<DrawerDashboardsProps> = ({
   onDeleteWeek,
   onTriggerCelebration,
   onLogout,
+  isAdmin = false,
 }) => {
   if (!isOpen) return null;
 
@@ -93,9 +95,18 @@ export const DrawerDashboards: React.FC<DrawerDashboardsProps> = ({
                   {loggedUser ? loggedUser.charAt(0).toUpperCase() : 'U'}
                 </div>
                 <div>
-                  <p className="text-xs font-black tracking-wide uppercase">
-                    {loggedUser || 'Estudiante UEES'}
-                  </p>
+                  <div className="flex items-center gap-1.5">
+                    <p className="text-xs font-black tracking-wide uppercase">
+                      {loggedUser || 'Estudiante UEES'}
+                    </p>
+                    <span className={`text-[9px] font-mono font-bold px-1 py-0.2 rounded uppercase border ${
+                      isAdmin
+                        ? isDark ? 'bg-white/10 text-zinc-200 border-white/20' : 'bg-black text-white border-black'
+                        : 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30'
+                    }`}>
+                      {isAdmin ? 'ADMIN' : 'USER'}
+                    </span>
+                  </div>
                   <p className={`text-[10px] font-semibold flex items-center gap-1.5 ${isDark ? 'text-zinc-400' : 'text-zinc-500'}`}>
                     <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 inline-block" />
                     En línea • Pro

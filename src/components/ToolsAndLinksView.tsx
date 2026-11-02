@@ -42,6 +42,7 @@ interface ToolsAndLinksViewProps {
   startDate: string;
   daysElapsed: number;
   pendingTasksCount: number;
+  isAdmin?: boolean;
   onBackToTasks: () => void;
   onExportJSON: () => void;
   onImportJSONClick: () => void;
@@ -64,6 +65,7 @@ export const ToolsAndLinksView: React.FC<ToolsAndLinksViewProps> = ({
   accessCode,
   startDate,
   daysElapsed,
+  isAdmin = false,
   onOpenSchedule,
   onOpenLinks,
   onOpenGrades,
@@ -410,77 +412,114 @@ export const ToolsAndLinksView: React.FC<ToolsAndLinksViewProps> = ({
       </motion.div>
 
       {/* Cloud Database (Supabase Sync) */}
-      <motion.div
-        initial={{ opacity: 0, scale: 0.98 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ delay: 0.2 }}
-        className={`rounded-3xl p-5 border transition-all ${
-          isDark
-            ? 'bg-[#131417] border-white/10 shadow-lg text-white'
-            : 'bg-white border-zinc-200/80 shadow-xs text-zinc-900'
-        }`}
-      >
-        <div className="flex items-center justify-between mb-3.5">
-          <div className="flex items-center gap-2.5">
-            <div className={`p-2 rounded-xl border ${
-              isDark ? 'bg-white/5 border-white/10 text-white' : 'bg-zinc-100 border-zinc-200 text-zinc-900'
+      {/* Base de Datos y Nube (Supabase) - Solo Administrador */}
+      {isAdmin ? (
+        <motion.div
+          initial={{ opacity: 0, scale: 0.98 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 0.2 }}
+          className={`rounded-3xl p-5 border transition-all ${
+            isDark
+              ? 'bg-[#131417] border-white/10 shadow-lg text-white'
+              : 'bg-white border-zinc-200/80 shadow-xs text-zinc-900'
+          }`}
+        >
+          <div className="flex items-center justify-between mb-3.5">
+            <div className="flex items-center gap-2.5">
+              <div className={`p-2 rounded-xl border ${
+                isDark ? 'bg-white/5 border-white/10 text-white' : 'bg-zinc-100 border-zinc-200 text-zinc-900'
+              }`}>
+                <Cloud className="w-5 h-5" />
+              </div>
+              <div>
+                <h3 className={`font-black text-sm uppercase tracking-wide ${isDark ? 'text-white' : 'text-zinc-900'}`}>
+                  Base de Datos y Nube (Supabase)
+                </h3>
+                <p className={`text-[11px] ${isDark ? 'text-zinc-400' : 'text-zinc-500'}`}>
+                  Sincronización remota para mantener tus datos en cualquier parte
+                </p>
+              </div>
+            </div>
+            <div className={`px-2.5 py-1 rounded-full text-[10px] font-bold font-mono border ${
+              isDark ? 'bg-white/5 border-white/10 text-zinc-300' : 'bg-zinc-100 border-zinc-200 text-zinc-700'
             }`}>
-              <Cloud className="w-5 h-5" />
-            </div>
-            <div>
-              <h3 className={`font-black text-sm uppercase tracking-wide ${isDark ? 'text-white' : 'text-zinc-900'}`}>
-                Base de Datos y Nube (Supabase)
-              </h3>
-              <p className={`text-[11px] ${isDark ? 'text-zinc-400' : 'text-zinc-500'}`}>
-                Sincronización remota para mantener tus datos en cualquier parte
-              </p>
+              {cloudStatus}
             </div>
           </div>
-          <div className={`px-2.5 py-1 rounded-full text-[10px] font-bold font-mono border ${
-            isDark ? 'bg-white/5 border-white/10 text-zinc-300' : 'bg-zinc-100 border-zinc-200 text-zinc-700'
-          }`}>
-            {cloudStatus}
+
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+            <button
+              onClick={onUploadCloud}
+              className={`p-3 rounded-2xl border flex items-center justify-center gap-2 font-bold text-xs transition-all cursor-pointer active:scale-95 ${
+                isDark
+                  ? 'bg-white/10 border-white/10 text-white hover:bg-white/15'
+                  : 'bg-zinc-900 border-zinc-900 text-white hover:bg-zinc-800'
+              }`}
+            >
+              <Upload className="w-4 h-4" />
+              <span>Guardar en Nube</span>
+            </button>
+
+            <button
+              onClick={onDownloadCloud}
+              className={`p-3 rounded-2xl border flex items-center justify-center gap-2 font-bold text-xs transition-all cursor-pointer active:scale-95 ${
+                isDark
+                  ? 'bg-white/5 border-white/10 text-zinc-200 hover:bg-white/10'
+                  : 'bg-zinc-100 border-zinc-200 text-zinc-800 hover:bg-zinc-200'
+              }`}
+            >
+              <Download className="w-4 h-4 text-emerald-500" />
+              <span>Descargar Nube</span>
+            </button>
+
+            <button
+              onClick={onCopyLink}
+              className={`p-3 rounded-2xl border flex items-center justify-center gap-2 font-bold text-xs transition-all cursor-pointer active:scale-95 ${
+                isDark
+                  ? 'bg-white/5 border-white/10 text-zinc-200 hover:bg-white/10'
+                  : 'bg-zinc-100 border-zinc-200 text-zinc-800 hover:bg-zinc-200'
+              }`}
+            >
+              <LinkIcon className="w-4 h-4" />
+              <span>Código: {accessCode}</span>
+            </button>
           </div>
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
-          <button
-            onClick={onUploadCloud}
-            className={`p-3 rounded-2xl border flex items-center justify-center gap-2 font-bold text-xs transition-all cursor-pointer active:scale-95 ${
-              isDark
-                ? 'bg-white/10 border-white/10 text-white hover:bg-white/15'
-                : 'bg-zinc-900 border-zinc-900 text-white hover:bg-zinc-800'
-            }`}
-          >
-            <Upload className="w-4 h-4" />
-            <span>Guardar en Nube</span>
-          </button>
-
-          <button
-            onClick={onDownloadCloud}
-            className={`p-3 rounded-2xl border flex items-center justify-center gap-2 font-bold text-xs transition-all cursor-pointer active:scale-95 ${
-              isDark
-                ? 'bg-white/5 border-white/10 text-zinc-200 hover:bg-white/10'
-                : 'bg-zinc-100 border-zinc-200 text-zinc-800 hover:bg-zinc-200'
-            }`}
-          >
-            <Download className="w-4 h-4 text-emerald-500" />
-            <span>Descargar Nube</span>
-          </button>
-
-          <button
-            onClick={onCopyLink}
-            className={`p-3 rounded-2xl border flex items-center justify-center gap-2 font-bold text-xs transition-all cursor-pointer active:scale-95 ${
-              isDark
-                ? 'bg-white/5 border-white/10 text-zinc-200 hover:bg-white/10'
-                : 'bg-zinc-100 border-zinc-200 text-zinc-800 hover:bg-zinc-200'
-            }`}
-          >
-            <LinkIcon className="w-4 h-4" />
-            <span>Código: {accessCode}</span>
-          </button>
-        </div>
-      </motion.div>
+        </motion.div>
+      ) : (
+        <motion.div
+          initial={{ opacity: 0, scale: 0.98 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 0.2 }}
+          className={`rounded-3xl p-5 border transition-all ${
+            isDark
+              ? 'bg-[#131417] border-white/10 shadow-lg text-white'
+              : 'bg-white border-zinc-200/80 shadow-xs text-zinc-900'
+          }`}
+        >
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2.5">
+              <div className={`p-2 rounded-xl border ${
+                isDark ? 'bg-white/5 border-white/10 text-emerald-400' : 'bg-emerald-50 border-emerald-200 text-emerald-700'
+              }`}>
+                <Check className="w-5 h-5" />
+              </div>
+              <div>
+                <h3 className={`font-black text-sm uppercase tracking-wide ${isDark ? 'text-white' : 'text-zinc-900'}`}>
+                  Almacenamiento Local Autónomo
+                </h3>
+                <p className={`text-[11px] ${isDark ? 'text-zinc-400' : 'text-zinc-500'}`}>
+                  Tus materias, notas y actividades se guardan en tu dispositivo
+                </p>
+              </div>
+            </div>
+            <span className={`px-2.5 py-1 rounded-full text-[10px] font-bold font-mono border ${
+              isDark ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400' : 'bg-emerald-50 border-emerald-300 text-emerald-700'
+            }`}>
+              PRIVADO
+            </span>
+          </div>
+        </motion.div>
+      )}
 
       {/* Academic Utilities Grid (Promedios, Pomodoro, Ciclo, Copiloto IA) */}
       <motion.div

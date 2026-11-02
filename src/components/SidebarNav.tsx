@@ -44,6 +44,7 @@ interface SidebarNavProps {
   isDark?: boolean;
   themeMode?: 'system' | 'dark' | 'light';
   onCycleTheme?: () => void;
+  isAdmin?: boolean;
 }
 
 export const SidebarNav: React.FC<SidebarNavProps> = ({
@@ -69,6 +70,7 @@ export const SidebarNav: React.FC<SidebarNavProps> = ({
   isDark = true,
   themeMode = 'system',
   onCycleTheme,
+  isAdmin = false,
 }) => {
   const getSubjectIcon = (name: string, index: number) => {
     const n = name.toLowerCase();
@@ -170,28 +172,56 @@ export const SidebarNav: React.FC<SidebarNavProps> = ({
             <span className="font-bold">Horario & Clases</span>
           </button>
 
-          <button
-            onClick={() => {
-              onSwitchView('cloud');
-              if (onCloseMobileDrawer) onCloseMobileDrawer();
-            }}
-            className={`w-full flex items-center space-x-3 px-3 py-2.5 rounded-2xl text-xs font-bold transition-all cursor-pointer ${
-              currentView === 'cloud'
-                ? isDark
-                  ? 'bg-white !text-black text-black shadow-sm'
-                  : 'bg-black !text-white text-white shadow-sm'
-                : isDark
-                ? 'text-zinc-300 hover:text-white hover:bg-white/10'
-                : 'text-zinc-700 hover:text-black hover:bg-zinc-100'
-            }`}
-          >
-            <CloudUpload className={`w-4 h-4 shrink-0 stroke-[2.2] ${
-              currentView === 'cloud'
-                ? isDark ? '!text-black text-black' : '!text-white text-white'
-                : isDark ? 'text-zinc-300' : 'text-zinc-700'
-            }`} />
-            <span className="font-bold">Base de Datos Nube</span>
-          </button>
+          {/* Base de Datos Nube (Solo Administrador) */}
+          {isAdmin ? (
+            <button
+              onClick={() => {
+                onSwitchView('cloud');
+                if (onCloseMobileDrawer) onCloseMobileDrawer();
+              }}
+              className={`w-full flex items-center space-x-3 px-3 py-2.5 rounded-2xl text-xs font-bold transition-all cursor-pointer ${
+                currentView === 'cloud'
+                  ? isDark
+                    ? 'bg-white !text-black text-black shadow-sm'
+                    : 'bg-black !text-white text-white shadow-sm'
+                  : isDark
+                  ? 'text-zinc-300 hover:text-white hover:bg-white/10'
+                  : 'text-zinc-700 hover:text-black hover:bg-zinc-100'
+              }`}
+            >
+              <CloudUpload className={`w-4 h-4 shrink-0 stroke-[2.2] ${
+                currentView === 'cloud'
+                  ? isDark ? '!text-black text-black' : '!text-white text-white'
+                  : isDark ? 'text-zinc-300' : 'text-zinc-700'
+              }`} />
+              <span className="font-bold">Base de Datos Nube</span>
+            </button>
+          ) : (
+            <button
+              onClick={() => {
+                onSwitchView('cloud');
+                if (onCloseMobileDrawer) onCloseMobileDrawer();
+              }}
+              className={`w-full flex items-center justify-between px-3 py-2.5 rounded-2xl text-xs font-bold transition-all cursor-pointer ${
+                currentView === 'cloud'
+                  ? isDark
+                    ? 'bg-white/10 text-white border border-white/15'
+                    : 'bg-zinc-200 text-zinc-900 border border-zinc-300'
+                  : isDark
+                  ? 'text-zinc-400 hover:text-zinc-200 hover:bg-white/5'
+                  : 'text-zinc-600 hover:text-zinc-900 hover:bg-zinc-100'
+              }`}
+              title="Base de datos central reservada para el Administrador"
+            >
+              <div className="flex items-center space-x-3">
+                <CloudUpload className="w-4 h-4 shrink-0 stroke-[2.2]" />
+                <span className="font-bold">Base de Datos</span>
+              </div>
+              <span className="text-[9px] font-mono font-bold px-1.5 py-0.5 rounded bg-white/10 text-zinc-300 border border-white/10">
+                🔒 Admin
+              </span>
+            </button>
+          )}
         </nav>
 
         {/* Materias del Ciclo */}
@@ -390,7 +420,16 @@ export const SidebarNav: React.FC<SidebarNavProps> = ({
               {loggedUser.charAt(0).toUpperCase()}
             </div>
             <div className="min-w-0">
-              <p className={`text-xs font-bold truncate ${isDark ? 'text-white' : 'text-black'}`}>{loggedUser}</p>
+              <div className="flex items-center gap-1.5">
+                <p className={`text-xs font-bold truncate ${isDark ? 'text-white' : 'text-black'}`}>{loggedUser}</p>
+                <span className={`text-[9px] font-mono font-bold px-1 py-0.2 rounded uppercase border ${
+                  isAdmin
+                    ? isDark ? 'bg-white/10 text-zinc-200 border-white/20' : 'bg-black text-white border-black'
+                    : 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30'
+                }`}>
+                  {isAdmin ? 'ADMIN' : 'USER'}
+                </span>
+              </div>
               <div className="flex items-center gap-2">
                 <p className="text-[10px] text-emerald-500 flex items-center font-bold">
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 mr-1.5 inline-block animate-pulse shrink-0" />

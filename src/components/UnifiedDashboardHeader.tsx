@@ -23,6 +23,7 @@ interface UnifiedDashboardHeaderProps {
   accessCode: string;
   quickNote?: string;
   isSyncing: boolean;
+  isAdmin?: boolean;
   onOpenStartDate: () => void;
   onOpenEditNote: () => void;
   onResetWeekTasks: () => void;
@@ -42,6 +43,7 @@ export const UnifiedDashboardHeader: React.FC<UnifiedDashboardHeaderProps> = ({
   accessCode,
   quickNote,
   isSyncing,
+  isAdmin = false,
   onOpenStartDate,
   onOpenEditNote,
   onResetWeekTasks,
@@ -115,38 +117,54 @@ export const UnifiedDashboardHeader: React.FC<UnifiedDashboardHeaderProps> = ({
         </div>
       </div>
 
-      {/* Action Row: Sleek Side-by-Side Database Sync Buttons */}
-      <div className="grid grid-cols-2 gap-2 mb-2.5">
-        {/* Subir a la Nube */}
-        <button
-          onClick={onUploadCloud}
-          disabled={isSyncing}
-          className={`py-2 px-3 rounded-2xl border flex items-center justify-center gap-2 font-bold text-xs transition-all cursor-pointer active:scale-95 disabled:opacity-50 disabled:pointer-events-none relative overflow-hidden ${
-            isDark
-              ? 'bg-white !text-black text-black border-white hover:bg-zinc-200 shadow-sm'
-              : 'bg-black !text-white text-white border-black hover:bg-zinc-800 shadow-sm'
-          }`}
-          title="Guardar materias y tareas en Supabase"
-        >
-          <Upload className={`w-3.5 h-3.5 shrink-0 stroke-[2.2] ${isDark ? '!text-black text-black' : '!text-white text-white'}`} />
-          <span className="font-extrabold tracking-wide text-xs">Subir Nube</span>
-        </button>
+      {/* Action Row: Sleek Side-by-Side Database Sync Buttons (Solo Admin) */}
+      {isAdmin ? (
+        <div className="grid grid-cols-2 gap-2 mb-2.5">
+          {/* Subir a la Nube */}
+          <button
+            onClick={onUploadCloud}
+            disabled={isSyncing}
+            className={`py-2 px-3 rounded-2xl border flex items-center justify-center gap-2 font-bold text-xs transition-all cursor-pointer active:scale-95 disabled:opacity-50 disabled:pointer-events-none relative overflow-hidden ${
+              isDark
+                ? 'bg-white !text-black text-black border-white hover:bg-zinc-200 shadow-sm'
+                : 'bg-black !text-white text-white border-black hover:bg-zinc-800 shadow-sm'
+            }`}
+            title="Guardar materias y tareas en Supabase"
+          >
+            <Upload className={`w-3.5 h-3.5 shrink-0 stroke-[2.2] ${isDark ? '!text-black text-black' : '!text-white text-white'}`} />
+            <span className="font-extrabold tracking-wide text-xs">Subir Nube</span>
+          </button>
 
-        {/* Descargar Nube */}
-        <button
-          onClick={onDownloadCloud}
-          disabled={isSyncing}
-          className={`py-2 px-3 rounded-2xl border flex items-center justify-center gap-2 font-bold text-xs transition-all cursor-pointer active:scale-95 disabled:opacity-50 disabled:pointer-events-none relative overflow-hidden ${
-            isDark
-              ? 'bg-zinc-900 border-white/20 text-white hover:bg-zinc-800'
-              : 'bg-white border-zinc-300 text-black hover:bg-zinc-100'
-          }`}
-          title="Cargar materias y tareas desde Supabase con clave oo"
-        >
-          <Download className="w-3.5 h-3.5 text-emerald-500 shrink-0 stroke-[2.2]" />
-          <span className="font-extrabold tracking-wide text-xs">Descargar Nube</span>
-        </button>
-      </div>
+          {/* Descargar Nube */}
+          <button
+            onClick={onDownloadCloud}
+            disabled={isSyncing}
+            className={`py-2 px-3 rounded-2xl border flex items-center justify-center gap-2 font-bold text-xs transition-all cursor-pointer active:scale-95 disabled:opacity-50 disabled:pointer-events-none relative overflow-hidden ${
+              isDark
+                ? 'bg-zinc-900 border-white/20 text-white hover:bg-zinc-800'
+                : 'bg-white border-zinc-300 text-black hover:bg-zinc-100'
+            }`}
+            title="Cargar materias y tareas desde Supabase con clave oo"
+          >
+            <Download className="w-3.5 h-3.5 text-emerald-500 shrink-0 stroke-[2.2]" />
+            <span className="font-extrabold tracking-wide text-xs">Descargar Nube</span>
+          </button>
+        </div>
+      ) : (
+        <div className={`p-2.5 rounded-2xl border mb-2.5 flex items-center justify-between text-xs ${
+          isDark ? 'bg-white/[0.03] border-white/10' : 'bg-zinc-50 border-zinc-200'
+        }`}>
+          <div className="flex items-center gap-2">
+            <span className="text-emerald-400 font-bold font-mono text-[11px] flex items-center gap-1.5">
+              <span className="w-2 h-2 rounded-full bg-emerald-500 inline-block animate-pulse" />
+              Almacenamiento Local Seguro
+            </span>
+          </div>
+          <span className={`text-[10px] font-mono ${isDark ? 'text-zinc-400' : 'text-zinc-500'}`}>
+            Tus datos se guardan en este dispositivo
+          </span>
+        </div>
+      )}
 
       {/* Bottom Utility Row: Note & Tools */}
       <div

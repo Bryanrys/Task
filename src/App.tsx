@@ -50,6 +50,7 @@ import {
   Globe,
   X,
   Bot,
+  Lock,
 } from 'lucide-react';
 
 import { Dashboard, WeekItem, SubjectItem, TaskItem } from './types';
@@ -98,6 +99,11 @@ import {
 } from './utils/gradeCalculation';
 
 import { cloudSave, cloudLoad } from './services/supabase';
+import {
+  getUserDashboardStorageKey,
+  USER_ROLE_KEY,
+  ACTIVE_USERNAME_KEY,
+} from './services/userService';
 import { Capacitor } from '@capacitor/core';
 import {
   getNotificationSettings,
@@ -199,6 +205,19 @@ export default function App() {
     }
   });
 
+  const [userRole, setUserRole] = useState<'admin' | 'user'>(() => {
+    try {
+      const savedRole = localStorage.getItem(USER_ROLE_KEY);
+      if (savedRole === 'admin' || savedRole === 'user') return savedRole;
+      const u = (localStorage.getItem(ACTIVE_USERNAME_KEY) || localStorage.getItem('uees_logged_user') || '').toLowerCase();
+      return (u === 'admin' || u === 'uees') ? 'admin' : 'user';
+    } catch {
+      return 'admin';
+    }
+  });
+
+  const isAdmin = userRole === 'admin';
+
   const [loggedUser, setLoggedUser] = useState<string>(() => {
     try {
       return localStorage.getItem('uees_logged_user') || 'Admin';
@@ -207,15 +226,69 @@ export default function App() {
     }
   });
 
-  const handleLoginSuccess = (user: string) => {
+  const handleLoginSuccess = (user: string, role: 'admin' | 'user' = 'user', isNewUser: boolean = false) => {
     setLoggedUser(user);
+    setUserRole(role);
     setIsAuthenticated(true);
     setToastMessage(`¡Bienvenido al Dashboard Académico, ${user}! ✨`);
+
+    const activeU = localStorage.getItem(ACTIVE_USERNAME_KEY) || (role === 'admin' ? 'admin' : user.toLowerCase());
+    const storageKey = getUserDashboardStorageKey(activeU, role);
+
+    if (isNewUser) {
+      setShowWizard(true);
+      const now = new Date();
+      const todayISO = now.toISOString().split('T')[0];
+      const initialUserDash: Dashboard = {
+        id: `dash-${Date.now()}`,
+        name: `Ciclo Académico - ${user}`,
+        startDate: '06 JUL 2026',
+        startDateISO: todayISO,
+        lastUpdated: `${now.getDate()} ${now.toLocaleString('es-ES', { month: 'short' })} ${now.getFullYear()}`,
+        subjects: [
+          { id: `subj-${Date.now()}-1`, name: 'Materia 1' },
+          { id: `subj-${Date.now()}-2`, name: 'Materia 2' },
+          { id: `subj-${Date.now()}-3`, name: 'Materia 3' },
+          { id: `subj-${Date.now()}-4`, name: 'Materia 4' },
+        ],
+        defaultTaskNames: ['Foro entregado', 'Tarea entregada'],
+        weeks: [
+          {
+            id: `week-1-${Date.now()}`,
+            weekNumber: 1,
+            dateRange: computeWeekRangeFromDate(1, todayISO),
+            status: 'EN PROCESO',
+            subjectTasks: {},
+            bloqueTareas: [],
+          },
+        ],
+        activeWeekId: `week-1-${Date.now()}`,
+        accessCode: 'oo',
+      };
+      setDashboards([initialUserDash]);
+      setActiveDashId(initialUserDash.id);
+      localStorage.setItem(storageKey, JSON.stringify([initialUserDash]));
+    } else {
+      const stored = localStorage.getItem(storageKey) || (role === 'admin' ? localStorage.getItem(STORAGE_KEY) : null);
+      if (stored) {
+        try {
+          const parsed = JSON.parse(stored);
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            setDashboards(parsed);
+            setActiveDashId(parsed[0].id);
+          }
+        } catch {}
+      } else if (role === 'admin') {
+        setDashboards(INITIAL_DASHBOARDS);
+        setActiveDashId(INITIAL_DASHBOARDS[0].id);
+      }
+    }
   };
 
   const handleLogout = () => {
     try {
       localStorage.removeItem('uees_academic_auth_v1');
+      localStorage.removeItem(ACTIVE_USERNAME_KEY);
     } catch { }
     setIsAuthenticated(false);
     setShowDrawer(false);
@@ -234,7 +307,9 @@ export default function App() {
   // Dashboards state
   const [dashboards, setDashboards] = useState<Dashboard[]>(() => {
     try {
-      const stored = localStorage.getItem(STORAGE_KEY);
+      const activeU = localStorage.getItem(ACTIVE_USERNAME_KEY) || (userRole === 'admin' ? 'admin' : 'estudiante');
+      const storageKey = getUserDashboardStorageKey(activeU, userRole);
+      const stored = localStorage.getItem(storageKey) || (userRole === 'admin' ? localStorage.getItem(STORAGE_KEY) : null);
       if (stored) {
         const parsed = JSON.parse(stored);
         if (Array.isArray(parsed) && parsed.length > 0) {
@@ -539,10 +614,19 @@ export default function App() {
   const [pendingDeleteDashId, setPendingDeleteDashId] = useState<string | null>(null);
   const [pendingDeleteWeekId, setPendingDeleteWeekId] = useState<string | null>(null);
 
-  // Persist dashboards
+  // Persist dashboards por usuario
   useEffect(() => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(dashboards));
-  }, [dashboards]);
+    try {
+      const activeU = localStorage.getItem(ACTIVE_USERNAME_KEY) || (userRole === 'admin' ? 'admin' : loggedUser);
+      const storageKey = getUserDashboardStorageKey(activeU, userRole);
+      localStorage.setItem(storageKey, JSON.stringify(dashboards));
+      if (userRole === 'admin') {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(dashboards));
+      }
+    } catch (e) {
+      console.error('Error guardando dashboards:', e);
+    }
+  }, [dashboards, userRole, loggedUser]);
 
   // Persist theme & sincronización en tiempo real con el sistema operativo
   useEffect(() => {
@@ -1375,6 +1459,10 @@ export default function App() {
   // Upload (Push to cloud Supabase + Local backup)
   const handleConfirmUpload = async () => {
     setShowUploadConfirm(false);
+    if (!isAdmin) {
+      setToastMessage('🔒 Solo el Administrador tiene permiso para guardar en la base de datos central.');
+      return;
+    }
     setIsSyncing(true);
 
     try {
@@ -1414,8 +1502,12 @@ export default function App() {
   };
 
   // Download (Pull from cloud Supabase + Local backup)
-  // Si el usuario ya está autenticado con sus credenciales, descarga directamente sin volver a pedir clave
+  // Si el usuario ya está autenticado como Admin con sus credenciales, descarga directamente
   const handleTriggerCloudDownload = () => {
+    if (!isAdmin) {
+      setToastMessage('🔒 La descarga de la base de datos central en la nube está reservada para el Administrador.');
+      return;
+    }
     if (isAuthenticated) {
       setPendingDownloadCode('oo');
       handleExecuteDownload('oo');
@@ -1425,6 +1517,10 @@ export default function App() {
   };
 
   const handlePromptDownload = (code: string) => {
+    if (!isAdmin) {
+      setToastMessage('🔒 La descarga de la base de datos central en la nube está reservada para el Administrador.');
+      return;
+    }
     if (!code.trim()) return;
     const finalCode = code.trim().toUpperCase();
     setPendingDownloadCode(finalCode);
@@ -1438,6 +1534,10 @@ export default function App() {
 
   const handleExecuteDownload = async (codeOverride?: string) => {
     setShowDownloadConfirm(false);
+    if (!isAdmin) {
+      setToastMessage('🔒 La descarga de la base de datos central en la nube está reservada para el Administrador.');
+      return;
+    }
     setIsSyncing(true);
 
     try {
@@ -1963,6 +2063,7 @@ export default function App() {
           isDark={isDark}
           themeMode={themeMode}
           onCycleTheme={cycleThemeMode}
+          isAdmin={isAdmin}
         />
 
         {/* Mobile Sidebar Overlay Drawer */}
@@ -1989,6 +2090,7 @@ export default function App() {
                     isDark={isDark}
                     themeMode={themeMode}
                     onCycleTheme={cycleThemeMode}
+                    isAdmin={isAdmin}
                     onSwitchView={(view: 'dashboard' | 'schedule' | 'cloud') => {
                       setCurrentView(view);
                       setShowMobileSidebar(false);
@@ -2509,32 +2611,45 @@ export default function App() {
                       </button>
                     </div>
 
-                    <div className="flex items-center gap-2">
-                      <button
-                        onClick={() => setShowUploadConfirm(true)}
-                        className={`inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer shadow-sm active:scale-95 ${
-                          isDark
-                            ? 'bg-white !text-black text-black hover:bg-zinc-200'
-                            : 'bg-black !text-white text-white hover:bg-zinc-800'
-                        }`}
-                      >
-                        <Upload className={`w-3.5 h-3.5 stroke-[2.2] ${isDark ? '!text-black text-black' : '!text-white text-white'}`} />
-                        <span className="font-bold">Subir Nube</span>
-                      </button>
+                    {isAdmin ? (
+                      <div className="flex items-center gap-2">
+                        <button
+                          onClick={() => setShowUploadConfirm(true)}
+                          className={`inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer shadow-sm active:scale-95 ${
+                            isDark
+                              ? 'bg-white !text-black text-black hover:bg-zinc-200'
+                              : 'bg-black !text-white text-white hover:bg-zinc-800'
+                          }`}
+                        >
+                          <Upload className={`w-3.5 h-3.5 stroke-[2.2] ${isDark ? '!text-black text-black' : '!text-white text-white'}`} />
+                          <span className="font-bold">Subir Nube</span>
+                        </button>
 
-                      <button
-                        onClick={handleTriggerCloudDownload}
-                        className={`inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-bold border transition-all cursor-pointer shadow-sm active:scale-95 ${
+                        <button
+                          onClick={handleTriggerCloudDownload}
+                          className={`inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-bold border transition-all cursor-pointer shadow-sm active:scale-95 ${
+                            isDark
+                              ? 'bg-zinc-900 hover:bg-zinc-800 border-white/20 text-white'
+                              : 'bg-white hover:bg-zinc-100 border-zinc-300 text-black'
+                          }`}
+                          title="Descargar de la nube directamente"
+                        >
+                          <Download className="w-3.5 h-3.5 text-emerald-500 stroke-[2.2]" />
+                          <span className="font-bold">Descargar Nube</span>
+                        </button>
+                      </div>
+                    ) : (
+                      <div className="flex items-center gap-2">
+                        <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-mono font-bold border ${
                           isDark
-                            ? 'bg-zinc-900 hover:bg-zinc-800 border-white/20 text-white'
-                            : 'bg-white hover:bg-zinc-100 border-zinc-300 text-black'
-                        }`}
-                        title="Descargar de la nube directamente"
-                      >
-                        <Download className="w-3.5 h-3.5 text-emerald-500 stroke-[2.2]" />
-                        <span className="font-bold">Descargar Nube</span>
-                      </button>
-                    </div>
+                            ? 'bg-emerald-500/10 border-emerald-500/25 text-emerald-400'
+                            : 'bg-emerald-50 border-emerald-300 text-emerald-800'
+                        }`}>
+                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                          <span>Almacenamiento Local</span>
+                        </span>
+                      </div>
+                    )}
                   </div>
 
                   {/* Banner de Nota Rápida si existe */}
@@ -2933,6 +3048,7 @@ export default function App() {
                         startDate={currentDashboard.startDate}
                         daysElapsed={daysTranscurridos}
                         pendingTasksCount={weekStats.pendingTasks}
+                        isAdmin={isAdmin}
                         onBackToTasks={() => setSelectedSubjectId(null)}
                         onExportJSON={handleExportJSON}
                         onImportJSONClick={() => jsonInputRef.current?.click()}
@@ -3079,90 +3195,129 @@ export default function App() {
 
           {/* Cloud Database View */}
           {currentView === 'cloud' && (
-            <div className={`max-w-3xl mx-auto p-6 rounded-3xl border transition-all space-y-6 ${
-              isDark ? 'bg-[#131417] border-white/5 shadow-md' : 'bg-white border-zinc-200/80 shadow-2xs'
-            }`}>
-              <div className={`flex items-center justify-between pb-4 border-b ${
-                isDark ? 'border-white/5' : 'border-zinc-200/80'
+            !isAdmin ? (
+              <div className={`max-w-xl mx-auto p-6 sm:p-8 rounded-3xl border text-center transition-all space-y-5 my-8 ${
+                isDark ? 'bg-[#131417] border-white/10 shadow-2xl text-white' : 'bg-white border-zinc-200 shadow-lg text-zinc-900'
               }`}>
-                <div>
-                  <h2 className={`text-lg font-bold flex items-center gap-2 ${
-                    isDark ? 'text-white' : 'text-zinc-900'
-                  }`}>
-                    <Cloud className="w-5 h-5 text-emerald-500" />
-                    <span>Base de Datos Nube (Supabase)</span>
+                <div className="w-16 h-16 mx-auto rounded-3xl bg-white/5 border border-white/10 flex items-center justify-center text-zinc-300">
+                  <Lock className="w-8 h-8 text-emerald-400 stroke-[1.8]" />
+                </div>
+                <div className="space-y-2">
+                  <h2 className="text-xl font-black uppercase tracking-wide">
+                    Acceso Reservado al Administrador
                   </h2>
-                  <p className={`text-xs mt-1 ${isDark ? 'text-zinc-400' : 'text-zinc-500'}`}>
-                    Sincroniza tus materias, tareas y progresos en la nube.
+                  <p className={`text-xs leading-relaxed max-w-md mx-auto ${isDark ? 'text-zinc-400' : 'text-zinc-600'}`}>
+                    La base de datos central en la nube está reservada para la administración del sistema. Como estudiante, todos tus datos, materias, horarios y tareas se guardan de forma privada y segura en tu dispositivo.
                   </p>
                 </div>
-                <span className={`text-xs font-mono font-bold px-3 py-1 rounded-full border ${
-                  isDark ? 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30' : 'bg-emerald-50 text-emerald-700 border-emerald-200'
+
+                <div className={`p-4 rounded-2xl border text-left text-xs space-y-1.5 ${
+                  isDark ? 'bg-white/[0.03] border-white/10 text-zinc-300' : 'bg-zinc-50 border-zinc-200 text-zinc-700'
                 }`}>
-                  {cloudStatus}
-                </span>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <button
-                  onClick={() => setShowUploadConfirm(true)}
-                  className={`p-5 rounded-3xl border text-left transition-all cursor-pointer group ${
-                    isDark
-                      ? 'bg-white/5 hover:bg-white/10 border-white/10'
-                      : 'bg-zinc-50 hover:bg-zinc-100 border-zinc-200 shadow-2xs'
-                  }`}
-                >
-                  <div className={`w-10 h-10 rounded-2xl flex items-center justify-center mb-3 group-hover:scale-105 transition-transform ${
-                    isDark ? 'bg-white !text-black text-black font-bold' : 'bg-black !text-white text-white font-bold'
-                  }`}>
-                    <Upload className="w-5 h-5" />
+                  <div className="flex items-center gap-2 font-bold font-mono text-emerald-400">
+                    <CheckCircle2 className="w-4 h-4 shrink-0" />
+                    <span>Tus funciones activas en la app:</span>
                   </div>
-                  <h3 className={`text-sm font-bold mb-1 ${isDark ? 'text-white' : 'text-zinc-900'}`}>Subir a la Nube</h3>
-                  <p className={`text-xs ${isDark ? 'text-zinc-400' : 'text-zinc-500'}`}>
-                    Guarda el estado actual del dashboard en la base de datos central.
+                  <p className="text-[11px] text-zinc-400 leading-relaxed">
+                    • Dashboard semanal de entregas • Horario y clases • Calculadora oficial de notas UEES • Temporizador Pomodoro • Respaldos locales en archivo .JSON
                   </p>
-                </button>
-
-                <button
-                  onClick={handleTriggerCloudDownload}
-                  className={`p-5 rounded-3xl border text-left transition-all cursor-pointer group ${
-                    isDark
-                      ? 'bg-white/5 hover:bg-white/10 border-white/10'
-                      : 'bg-zinc-50 hover:bg-zinc-100 border-zinc-200 shadow-2xs'
-                  }`}
-                  title="Descargar de la nube directamente"
-                >
-                  <div className={`w-10 h-10 rounded-2xl flex items-center justify-center mb-3 group-hover:scale-105 transition-transform ${
-                    isDark ? 'bg-emerald-500 text-white font-bold' : 'bg-emerald-600 text-white font-bold'
-                  }`}>
-                    <Download className="w-5 h-5" />
-                  </div>
-                  <h3 className={`text-sm font-bold mb-1 ${isDark ? 'text-white' : 'text-zinc-900'}`}>Descargar de la Nube</h3>
-                  <p className={`text-xs ${isDark ? 'text-zinc-400' : 'text-zinc-500'}`}>
-                    Sincroniza directamente tus materias y tareas con la base de datos central.
-                  </p>
-                </button>
-              </div>
-
-              <div className={`p-4 rounded-2xl border flex items-center justify-between ${
-                isDark ? 'bg-white/5 border-white/10' : 'bg-zinc-50 border-zinc-200/80'
-              }`}>
-                <div>
-                  <span className={`text-xs block ${isDark ? 'text-zinc-400' : 'text-zinc-500'}`}>Enlace público / compartir</span>
-                  <span className={`text-xs font-mono font-semibold ${isDark ? 'text-zinc-300' : 'text-zinc-700'}`}>
-                    {window.location.origin}
-                  </span>
                 </div>
+
                 <button
-                  onClick={handleCopyLink}
-                  className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition-colors cursor-pointer shadow-xs ${
+                  onClick={() => setCurrentView('dashboard')}
+                  className={`px-6 py-3 rounded-xl font-bold text-xs uppercase tracking-wider transition-all cursor-pointer active:scale-95 shadow-md ${
                     isDark ? 'bg-white !text-black text-black hover:bg-zinc-200' : 'bg-black !text-white text-white hover:bg-zinc-800'
                   }`}
                 >
-                  Copiar Enlace
+                  Volver a mi Dashboard
                 </button>
               </div>
-            </div>
+            ) : (
+              <div className={`max-w-3xl mx-auto p-6 rounded-3xl border transition-all space-y-6 ${
+                isDark ? 'bg-[#131417] border-white/5 shadow-md' : 'bg-white border-zinc-200/80 shadow-2xs'
+              }`}>
+                <div className={`flex items-center justify-between pb-4 border-b ${
+                  isDark ? 'border-white/5' : 'border-zinc-200/80'
+                }`}>
+                  <div>
+                    <h2 className={`text-lg font-bold flex items-center gap-2 ${
+                      isDark ? 'text-white' : 'text-zinc-900'
+                    }`}>
+                      <Cloud className="w-5 h-5 text-emerald-500" />
+                      <span>Base de Datos Nube (Supabase)</span>
+                    </h2>
+                    <p className={`text-xs mt-1 ${isDark ? 'text-zinc-400' : 'text-zinc-500'}`}>
+                      Sincroniza tus materias, tareas y progresos en la nube.
+                    </p>
+                  </div>
+                  <span className={`text-xs font-mono font-bold px-3 py-1 rounded-full border ${
+                    isDark ? 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30' : 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                  }`}>
+                    {cloudStatus}
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <button
+                    onClick={() => setShowUploadConfirm(true)}
+                    className={`p-5 rounded-3xl border text-left transition-all cursor-pointer group ${
+                      isDark
+                        ? 'bg-white/5 hover:bg-white/10 border-white/10'
+                        : 'bg-zinc-50 hover:bg-zinc-100 border-zinc-200 shadow-2xs'
+                    }`}
+                  >
+                    <div className={`w-10 h-10 rounded-2xl flex items-center justify-center mb-3 group-hover:scale-105 transition-transform ${
+                      isDark ? 'bg-white !text-black text-black font-bold' : 'bg-black !text-white text-white font-bold'
+                    }`}>
+                      <Upload className="w-5 h-5" />
+                    </div>
+                    <h3 className={`text-sm font-bold mb-1 ${isDark ? 'text-white' : 'text-zinc-900'}`}>Subir a la Nube</h3>
+                    <p className={`text-xs ${isDark ? 'text-zinc-400' : 'text-zinc-500'}`}>
+                      Guarda el estado actual del dashboard en la base de datos central.
+                    </p>
+                  </button>
+
+                  <button
+                    onClick={handleTriggerCloudDownload}
+                    className={`p-5 rounded-3xl border text-left transition-all cursor-pointer group ${
+                      isDark
+                        ? 'bg-white/5 hover:bg-white/10 border-white/10'
+                        : 'bg-zinc-50 hover:bg-zinc-100 border-zinc-200 shadow-2xs'
+                    }`}
+                    title="Descargar de la nube directamente"
+                  >
+                    <div className={`w-10 h-10 rounded-2xl flex items-center justify-center mb-3 group-hover:scale-105 transition-transform ${
+                      isDark ? 'bg-emerald-500 text-white font-bold' : 'bg-emerald-600 text-white font-bold'
+                    }`}>
+                      <Download className="w-5 h-5" />
+                    </div>
+                    <h3 className={`text-sm font-bold mb-1 ${isDark ? 'text-white' : 'text-zinc-900'}`}>Descargar de la Nube</h3>
+                    <p className={`text-xs ${isDark ? 'text-zinc-400' : 'text-zinc-500'}`}>
+                      Sincroniza directamente tus materias y tareas con la base de datos central.
+                    </p>
+                  </button>
+                </div>
+
+                <div className={`p-4 rounded-2xl border flex items-center justify-between ${
+                  isDark ? 'bg-white/5 border-white/10' : 'bg-zinc-50 border-zinc-200/80'
+                }`}>
+                  <div>
+                    <span className={`text-xs block ${isDark ? 'text-zinc-400' : 'text-zinc-500'}`}>Enlace público / compartir</span>
+                    <span className={`text-xs font-mono font-semibold ${isDark ? 'text-zinc-300' : 'text-zinc-700'}`}>
+                      {window.location.origin}
+                    </span>
+                  </div>
+                  <button
+                    onClick={handleCopyLink}
+                    className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition-colors cursor-pointer shadow-xs ${
+                      isDark ? 'bg-white !text-black text-black hover:bg-zinc-200' : 'bg-black !text-white text-white hover:bg-zinc-800'
+                    }`}
+                  >
+                    Copiar Enlace
+                  </button>
+                </div>
+              </div>
+            )
           )}
         </main>
       </div>
@@ -3307,6 +3462,7 @@ export default function App() {
         onClose={() => setShowWizard(false)}
         onFinish={handleFinishWizard}
         onOpenAccessCode={handleTriggerCloudDownload}
+        isAdmin={isAdmin}
       />
 
       {/* Side Drawer for Dashboards & Weeks with Delete options */}
@@ -3317,6 +3473,7 @@ export default function App() {
         activeDashboard={currentDashboard}
         isDark={isDark}
         loggedUser={loggedUser}
+        isAdmin={isAdmin}
         onSelectDashboard={(id) => setActiveDashId(id)}
         onSelectWeek={handleSelectWeek}
         onNewDashboard={() => {

@@ -82,7 +82,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLoginSuccess }) => {
 
     setTimeout(async () => {
       try {
-        const res = authenticateUser(username, password);
+        const res = await authenticateUser(username, password);
 
         if (res.success && res.user) {
           if (enableBiometricsCheckbox && isBiometricAvailable) {
@@ -122,7 +122,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLoginSuccess }) => {
 
     setTimeout(async () => {
       try {
-        const res = registerNewUser(regUsername, regDisplayName, regPassword);
+        const res = await registerNewUser(regUsername, regDisplayName, regPassword);
 
         if (res.success && res.user) {
           await triggerHaptic('success').catch(() => {});

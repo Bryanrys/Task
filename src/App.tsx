@@ -104,6 +104,8 @@ import {
   USER_ROLE_KEY,
   ACTIVE_USERNAME_KEY,
   createInitialDashboardForUser,
+  syncUserDashboardToCloud,
+  syncUserDashboardFromCloud,
 } from './services/userService';
 import { Capacitor } from '@capacitor/core';
 import {
@@ -244,6 +246,7 @@ export default function App() {
       try {
         localStorage.setItem(storageKey, JSON.stringify([initialUserDash]));
       } catch {}
+      syncUserDashboardToCloud(activeU, [initialUserDash]);
     } else {
       const stored = localStorage.getItem(storageKey) || (role === 'admin' ? localStorage.getItem(STORAGE_KEY) : null);
       if (stored) {
@@ -261,12 +264,31 @@ export default function App() {
         setDashboards(INITIAL_DASHBOARDS);
         setActiveDashId(INITIAL_DASHBOARDS[0].id);
       } else {
-        const userDash = createInitialDashboardForUser(activeU, user);
-        setDashboards([userDash]);
-        setActiveDashId(userDash.id);
-        try {
-          localStorage.setItem(storageKey, JSON.stringify([userDash]));
-        } catch {}
+        // Intentar recuperar el dashboard del estudiante desde la nube (celular <-> web)
+        syncUserDashboardFromCloud(activeU).then((cloudDashboards) => {
+          if (cloudDashboards && cloudDashboards.length > 0) {
+            setDashboards(cloudDashboards);
+            setActiveDashId(cloudDashboards[0].id);
+            try {
+              localStorage.setItem(storageKey, JSON.stringify(cloudDashboards));
+            } catch {}
+          } else {
+            const userDash = createInitialDashboardForUser(activeU, user);
+            setDashboards([userDash]);
+            setActiveDashId(userDash.id);
+            try {
+              localStorage.setItem(storageKey, JSON.stringify([userDash]));
+            } catch {}
+            syncUserDashboardToCloud(activeU, [userDash]);
+          }
+        }).catch(() => {
+          const userDash = createInitialDashboardForUser(activeU, user);
+          setDashboards([userDash]);
+          setActiveDashId(userDash.id);
+          try {
+            localStorage.setItem(storageKey, JSON.stringify([userDash]));
+          } catch {}
+        });
       }
     }
   };
@@ -608,7 +630,7 @@ export default function App() {
   const [pendingDeleteDashId, setPendingDeleteDashId] = useState<string | null>(null);
   const [pendingDeleteWeekId, setPendingDeleteWeekId] = useState<string | null>(null);
 
-  // Persist dashboards por usuario
+  // Persist dashboards por usuario (Local + Nube personal)
   useEffect(() => {
     try {
       const activeU = localStorage.getItem(ACTIVE_USERNAME_KEY) || (userRole === 'admin' ? 'admin' : loggedUser);
@@ -616,6 +638,8 @@ export default function App() {
       localStorage.setItem(storageKey, JSON.stringify(dashboards));
       if (userRole === 'admin') {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(dashboards));
+      } else if (activeU && activeU !== 'admin' && activeU !== 'uees' && dashboards.length > 0) {
+        syncUserDashboardToCloud(activeU, dashboards).catch(() => {});
       }
     } catch (e) {
       console.error('Error guardando dashboards:', e);

@@ -8,6 +8,7 @@
 
 import { Dashboard, SubjectItem, WeekItem, TaskItem } from '../types';
 import { computeWeekRangeFromDate } from '../utils/dateRange';
+import { supabase } from './supabase';
 
 export interface RegisteredUser {
   username: string;
@@ -39,13 +40,108 @@ export function getRegisteredUsers(): RegisteredUser[] {
 }
 
 /**
- * Registra un nuevo estudiante/usuario en el sistema local
+ * Sincroniza una cuenta de usuario hacia la base de datos de Supabase
  */
-export function registerNewUser(
+export async function syncUserAccountToCloud(user: RegisteredUser): Promise<boolean> {
+  try {
+    const { error } = await supabase.from('data_user_bro').upsert(
+      {
+        key: `uees_user_acc_${user.username.toLowerCase()}`,
+        value: {
+          username: user.username.toLowerCase(),
+          displayName: user.displayName,
+          password: user.password,
+          role: user.role,
+          registeredAt: user.registeredAt,
+        },
+      },
+      { onConflict: 'key' }
+    );
+    return !error;
+  } catch (e) {
+    console.warn('Error sincronizando cuenta en Supabase:', e);
+    return false;
+  }
+}
+
+/**
+ * Consulta y recupera una cuenta de usuario desde Supabase
+ */
+export async function syncUserAccountFromCloud(rawUsername: string): Promise<RegisteredUser | null> {
+  const u = rawUsername.trim().toLowerCase();
+  if (!u || u === 'admin' || u === 'uees') return null;
+
+  try {
+    const { data, error } = await supabase
+      .from('data_user_bro')
+      .select('value')
+      .eq('key', `uees_user_acc_${u}`)
+      .maybeSingle();
+
+    if (error || !data || !data.value) {
+      return null;
+    }
+    return data.value as RegisteredUser;
+  } catch (e) {
+    console.warn('Error consultando cuenta en Supabase:', e);
+    return null;
+  }
+}
+
+/**
+ * Guarda el dashboard personal de un estudiante en Supabase de forma privada
+ */
+export async function syncUserDashboardToCloud(username: string, dashboards: Dashboard[]): Promise<boolean> {
+  const u = (username || '').trim().toLowerCase();
+  if (!u || u === 'admin' || u === 'uees') return false;
+
+  try {
+    const { error } = await supabase.from('data_user_bro').upsert(
+      {
+        key: `uees_user_dash_${u}`,
+        value: dashboards,
+      },
+      { onConflict: 'key' }
+    );
+    return !error;
+  } catch (e) {
+    console.warn('Error guardando dashboard personal en Supabase:', e);
+    return false;
+  }
+}
+
+/**
+ * Carga el dashboard personal de un estudiante desde Supabase
+ */
+export async function syncUserDashboardFromCloud(username: string): Promise<Dashboard[] | null> {
+  const u = (username || '').trim().toLowerCase();
+  if (!u || u === 'admin' || u === 'uees') return null;
+
+  try {
+    const { data, error } = await supabase
+      .from('data_user_bro')
+      .select('value')
+      .eq('key', `uees_user_dash_${u}`)
+      .maybeSingle();
+
+    if (error || !data || !data.value || !Array.isArray(data.value)) {
+      return null;
+    }
+    return data.value as Dashboard[];
+  } catch (e) {
+    console.warn('Error recuperando dashboard personal de Supabase:', e);
+    return null;
+  }
+}
+
+/**
+ * Registra un nuevo estudiante/usuario en el sistema local y en la nube de Supabase
+ */
+export async function registerNewUser(
   rawUsername: string,
   rawDisplayName: string,
   rawPassword: string
-): { success: boolean; error?: string; user?: RegisteredUser } {
+): Promise<{ success: boolean; error?: string; user?: RegisteredUser }> {
   const username = rawUsername.trim().toLowerCase();
   const displayName = rawDisplayName.trim() || rawUsername.trim();
   const password = rawPassword.trim();
@@ -80,12 +176,27 @@ export function registerNewUser(
     return { success: false, error: 'La contraseña debe contener al menos 2 caracteres.' };
   }
 
+  // 1. Verificar si ya existe en almacenamiento local
   const existingUsers = getRegisteredUsers();
-  const exists = existingUsers.some((u) => u.username === username);
-  if (exists) {
+  const existsLocal = existingUsers.some((u) => u.username === username);
+  if (existsLocal) {
     return {
       success: false,
-      error: `El usuario "${username}" ya existe. Inicia sesión o elige otro nombre.`,
+      error: `El usuario "${username}" ya existe en este dispositivo. Inicia sesión o elige otro nombre.`,
+    };
+  }
+
+  // 2. Verificar si ya existe en la nube (Supabase)
+  const existsCloud = await syncUserAccountFromCloud(username);
+  if (existsCloud) {
+    // Si ya existe en la nube, guardarlo localmente para conveniencia y pedirle iniciar sesión
+    try {
+      existingUsers.push(existsCloud);
+      localStorage.setItem(USERS_STORAGE_KEY, JSON.stringify(existingUsers));
+    } catch {}
+    return {
+      success: false,
+      error: `El usuario "${username}" ya está registrado en la nube. Inicia sesión con tu contraseña.`,
     };
   }
 
@@ -108,6 +219,17 @@ export function registerNewUser(
     localStorage.setItem(USER_ROLE_KEY, 'user');
     localStorage.setItem(NEW_USER_PENDING_WIZARD_KEY, 'true');
 
+    // Sincronizar cuenta a Supabase en la nube
+    await syncUserAccountToCloud(newUser);
+
+    // Inicializar y guardar plantilla de dashboard tanto local como en la nube
+    const initialDash = createInitialDashboardForUser(username, displayName);
+    const storageKey = getUserDashboardStorageKey(username, 'user');
+    try {
+      localStorage.setItem(storageKey, JSON.stringify([initialDash]));
+    } catch {}
+    await syncUserDashboardToCloud(username, [initialDash]);
+
     return { success: true, user: newUser };
   } catch (e) {
     return { success: false, error: 'No se pudo guardar el registro en el almacenamiento local.' };
@@ -115,16 +237,16 @@ export function registerNewUser(
 }
 
 /**
- * Autentica un usuario existente (Admin o Estudiante registrado)
+ * Autentica un usuario existente (Admin o Estudiante registrado, compatible celular <-> web)
  */
-export function authenticateUser(
+export async function authenticateUser(
   rawUsername: string,
   rawPassword: string
-): {
+): Promise<{
   success: boolean;
   error?: string;
   user?: { username: string; displayName: string; role: 'admin' | 'user'; isNew?: boolean };
-} {
+}> {
   const u = rawUsername.trim().toLowerCase();
   const p = rawPassword.trim();
 
@@ -154,27 +276,59 @@ export function authenticateUser(
     };
   }
 
-  // 2. Verificación en catálogo de usuarios locales registrados
+  // 2. Verificación en catálogo de usuarios locales registrados (Offline-first rápido)
   const registered = getRegisteredUsers();
-  const found = registered.find((user) => user.username === u);
+  const foundLocal = registered.find((user) => user.username === u);
 
-  if (found) {
-    if (found.password === p) {
+  if (foundLocal) {
+    if (foundLocal.password === p) {
       const isNew = localStorage.getItem(NEW_USER_PENDING_WIZARD_KEY) === 'true';
       try {
         localStorage.setItem(AUTH_TOKEN_KEY, 'authenticated');
-        localStorage.setItem(LOGGED_USER_KEY, found.displayName);
-        localStorage.setItem(ACTIVE_USERNAME_KEY, found.username);
+        localStorage.setItem(LOGGED_USER_KEY, foundLocal.displayName);
+        localStorage.setItem(ACTIVE_USERNAME_KEY, foundLocal.username);
+        localStorage.setItem(USER_ROLE_KEY, 'user');
+      } catch {}
+
+      // Sincronizar en segundo plano hacia Supabase por si no estaba
+      syncUserAccountToCloud(foundLocal).catch(() => {});
+
+      return {
+        success: true,
+        user: {
+          username: foundLocal.username,
+          displayName: foundLocal.displayName,
+          role: 'user',
+          isNew,
+        },
+      };
+    }
+  }
+
+  // 3. Si no existe localmente (o la clave cambió en otro dispositivo), consultar Supabase en la nube
+  const cloudUser = await syncUserAccountFromCloud(u);
+
+  if (cloudUser) {
+    if (cloudUser.password === p) {
+      // Guardar o actualizar en catálogo local
+      try {
+        const updatedUsers = registered.filter((user) => user.username !== u);
+        updatedUsers.push(cloudUser);
+        localStorage.setItem(USERS_STORAGE_KEY, JSON.stringify(updatedUsers));
+
+        localStorage.setItem(AUTH_TOKEN_KEY, 'authenticated');
+        localStorage.setItem(LOGGED_USER_KEY, cloudUser.displayName);
+        localStorage.setItem(ACTIVE_USERNAME_KEY, cloudUser.username);
         localStorage.setItem(USER_ROLE_KEY, 'user');
       } catch {}
 
       return {
         success: true,
         user: {
-          username: found.username,
-          displayName: found.displayName,
+          username: cloudUser.username,
+          displayName: cloudUser.displayName,
           role: 'user',
-          isNew,
+          isNew: false,
         },
       };
     } else {
@@ -182,7 +336,7 @@ export function authenticateUser(
     }
   }
 
-  // 3. Si ingresó como admin pero clave errónea
+  // 4. Si intentó ingresar como admin con clave errónea
   if (isAdminUser && !isAdminPass) {
     return { success: false, error: 'Clave de administrador incorrecta.' };
   }

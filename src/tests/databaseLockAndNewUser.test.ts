@@ -100,4 +100,31 @@ describe('Pruebas Unitarias - Bloqueo de Base de Datos y Optimización Multi-Usu
 
     assert.ok(content.includes('<ErrorBoundary>'), 'main.tsx debe envolver App con ErrorBoundary');
   });
+
+  it('OnboardingTutorialModal debe existir y estructurar los 5 pasos profesionales del dashboard', () => {
+    const tutorialPath = path.join(srcDir, 'components', 'OnboardingTutorialModal.tsx');
+    assert.ok(fs.existsSync(tutorialPath), 'El componente OnboardingTutorialModal.tsx debe existir');
+    const content = fs.readFileSync(tutorialPath, 'utf-8');
+
+    assert.ok(content.includes('PASO 1 • CICLO UNIVERSITARIO'), 'Debe incluir paso 1 de semanas y parciales');
+    assert.ok(content.includes('PASO 2 • MATERIAS Y ENTREGAS'), 'Debe incluir paso 2 de materias y casillas de tareas');
+    assert.ok(content.includes('PASO 3 • RENDIMIENTO ACADÉMICO'), 'Debe incluir paso 3 de calculadora UEES');
+    assert.ok(content.includes('PASO 4 • CLASES Y HORARIOS'), 'Debe incluir paso 4 de horario y aulas virtuales');
+    assert.ok(content.includes('PASO 5 • PRODUCTIVIDAD TOTAL'), 'Debe incluir paso 5 de pomodoro y multi-dispositivo');
+    assert.ok(content.includes('onOpenCustomizer'), 'Debe proveer opción para personalizar materias y fechas');
+  });
+
+  it('App.tsx y SidebarNav deben activar el tutorial guiado para usuarios nuevos y brindar acceso manual', () => {
+    const appPath = path.join(srcDir, 'App.tsx');
+    const appContent = fs.readFileSync(appPath, 'utf-8');
+
+    assert.ok(appContent.includes('OnboardingTutorialModal'), 'App.tsx debe importar y renderizar OnboardingTutorialModal');
+    assert.ok(appContent.includes('showTutorial'), 'App.tsx debe gestionar el estado showTutorial');
+    assert.ok(appContent.includes('onOpenTutorial'), 'App.tsx debe conectar onOpenTutorial con el Sidebar');
+
+    const sidebarPath = path.join(srcDir, 'components', 'SidebarNav.tsx');
+    const sidebarContent = fs.readFileSync(sidebarPath, 'utf-8');
+    assert.ok(sidebarContent.includes('onOpenTutorial'), 'SidebarNav.tsx debe declarar la prop onOpenTutorial');
+    assert.ok(sidebarContent.includes('Guía & Pasos del Dashboard'), 'SidebarNav.tsx debe mostrar botón de guía en utilidades');
+  });
 });

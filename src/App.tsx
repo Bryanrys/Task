@@ -42,6 +42,7 @@ import {
   Menu,
   Clock,
   MessageSquare,
+  Compass,
   Code2,
   Atom,
   Binary,
@@ -67,6 +68,7 @@ import { SidebarNav } from './components/SidebarNav';
 import { AnalyticsSection } from './components/AnalyticsSection';
 import { WelcomeModal } from './components/WelcomeModal';
 import { WizardModal } from './components/WizardModal';
+import { OnboardingTutorialModal } from './components/OnboardingTutorialModal';
 import { DrawerDashboards } from './components/DrawerDashboards';
 import { PromptModal, ConfirmModal } from './components/ActionModals';
 import { StartDateModal } from './components/StartDateModal';
@@ -240,14 +242,25 @@ export default function App() {
 
     if (isNewUser) {
       setShowWizard(false);
+      setShowTutorial(true);
       const initialUserDash = createInitialDashboardForUser(activeU, user);
       setDashboards([initialUserDash]);
       setActiveDashId(initialUserDash.id);
       try {
         localStorage.setItem(storageKey, JSON.stringify([initialUserDash]));
+        localStorage.setItem(`uees_tutorial_seen_${activeU}`, 'true');
       } catch {}
       syncUserDashboardToCloud(activeU, [initialUserDash]);
     } else {
+      // Si el usuario no ha visto el tutorial interactivo profesional, mostrarlo
+      try {
+        const hasSeenTutorial = localStorage.getItem(`uees_tutorial_seen_${activeU}`);
+        if (!hasSeenTutorial && role !== 'admin') {
+          setShowTutorial(true);
+          localStorage.setItem(`uees_tutorial_seen_${activeU}`, 'true');
+        }
+      } catch {}
+
       const stored = localStorage.getItem(storageKey) || (role === 'admin' ? localStorage.getItem(STORAGE_KEY) : null);
       if (stored) {
         try {
@@ -422,6 +435,7 @@ export default function App() {
   // Modals & UI States
   const [showWelcome, setShowWelcome] = useState<boolean>(false);
   const [showWizard, setShowWizard] = useState<boolean>(false);
+  const [showTutorial, setShowTutorial] = useState<boolean>(false);
   const [showDrawer, setShowDrawer] = useState<boolean>(false);
   const [showStartDateModal, setShowStartDateModal] = useState<boolean>(false);
   const [showNotificationModal, setShowNotificationModal] = useState<boolean>(false);
@@ -765,6 +779,7 @@ export default function App() {
         showQuickNoteModal ||
         showWelcome ||
         showWizard ||
+        showTutorial ||
         showDrawer ||
         showStartDateModal ||
         showNotificationModal ||
@@ -865,6 +880,7 @@ export default function App() {
     showQuickNoteModal,
     showWelcome,
     showWizard,
+    showTutorial,
     showDrawer,
     showStartDateModal,
     showNotificationModal,
@@ -1468,10 +1484,21 @@ export default function App() {
 
   // Create new Dashboard from Wizard
   const handleFinishWizard = (newDash: Dashboard) => {
-    setDashboards((prev) => [newDash, ...prev]);
+    setDashboards((prev) => {
+      const updated = [newDash, ...prev];
+      const activeU = localStorage.getItem(ACTIVE_USERNAME_KEY) || (userRole === 'admin' ? 'admin' : loggedUser.toLowerCase());
+      const storageKey = getUserDashboardStorageKey(activeU, userRole);
+      try {
+        localStorage.setItem(storageKey, JSON.stringify(updated));
+      } catch {}
+      if (userRole !== 'admin') {
+        syncUserDashboardToCloud(activeU, updated);
+      }
+      return updated;
+    });
     setActiveDashId(newDash.id);
     setShowWizard(false);
-    setToastMessage(`Dashboard "${newDash.name}" creado con éxito.`);
+    setToastMessage(`Dashboard "${newDash.name}" creado con éxito ✨`);
   };
 
   // Upload (Push to cloud Supabase + Local backup)
@@ -2074,6 +2101,7 @@ export default function App() {
           onOpenThemes={() => setShowThemeModal(true)}
           onOpenPomodoro={() => setShowPomodoroModal(true)}
           onOpenCalculator={() => setShowGradesModal(true)}
+          onOpenTutorial={() => setShowTutorial(true)}
           onOpenPensumWidget={() => setShowPensumModal(true)}
           onOpenAIAssistant={() => setShowAIAssistant(true)}
           onTriggerCelebration={handleTriggerCelebration}
@@ -2141,6 +2169,10 @@ export default function App() {
                     }}
                     onOpenCalculator={() => {
                       setShowGradesModal(true);
+                      setShowMobileSidebar(false);
+                    }}
+                    onOpenTutorial={() => {
+                      setShowTutorial(true);
                       setShowMobileSidebar(false);
                     }}
                     onOpenPensumWidget={() => {
@@ -2268,6 +2300,16 @@ export default function App() {
                   }`}
                 >
                   Pomodoro
+                </button>
+                <button
+                  onClick={() => setShowTutorial(true)}
+                  className={`px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all cursor-pointer flex items-center gap-1 ${
+                    isDark ? 'text-zinc-400 hover:text-white' : 'text-zinc-600 hover:text-zinc-900'
+                  }`}
+                  title="Guía paso a paso del dashboard"
+                >
+                  <Compass className="w-3 h-3 text-emerald-400" />
+                  <span>Tutorial</span>
                 </button>
                 <button
                   onClick={() => setShowAIAssistant(true)}
@@ -3481,6 +3523,18 @@ export default function App() {
         onFinish={handleFinishWizard}
         onOpenAccessCode={handleTriggerCloudDownload}
         isAdmin={isAdmin}
+      />
+
+      {/* Onboarding Tutorial Modal Profesional */}
+      <OnboardingTutorialModal
+        isOpen={showTutorial}
+        onClose={() => setShowTutorial(false)}
+        onOpenCustomizer={() => {
+          setShowTutorial(false);
+          setShowWizard(true);
+        }}
+        userName={loggedUser}
+        isDark={isDark}
       />
 
       {/* Side Drawer for Dashboards & Weeks with Delete options */}

@@ -17,6 +17,7 @@ import {
   Laptop,
   Palette,
   Fingerprint,
+  Compass,
 } from 'lucide-react';
 import { isBiometricUnlockEnabled } from '../services/biometricService';
 import { SubjectItem } from '../types';
@@ -35,6 +36,7 @@ interface SidebarNavProps {
   onOpenPomodoro?: () => void;
   onOpenThemes?: () => void;
   onOpenCalculator: () => void;
+  onOpenTutorial?: () => void;
   onOpenPensumWidget?: () => void;
   onOpenAIAssistant?: () => void;
   onTriggerCelebration: () => void;
@@ -61,6 +63,7 @@ export const SidebarNav: React.FC<SidebarNavProps> = ({
   onOpenPomodoro,
   onOpenThemes,
   onOpenCalculator,
+  onOpenTutorial,
   onOpenPensumWidget,
   onOpenAIAssistant,
   onTriggerCelebration,
@@ -330,6 +333,21 @@ export const SidebarNav: React.FC<SidebarNavProps> = ({
               <Calculator className="w-4 h-4 text-blue-500 shrink-0" />
               <span>Notas y Promedios UEES</span>
             </button>
+
+            {onOpenTutorial && (
+              <button
+                onClick={() => {
+                  onOpenTutorial();
+                  if (onCloseMobileDrawer) onCloseMobileDrawer();
+                }}
+                className={`w-full text-left flex items-center space-x-3 px-3 py-2 rounded-xl text-xs transition-all cursor-pointer ${
+                  isDark ? 'text-zinc-300 hover:text-white hover:bg-white/5' : 'text-zinc-600 hover:text-zinc-900 hover:bg-zinc-100'
+                }`}
+              >
+                <Compass className="w-4 h-4 text-emerald-400 shrink-0" />
+                <span>Guía & Pasos del Dashboard</span>
+              </button>
+            )}
 
             {onOpenPensumWidget && (
               <button

@@ -6,7 +6,7 @@
 
 | 🏷️ Versión | 📦 Tamaño | 📱 Requerimientos | 📅 Día y Fecha | 🕒 Hora (GMT-6) |
 | :---: | :---: | :---: | :---: | :---: |
-| **v2.7 (Sincronización Multi-Dispositivo Celular & Web)** | **8.8 MB** | **Android 7.0 - Android 14+** | **Lunes, 02 de Noviembre de 2026** | **04:19 PM** |
+| **v2.8 (Guía Profesional & Onboarding Interactivo Paso a Paso)** | **8.8 MB** | **Android 7.0 - Android 14+** | **Lunes, 02 de Noviembre de 2026** | **04:39 PM** |
 
 [![Descargar APK Directo](https://img.shields.io/badge/Descargar-APK%20Directo%20(8.8%20MB)-000000?style=for-the-badge&logo=android&logoColor=white)](https://github.com/Bryanrys/Task/raw/main/apk/app-debug.apk)
 
@@ -14,11 +14,16 @@
 
 > ℹ️ **Identidad APK Multi-Dispositivo:** `0` (`com.uees.dashboard`)  
 > 📦 **Archivo:** [`apk/app-debug.apk`](./app-debug.apk)  
-> ✨ **Novedades v2.7:**  
-> 1. **Sincronización Multi-Dispositivo (Celular ⇄ Web):** Las cuentas de estudiantes creadas en la app móvil de Android ahora pueden iniciar sesión de inmediato en la versión Web (`https://task-ecru-eight-84.vercel.app`) y viceversa, respaldando de forma privada las credenciales y el dashboard del estudiante en Supabase.  
-> 2. **Persistencia Híbrida Offline-First:** Las cuentas y tareas se almacenan en `localStorage` para funcionamiento instantáneo sin internet y se sincronizan en segundo plano en la nube con `data_user_bro`.  
-> 3. **Blindaje de la Base de Datos Central:** Los estudiantes tienen acceso exclusivo a su perfil personal; la base de datos central de administración (`user_master_lixx_00_` / `coleccion_dashboards`) permanece 100% protegida y restringida al Administrador (`oo` / `00`).  
-> 4. **Resolución Automática de Cuentas en Login:** Si un usuario se registró en un dispositivo diferente, el sistema consulta de forma segura el registro en Supabase, lo descarga al dispositivo actual e inicia sesión sin fricción.  
+> ✨ **Novedades v2.8:**  
+> 1. **Tutorial Interactivo Profesional (Guía Paso a Paso para Nuevos Usuarios):** Al ingresar o registrarse un nuevo estudiante, se despliega una presentación interactiva y profesional que explica detalladamente para qué sirve cada herramienta del Dashboard:  
+>    - **Paso 1:** Semanas 1 a 20 del ciclo y detección automática de evaluaciones parciales (semanas 6, 12 y 18).  
+>    - **Paso 2:** Materias, casillas de tareas semanales, notas con el lápiz ✏️ y porcentaje de avance.  
+>    - **Paso 3:** Calculadora y Simulador Oficial UEES (30%, 30%, 40%) con reposición inteligente.  
+>    - **Paso 4:** Horario de clases interactivo con enlaces de un toque a Microsoft Teams, Google Meet y aulas presenciales.  
+>    - **Paso 5:** Pomodoro de estudio concentrado (25 min / 5 min) y notificaciones nativas en Android.  
+> 2. **Personalización Directa o Inicio Guiado:** El estudiante puede elegir comenzar con la plantilla oficial recomendada de la UEES o abrir el asistente para personalizar sus propias materias, fecha de inicio y entorno.  
+> 3. **Acceso Permanente a la Guía:** Se incorporó el acceso *"Guía & Pasos del Dashboard"* en la sección de Utilidades del menú lateral y un acceso rápido *"Tutorial"* en la barra de navegación superior.  
+> 4. **Persistencia y Sincronización:** Registro automático de finalización del tutorial en `localStorage` y sincronización con Supabase.  
 > 🛡️ **Seguridad e Identidad:** Nombre de app `0` estricto para compatibilidad cruzada entre PC y laptop sin errores de instalación.
 
 ---
@@ -27,7 +32,7 @@
 
 | Versión | Archivo Físico | Tamaño | Requerimientos | Fecha y Hora de Compilación | Enlace de Descarga Inmediata |
 | :--- | :--- | :---: | :---: | :---: | :--- |
-| **Última Versión Oficial (v2.7)** | [`app-debug.apk`](./app-debug.apk) | **8.8 MB** | **Android 7.0 a 14+** | **02 Nov 2026 — 04:19 PM** | 📥 **[Descargar APK Directo (Sin 404)](https://github.com/Bryanrys/Task/raw/main/apk/app-debug.apk)** |
+| **Última Versión Oficial (v2.8)** | [`app-debug.apk`](./app-debug.apk) | **8.8 MB** | **Android 7.0 a 14+** | **02 Nov 2026 — 04:39 PM** | 📥 **[Descargar APK Directo (Sin 404)](https://github.com/Bryanrys/Task/raw/main/apk/app-debug.apk)** |
 | **Página de Releases** | Releases y Tags | N/A | Android | Ver historial | 📦 **[Ver Releases en GitHub](https://github.com/Bryanrys/Task/releases)** |
 
 ---
@@ -47,7 +52,7 @@
 - **Nombre del Paquete**: `com.uees.dashboard`
 - **Nombre del Archivo**: `app-debug.apk`
 - **Tamaño del Archivo**: `8.8 MB`
-- **Fecha de Compilación**: Lunes, 02 de Noviembre de 2026 a las 04:19 PM (GMT-6)
+- **Fecha de Compilación**: Lunes, 02 de Noviembre de 2026 a las 04:39 PM (GMT-6)
 - **Framework**: Capacitor 8.5 + Android Native Bridge
 - **Compilador**: Gradle con Java 21 / OpenJDK
 - **Canal de Notificaciones**: Alertas heads-up con timbre y vibración para recordatorios de entregas académicas.

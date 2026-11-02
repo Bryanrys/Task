@@ -6,7 +6,7 @@
 
 | 🏷️ Versión | 📦 Tamaño | 📱 Requerimientos | 📅 Día y Fecha | 🕒 Hora (GMT-6) |
 | :---: | :---: | :---: | :---: | :---: |
-| **v2.8 (Guía Profesional & Onboarding Interactivo Paso a Paso)** | **8.8 MB** | **Android 7.0 - Android 14+** | **Lunes, 02 de Noviembre de 2026** | **04:39 PM** |
+| **v2.9 (Solución Error #310 & Tutorial Interactivo en Vivo)** | **8.8 MB** | **Android 7.0 - Android 14+** | **Lunes, 02 de Noviembre de 2026** | **04:56 PM** |
 
 [![Descargar APK Directo](https://img.shields.io/badge/Descargar-APK%20Directo%20(8.8%20MB)-000000?style=for-the-badge&logo=android&logoColor=white)](https://github.com/Bryanrys/Task/raw/main/apk/app-debug.apk)
 
@@ -14,16 +14,15 @@
 
 > ℹ️ **Identidad APK Multi-Dispositivo:** `0` (`com.uees.dashboard`)  
 > 📦 **Archivo:** [`apk/app-debug.apk`](./app-debug.apk)  
-> ✨ **Novedades v2.8:**  
-> 1. **Tutorial Interactivo Profesional (Guía Paso a Paso para Nuevos Usuarios):** Al ingresar o registrarse un nuevo estudiante, se despliega una presentación interactiva y profesional que explica detalladamente para qué sirve cada herramienta del Dashboard:  
->    - **Paso 1:** Semanas 1 a 20 del ciclo y detección automática de evaluaciones parciales (semanas 6, 12 y 18).  
->    - **Paso 2:** Materias, casillas de tareas semanales, notas con el lápiz ✏️ y porcentaje de avance.  
->    - **Paso 3:** Calculadora y Simulador Oficial UEES (30%, 30%, 40%) con reposición inteligente.  
->    - **Paso 4:** Horario de clases interactivo con enlaces de un toque a Microsoft Teams, Google Meet y aulas presenciales.  
->    - **Paso 5:** Pomodoro de estudio concentrado (25 min / 5 min) y notificaciones nativas en Android.  
-> 2. **Personalización Directa o Inicio Guiado:** El estudiante puede elegir comenzar con la plantilla oficial recomendada de la UEES o abrir el asistente para personalizar sus propias materias, fecha de inicio y entorno.  
-> 3. **Acceso Permanente a la Guía:** Se incorporó el acceso *"Guía & Pasos del Dashboard"* en la sección de Utilidades del menú lateral y un acceso rápido *"Tutorial"* en la barra de navegación superior.  
-> 4. **Persistencia y Sincronización:** Registro automático de finalización del tutorial en `localStorage` y sincronización con Supabase.  
+> ✨ **Novedades v2.9:**  
+> 1. **Solución Definitiva al Error de Renderizado #310:** Se eliminó la violación a las reglas de Hooks de React moviendo la llamada `useMemo` de `overallUeesAvg` al nivel superior incondicional del componente. Con esto, el registro y creación de cuenta entra limpiamente sin disparar el ErrorBoundary.  
+> 2. **Tutorial Interactivo en Vivo en la Misma App:** El tutorial ahora corre directamente sobre la interfaz activa del dashboard sin pantallas oscuras de bloqueo, permitiendo al usuario probar acciones reales:  
+>    - **Paso 1:** Botón interactivo para abrir y probar el selector de semanas (1 a 20) y ver parciales.  
+>    - **Paso 2:** Botón interactivo para enfocar sus materias y marcar tareas con notas ✏️.  
+>    - **Paso 3:** Botón interactivo para abrir el simulador y calculadora de notas UEES (30%, 30%, 40%).  
+>    - **Paso 4:** Botón interactivo para explorar el horario de clases y links de Teams.  
+>    - **Paso 5:** Botón interactivo para probar el Pomodoro y sincronización en la nube.  
+> 3. **Transición Inmediata al Dashboard:** Al registrarse o iniciar sesión, el estudiante ingresa directamente a su dashboard y la guía interactiva lo asiste en vivo sin fricción.  
 > 🛡️ **Seguridad e Identidad:** Nombre de app `0` estricto para compatibilidad cruzada entre PC y laptop sin errores de instalación.
 
 ---
@@ -32,7 +31,7 @@
 
 | Versión | Archivo Físico | Tamaño | Requerimientos | Fecha y Hora de Compilación | Enlace de Descarga Inmediata |
 | :--- | :--- | :---: | :---: | :---: | :--- |
-| **Última Versión Oficial (v2.8)** | [`app-debug.apk`](./app-debug.apk) | **8.8 MB** | **Android 7.0 a 14+** | **02 Nov 2026 — 04:39 PM** | 📥 **[Descargar APK Directo (Sin 404)](https://github.com/Bryanrys/Task/raw/main/apk/app-debug.apk)** |
+| **Última Versión Oficial (v2.9)** | [`app-debug.apk`](./app-debug.apk) | **8.8 MB** | **Android 7.0 a 14+** | **02 Nov 2026 — 04:56 PM** | 📥 **[Descargar APK Directo (Sin 404)](https://github.com/Bryanrys/Task/raw/main/apk/app-debug.apk)** |
 | **Página de Releases** | Releases y Tags | N/A | Android | Ver historial | 📦 **[Ver Releases en GitHub](https://github.com/Bryanrys/Task/releases)** |
 
 ---
@@ -52,7 +51,7 @@
 - **Nombre del Paquete**: `com.uees.dashboard`
 - **Nombre del Archivo**: `app-debug.apk`
 - **Tamaño del Archivo**: `8.8 MB`
-- **Fecha de Compilación**: Lunes, 02 de Noviembre de 2026 a las 04:39 PM (GMT-6)
+- **Fecha de Compilación**: Lunes, 02 de Noviembre de 2026 a las 04:56 PM (GMT-6)
 - **Framework**: Capacitor 8.5 + Android Native Bridge
 - **Compilador**: Gradle con Java 21 / OpenJDK
 - **Canal de Notificaciones**: Alertas heads-up con timbre y vibración para recordatorios de entregas académicas.

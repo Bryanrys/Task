@@ -1011,6 +1011,23 @@ export default function App() {
     });
   }, [currentDashboard, currentWeek, showCompletedSubjects]);
 
+  // Promedio General de todas las materias del ciclo (para Speedometer Gauge) - Hook en nivel superior
+  const overallUeesAvg = useMemo(() => {
+    if (!currentDashboard || !currentDashboard.subjects || !currentDashboard.subjects.length) return '0.0';
+    let sum = 0;
+    let count = 0;
+    for (const s of currentDashboard.subjects) {
+      const data = findGradeDataForSubject(s.id, s.name, gradesTracker);
+      const calc = calculateUeesGrade(data);
+      const avg = parseFloat(calc.ueesAverageFormatted);
+      if (!isNaN(avg)) {
+        sum += avg;
+        count++;
+      }
+    }
+    return count > 0 ? (sum / count).toFixed(1) : '0.0';
+  }, [currentDashboard, gradesTracker]);
+
   // Check if all tasks in active week are completed for Victory Screen
   const allWeekDone = weekStats.totalTasks > 0 && weekStats.pendingTasks === 0;
 
@@ -1932,23 +1949,6 @@ export default function App() {
     currentWeek.dateRange
   );
   const semesterProgressPct = Math.min(100, Math.round((daysTranscurridos / (16 * 7)) * 100));
-
-  // Promedio General de todas las materias del ciclo (para Speedometer Gauge)
-  const overallUeesAvg = useMemo(() => {
-    if (!currentDashboard.subjects.length) return '0.0';
-    let sum = 0;
-    let count = 0;
-    for (const s of currentDashboard.subjects) {
-      const data = findGradeDataForSubject(s.id, s.name, gradesTracker);
-      const calc = calculateUeesGrade(data);
-      const avg = parseFloat(calc.ueesAverageFormatted);
-      if (!isNaN(avg)) {
-        sum += avg;
-        count++;
-      }
-    }
-    return count > 0 ? (sum / count).toFixed(1) : '0.0';
-  }, [currentDashboard.subjects, gradesTracker]);
 
   return (
     <div className={`min-h-screen flex flex-col relative transition-colors duration-200 font-sans select-none overflow-x-hidden ${
@@ -3525,10 +3525,19 @@ export default function App() {
         isAdmin={isAdmin}
       />
 
-      {/* Onboarding Tutorial Modal Profesional */}
+      {/* Onboarding Tutorial Modal Profesional Interactivo en la misma App */}
       <OnboardingTutorialModal
         isOpen={showTutorial}
         onClose={() => setShowTutorial(false)}
+        onOpenWeeks={() => setShowDrawer(true)}
+        onScrollToSubjects={() => {
+          if (currentDashboard && currentDashboard.subjects && currentDashboard.subjects.length > 0) {
+            scrollToSubject(currentDashboard.subjects[0].id);
+          }
+        }}
+        onOpenCalculator={() => setShowGradesModal(true)}
+        onOpenSchedule={() => setCurrentView('schedule')}
+        onOpenPomodoro={() => setShowPomodoroModal(true)}
         onOpenCustomizer={() => {
           setShowTutorial(false);
           setShowWizard(true);

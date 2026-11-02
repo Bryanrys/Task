@@ -14,14 +14,20 @@ import {
   BookOpen,
   Edit3,
   Wand2,
-  ShieldCheck,
   Zap,
+  ArrowRight,
+  Layers,
 } from 'lucide-react';
 import { triggerHaptic } from '../services/hapticsService';
 
 interface OnboardingTutorialModalProps {
   isOpen: boolean;
   onClose: () => void;
+  onOpenWeeks?: () => void;
+  onScrollToSubjects?: () => void;
+  onOpenCalculator?: () => void;
+  onOpenSchedule?: () => void;
+  onOpenPomodoro?: () => void;
   onOpenCustomizer?: () => void;
   userName?: string;
   isDark?: boolean;
@@ -34,6 +40,8 @@ interface TutorialStep {
   subtitle: string;
   description: string;
   icon: React.ReactNode;
+  actionText: string;
+  onAction?: () => void;
   tips: string[];
   previewType: 'weeks' | 'tasks' | 'grades' | 'schedule' | 'cloud_pomodoro';
 }
@@ -41,6 +49,11 @@ interface TutorialStep {
 export const OnboardingTutorialModal: React.FC<OnboardingTutorialModalProps> = ({
   isOpen,
   onClose,
+  onOpenWeeks,
+  onScrollToSubjects,
+  onOpenCalculator,
+  onOpenSchedule,
+  onOpenPomodoro,
   onOpenCustomizer,
   userName = 'Estudiante',
   isDark = true,
@@ -57,12 +70,14 @@ export const OnboardingTutorialModal: React.FC<OnboardingTutorialModalProps> = (
       subtitle: 'Control cronológico de todo tu semestre',
       description:
         'Tu ciclo académico está dividido en 20 semanas sincronizadas. El sistema detecta y activa de manera automática las semanas de evaluaciones oficiales para que nunca te tome por sorpresa una entrega.',
-      icon: <CalendarDays className="w-6 h-6 text-emerald-400" />,
+      icon: <CalendarDays className="w-5 h-5 text-emerald-400" />,
+      actionText: 'Probar selector de semanas',
+      onAction: onOpenWeeks,
       tips: [
         'Semana 6: Evaluación del Primer Parcial (P1).',
         'Semana 12: Evaluación del Segundo Parcial (P2).',
         'Semana 18: Evaluación del Tercer Parcial (P3).',
-        'Puedes cambiar de semana deslizando o usando el selector superior.',
+        'Puedes cambiar de semana deslizando o usando el botón Semanas arriba.',
       ],
       previewType: 'weeks',
     },
@@ -73,7 +88,9 @@ export const OnboardingTutorialModal: React.FC<OnboardingTutorialModalProps> = (
       subtitle: 'Monitoreo de tareas por materia en tiempo real',
       description:
         'Cada materia muestra tus actividades a entregar. Marca la casilla al finalizar una tarea para elevar tu porcentaje de cumplimiento. Usa el lápiz ✏️ para añadir apuntes o fechas límite a cualquier tarea.',
-      icon: <CheckCircle2 className="w-6 h-6 text-emerald-400" />,
+      icon: <CheckCircle2 className="w-5 h-5 text-emerald-400" />,
+      actionText: 'Ver mis materias y tareas',
+      onAction: onScrollToSubjects,
       tips: [
         'Toca la casilla para marcar la tarea como completada al instante.',
         'Pulsa el icono de lápiz ✏️ para registrar detalles, fecha límite o links de la tarea.',
@@ -88,7 +105,9 @@ export const OnboardingTutorialModal: React.FC<OnboardingTutorialModalProps> = (
       subtitle: 'Conoce con cuánto pasas tu materia antes del examen',
       description:
         'Sistema configurado con la ponderación oficial UEES (R1: 30%, R2: 30%, R3: 40%). Introduce tus notas de laboratorio y parcial para calcular tu acumulado exacto y simular la nota necesaria para aprobar (mínimo 6.0).',
-      icon: <Calculator className="w-6 h-6 text-emerald-400" />,
+      icon: <Calculator className="w-5 h-5 text-emerald-400" />,
+      actionText: 'Abrir Calculadora UEES',
+      onAction: onOpenCalculator,
       tips: [
         'Simula el examen del Parcial 3 para saber la nota mínima requerida.',
         'Activa la opción de Reposición para que el algoritmo reemplace automáticamente tu peor registro.',
@@ -103,7 +122,9 @@ export const OnboardingTutorialModal: React.FC<OnboardingTutorialModalProps> = (
       subtitle: 'Tus clases de Lunes a Sábado con acceso directo',
       description:
         'Accede a tu vista de horario para ver tus asignaturas del día. Incluye enlaces de un solo toque para ingresar a reuniones de Microsoft Teams, Google Meet o consultar el aula física en el campus.',
-      icon: <Clock className="w-6 h-6 text-emerald-400" />,
+      icon: <Clock className="w-5 h-5 text-emerald-400" />,
+      actionText: 'Ver horario de clases',
+      onAction: onOpenSchedule,
       tips: [
         'Toca el botón Teams o Meet para entrar a tu aula virtual al instante.',
         'Visualiza el aula física y el horario exacto de cada cátedra.',
@@ -118,7 +139,9 @@ export const OnboardingTutorialModal: React.FC<OnboardingTutorialModalProps> = (
       subtitle: 'Concentración y respaldo seguro en Celular y Web',
       description:
         'Aprovecha el temporizador Pomodoro integrado (25 min de estudio / 5 min de descanso) con avisos sonoros. Además, tu cuenta y dashboard se sincronizan de forma privada en la nube para que accedas desde tu móvil o PC.',
-      icon: <Smartphone className="w-6 h-6 text-emerald-400" />,
+      icon: <Smartphone className="w-5 h-5 text-emerald-400" />,
+      actionText: 'Probar Pomodoro de estudio',
+      onAction: onOpenPomodoro,
       tips: [
         'En Android: Recibe notificaciones flotantes de tareas pendientes.',
         'Sincronización multi-dispositivo: Puedes iniciar sesión en la Web o en la app móvil.',
@@ -159,40 +182,50 @@ export const OnboardingTutorialModal: React.FC<OnboardingTutorialModalProps> = (
     }
   };
 
+  const handleInteractiveAction = () => {
+    triggerHaptic();
+    if (activeStepData.onAction) {
+      activeStepData.onAction();
+    }
+  };
+
   return (
     <div
       onClick={onClose}
-      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/85 backdrop-blur-md select-none"
+      className="fixed inset-0 z-50 flex flex-col justify-end sm:justify-center items-center p-3 sm:p-4 bg-black/65 backdrop-blur-xs select-none transition-all"
     >
       <motion.div
         onClick={(e) => e.stopPropagation()}
-        initial={{ opacity: 0, scale: 0.94, y: 15 }}
+        initial={{ opacity: 0, scale: 0.95, y: 30 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
-        exit={{ opacity: 0, scale: 0.94, y: 10 }}
+        exit={{ opacity: 0, scale: 0.95, y: 20 }}
         transition={{ duration: 0.25, ease: 'easeOut' }}
-        className={`relative w-full max-w-[460px] rounded-3xl border shadow-2xl overflow-hidden flex flex-col max-h-[92vh] ${
+        className={`relative w-full max-w-[480px] rounded-3xl border shadow-2xl overflow-hidden flex flex-col max-h-[88vh] ${
           isDark
-            ? 'bg-[#0d0f14] border-white/10 text-white shadow-black/80'
-            : 'bg-white border-zinc-200 text-zinc-900 shadow-xl'
+            ? 'bg-[#0c0e14]/95 border-white/15 text-white shadow-black/90 backdrop-blur-md'
+            : 'bg-white/95 border-zinc-300 text-zinc-900 shadow-xl backdrop-blur-md'
         }`}
       >
-        {/* Header Decorativo con Progreso */}
+        {/* Header Decorativo con Progreso y Título */}
         <div className={`p-4 sm:p-5 border-b relative ${isDark ? 'border-white/10 bg-white/[0.02]' : 'border-zinc-200 bg-zinc-50'}`}>
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-2">
-              <div className={`p-1.5 rounded-xl border ${
+              <div className={`p-2 rounded-xl border ${
                 isDark ? 'bg-white/5 border-white/10 text-emerald-400' : 'bg-white border-zinc-200 text-emerald-600'
               }`}>
                 <Compass className="w-4 h-4" />
               </div>
               <div>
-                <span className={`text-[10px] font-mono font-bold uppercase tracking-wider block ${
-                  isDark ? 'text-zinc-400' : 'text-zinc-500'
-                }`}>
-                  Guía Profesional • Dashboard UEES
-                </span>
+                <div className="flex items-center gap-1.5">
+                  <span className={`text-[10px] font-mono font-bold uppercase tracking-wider block ${
+                    isDark ? 'text-zinc-400' : 'text-zinc-500'
+                  }`}>
+                    Tutorial Interactivo en Vivo
+                  </span>
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                </div>
                 <span className="text-xs font-bold font-mono">
-                  Paso {currentStep} de {steps.length}
+                  Paso {currentStep} de {steps.length} • {activeStepData.title.split('&')[0].trim()}
                 </span>
               </div>
             </div>
@@ -205,13 +238,13 @@ export const OnboardingTutorialModal: React.FC<OnboardingTutorialModalProps> = (
                   ? 'border-white/10 text-zinc-400 hover:text-white hover:bg-white/10'
                   : 'border-zinc-200 text-zinc-500 hover:text-zinc-900 hover:bg-zinc-100'
               }`}
-              title="Cerrar guía"
+              title="Cerrar tutorial y explorar libremente"
             >
               <X className="w-4 h-4" />
             </button>
           </div>
 
-          {/* Barra de progreso de pasos */}
+          {/* Barra de progreso de pasos interactiva */}
           <div className="grid grid-cols-5 gap-1.5">
             {steps.map((st) => (
               <button
@@ -243,15 +276,15 @@ export const OnboardingTutorialModal: React.FC<OnboardingTutorialModalProps> = (
           <AnimatePresence mode="wait">
             <motion.div
               key={activeStepData.number}
-              initial={{ opacity: 0, x: 12 }}
+              initial={{ opacity: 0, x: 14 }}
               animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -12 }}
+              exit={{ opacity: 0, x: -14 }}
               transition={{ duration: 0.2 }}
-              className="space-y-4"
+              className="space-y-3.5"
             >
               {/* Badge y Título */}
               <div>
-                <span className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-lg text-[10px] font-mono font-bold border mb-2 ${
+                <span className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-lg text-[10px] font-mono font-bold border mb-1.5 ${
                   isDark
                     ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
                     : 'bg-emerald-50 text-emerald-700 border-emerald-200'
@@ -267,7 +300,27 @@ export const OnboardingTutorialModal: React.FC<OnboardingTutorialModalProps> = (
                 </p>
               </div>
 
-              {/* Vista previa gráfica interactiva / didáctica del paso */}
+              {/* Botón de Acción Interactiva en Vivo en la App */}
+              {activeStepData.onAction && (
+                <button
+                  type="button"
+                  onClick={handleInteractiveAction}
+                  className={`w-full py-2 px-3 rounded-2xl border text-xs font-mono font-bold flex items-center justify-between transition-all cursor-pointer shadow-sm active:scale-98 ${
+                    isDark
+                      ? 'bg-white/10 hover:bg-white/15 border-white/20 text-white'
+                      : 'bg-zinc-100 hover:bg-zinc-200 border-zinc-300 text-zinc-900'
+                  }`}
+                  title="Ejecutar esta función en la app ahora mismo"
+                >
+                  <span className="flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
+                    <span>Acción en la app: {activeStepData.actionText}</span>
+                  </span>
+                  <ArrowRight className="w-4 h-4 text-emerald-400" />
+                </button>
+              )}
+
+              {/* Vista didáctica del paso */}
               <div className={`p-3.5 rounded-2xl border ${
                 isDark ? 'bg-black/40 border-white/10' : 'bg-zinc-50 border-zinc-200'
               }`}>
@@ -275,7 +328,7 @@ export const OnboardingTutorialModal: React.FC<OnboardingTutorialModalProps> = (
                   <div className="space-y-2">
                     <div className="flex items-center justify-between text-[11px] font-mono font-bold">
                       <span className="text-emerald-400 flex items-center gap-1">
-                        <CalendarDays className="w-3.5 h-3.5" /> Semana Activa
+                        <CalendarDays className="w-3.5 h-3.5" /> Semana Activa del Ciclo
                       </span>
                       <span className={`px-2 py-0.5 rounded-md text-[10px] border ${
                         isDark ? 'bg-white/10 border-white/10 text-zinc-300' : 'bg-zinc-200 border-zinc-300 text-zinc-800'
@@ -288,13 +341,13 @@ export const OnboardingTutorialModal: React.FC<OnboardingTutorialModalProps> = (
                       <div className={`p-2 rounded-xl border text-center ${
                         isDark ? 'bg-white/10 border-white/20 text-white' : 'bg-white border-zinc-300 font-bold'
                       }`}>
-                        <span className="block text-[9px] text-emerald-400">EN CURSO</span>
+                        <span className="block text-[9px] text-emerald-400 font-bold">EN CURSO</span>
                         <span>Semana 1</span>
                       </div>
                       <div className={`p-2 rounded-xl border text-center ${
                         isDark ? 'bg-white/5 border-white/10 text-zinc-400' : 'bg-zinc-100 border-zinc-200 text-zinc-600'
                       }`}>
-                        <span className="block text-[9px] text-zinc-400">REGULAR</span>
+                        <span className="block text-[9px] text-zinc-400 font-bold">REGULAR</span>
                         <span>Semana 2</span>
                       </div>
                       <div className={`p-2 rounded-xl border text-center ${
@@ -360,7 +413,7 @@ export const OnboardingTutorialModal: React.FC<OnboardingTutorialModalProps> = (
                   <div className="space-y-2 font-mono text-xs">
                     <div className="flex items-center justify-between text-[11px]">
                       <span className="font-bold">Lunes • 07:00 AM - 09:00 AM</span>
-                      <span className="text-blue-400 font-bold">Aula Presencial / Teams</span>
+                      <span className="text-emerald-400 font-bold">Aula Presencial / Teams</span>
                     </div>
                     <div className={`p-2.5 rounded-xl border flex items-center justify-between ${
                       isDark ? 'bg-white/5 border-white/10' : 'bg-white border-zinc-200'

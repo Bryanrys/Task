@@ -43,6 +43,7 @@ import {
   Clock,
   MessageSquare,
   Compass,
+  ShieldCheck,
   Code2,
   Atom,
   Binary,
@@ -90,6 +91,7 @@ import { PensumConfigModal } from './components/PensumConfigModal';
 import { syncTaskWidget } from './services/pensumWidgetService';
 import { ToolsAndLinksView } from './components/ToolsAndLinksView';
 import { UnifiedDashboardHeader } from './components/UnifiedDashboardHeader';
+import { StudentHomeHero } from './components/StudentHomeHero';
 import { triggerHaptic } from './services/hapticsService';
 import { getDeadlineStatus } from './utils/deadline';
 import { formatOrResolveWeekDateRange, computeWeekRangeFromDate } from './utils/dateRange';
@@ -1028,6 +1030,17 @@ export default function App() {
     return count > 0 ? (sum / count).toFixed(1) : '0.0';
   }, [currentDashboard, gradesTracker]);
 
+  // Detección de próxima semana de evaluaciones parciales (Semana 6, 12 o 18)
+  const { nextParcialWeek, weeksUntilParcial } = useMemo(() => {
+    const currentNum = currentWeek?.weekNumber || 1;
+    const parcialWeeks = [6, 12, 18];
+    const next = parcialWeeks.find((p) => p >= currentNum) || 18;
+    return {
+      nextParcialWeek: next,
+      weeksUntilParcial: Math.max(0, next - currentNum),
+    };
+  }, [currentWeek]);
+
   // Check if all tasks in active week are completed for Victory Screen
   const allWeekDone = weekStats.totalTasks > 0 && weekStats.pendingTasks === 0;
 
@@ -1516,6 +1529,20 @@ export default function App() {
     setActiveDashId(newDash.id);
     setShowWizard(false);
     setToastMessage(`Dashboard "${newDash.name}" creado con éxito ✨`);
+  };
+
+  // Respaldo en la nube privado para Estudiantes (Supabase aislado sin requerir clave de admin)
+  const handleSyncStudentDashboard = async () => {
+    setIsSyncing(true);
+    const activeU = localStorage.getItem(ACTIVE_USERNAME_KEY) || loggedUser.toLowerCase();
+    const success = await syncUserDashboardToCloud(activeU, dashboards);
+    setIsSyncing(false);
+    if (success) {
+      setToastMessage('☁️ ¡Tus notas y materias se sincronizaron con éxito en tu cuenta!');
+      triggerHaptic('success').catch(() => {});
+    } else {
+      setToastMessage('⚠️ Guardado en tu dispositivo. Sin conexión para respaldo en la nube.');
+    }
   };
 
   // Upload (Push to cloud Supabase + Local backup)
@@ -2400,6 +2427,67 @@ export default function App() {
               {/* Contenido Superior General (Semana activa, 4 Métricas, Barra de Acciones y Notas) - Solo visible cuando NO hay una materia enfocada */}
               {!selectedSubjectId && (
                 <>
+                  {/* Inicio Diferenciado: Estudiante Registrado vs Administrador Maestro */}
+                  {!isAdmin ? (
+                    <StudentHomeHero
+                      studentName={loggedUser}
+                      isDark={isDark}
+                      activeWeekNumber={currentWeek.weekNumber}
+                      totalWeeksCount={currentDashboard.weeks.length}
+                      pendingTasksCount={weekStats.pendingTasks}
+                      completedTasksCount={weekStats.completedTasks}
+                      overallUeesAvg={overallUeesAvg}
+                      nextParcialWeek={nextParcialWeek}
+                      weeksUntilParcial={weeksUntilParcial}
+                      onOpenTutorial={() => setShowTutorial(true)}
+                      onOpenSchedule={() => setCurrentView('schedule')}
+                      onOpenCalculator={() => setShowGradesModal(true)}
+                      onOpenPomodoro={() => setShowPomodoroModal(true)}
+                      onSyncStudentDashboard={handleSyncStudentDashboard}
+                      isSyncingCloud={isSyncing}
+                    />
+                  ) : (
+                    <div className={`p-4 sm:p-5 rounded-3xl mb-6 border shadow-md flex flex-wrap items-center justify-between gap-3 ${
+                      isDark ? 'bg-white/[0.03] border-white/10' : 'bg-white border-zinc-200'
+                    }`}>
+                      <div className="flex items-center gap-3">
+                        <div className={`w-10 h-10 rounded-2xl flex items-center justify-center font-bold text-xs ${
+                          isDark ? 'bg-white !text-black text-black' : 'bg-black !text-white text-white'
+                        }`}>
+                          <ShieldCheck className="w-5 h-5" />
+                        </div>
+                        <div>
+                          <div className="flex items-center gap-2">
+                            <span className="text-[10px] font-mono font-bold uppercase tracking-wider px-2 py-0.5 rounded-md bg-white/10 border border-white/20">
+                              Modo Administrador Maestro
+                            </span>
+                            <span className="text-[10px] font-mono text-zinc-400">Clave: oo</span>
+                          </div>
+                          <h3 className="text-sm font-bold font-mono text-white mt-0.5">
+                            Consola Institucional UEES
+                          </h3>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-2">
+                        <button
+                          onClick={() => setShowUploadConfirm(true)}
+                          className="px-3.5 py-1.5 rounded-xl bg-white !text-black text-black text-xs font-bold font-mono flex items-center gap-1.5 shadow-sm active:scale-95 cursor-pointer"
+                        >
+                          <Upload className="w-3.5 h-3.5" />
+                          <span>Subir Nube</span>
+                        </button>
+                        <button
+                          onClick={handleTriggerCloudDownload}
+                          className="px-3.5 py-1.5 rounded-xl border border-white/20 text-white text-xs font-bold font-mono flex items-center gap-1.5 shadow-sm active:scale-95 cursor-pointer hover:bg-white/10"
+                        >
+                          <Download className="w-3.5 h-3.5 text-emerald-400" />
+                          <span>Descargar Nube</span>
+                        </button>
+                      </div>
+                    </div>
+                  )}
+
                   {/* Dashboard Subheader & Week Indicator */}
                   <div className="flex flex-wrap items-center justify-between gap-3 mb-6">
                     <div>

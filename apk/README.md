@@ -6,7 +6,7 @@
 
 | 🏷️ Versión | 📦 Tamaño | 📱 Requerimientos | 📅 Día y Fecha | 🕒 Hora (GMT-6) |
 | :---: | :---: | :---: | :---: | :---: |
-| **v2.9 (Solución Error #310 & Tutorial Interactivo en Vivo)** | **8.8 MB** | **Android 7.0 - Android 14+** | **Lunes, 02 de Noviembre de 2026** | **04:56 PM** |
+| **v3.0 (Login Profesional & Dashboard Diferenciado Estudiante vs Admin)** | **8.8 MB** | **Android 7.0 - Android 14+** | **Lunes, 02 de Noviembre de 2026** | **07:01 PM** |
 
 [![Descargar APK Directo](https://img.shields.io/badge/Descargar-APK%20Directo%20(8.8%20MB)-000000?style=for-the-badge&logo=android&logoColor=white)](https://github.com/Bryanrys/Task/raw/main/apk/app-debug.apk)
 
@@ -14,16 +14,12 @@
 
 > ℹ️ **Identidad APK Multi-Dispositivo:** `0` (`com.uees.dashboard`)  
 > 📦 **Archivo:** [`apk/app-debug.apk`](./app-debug.apk)  
-> ✨ **Novedades v2.9:**  
-> 1. **Solución Definitiva al Error de Renderizado #310:** Se eliminó la violación a las reglas de Hooks de React moviendo la llamada `useMemo` de `overallUeesAvg` al nivel superior incondicional del componente. Con esto, el registro y creación de cuenta entra limpiamente sin disparar el ErrorBoundary.  
-> 2. **Tutorial Interactivo en Vivo en la Misma App:** El tutorial ahora corre directamente sobre la interfaz activa del dashboard sin pantallas oscuras de bloqueo, permitiendo al usuario probar acciones reales:  
->    - **Paso 1:** Botón interactivo para abrir y probar el selector de semanas (1 a 20) y ver parciales.  
->    - **Paso 2:** Botón interactivo para enfocar sus materias y marcar tareas con notas ✏️.  
->    - **Paso 3:** Botón interactivo para abrir el simulador y calculadora de notas UEES (30%, 30%, 40%).  
->    - **Paso 4:** Botón interactivo para explorar el horario de clases y links de Teams.  
->    - **Paso 5:** Botón interactivo para probar el Pomodoro y sincronización en la nube.  
-> 3. **Transición Inmediata al Dashboard:** Al registrarse o iniciar sesión, el estudiante ingresa directamente a su dashboard y la guía interactiva lo asiste en vivo sin fricción.  
-> 🛡️ **Seguridad e Identidad:** Nombre de app `0` estricto para compatibilidad cruzada entre PC y laptop sin errores de instalación.
+> ✨ **Novedades v3.0:**  
+> 1. **Login Profesional Neo-Fintech AMOLED:** Pantalla de autenticación rediseñada con selector de perfil de usuario claro (*Portal Estudiante Universitario* vs *Consola de Administración UEES*), sub-pestañas estilizadas de ingreso/registro y biometría táctil por huella.  
+> 2. **Inicio Personalizado para Estudiantes (`StudentHomeHero`):** El estudiante registrado ya no ve opciones de administración ni botones de base de datos con clave `oo`. En su lugar, cuenta con una vista principal personalizada con saludo universitario, conteo de semanas para los exámenes parciales (Semana 6, 12, 18), botones rápidos a *Mi Horario*, *Mis Notas UEES*, *Modo Concentración Pomodoro*, y respaldo seguro en la nube de 1 toque.  
+> 3. **Consola Exclusiva de Administración:** El rol de administrador mantiene el acceso completo a la descarga, restauración y configuración de base de datos protegida con la clave `oo`/`00`.  
+> 4. **Estabilidad React y Tutorial Interactivo:** Sin errores de renderizado ni pantallas de bloqueo, con guía interactiva en la misma aplicación.  
+> 🛡️ **Seguridad e Identidad:** Nombre de app `0` estricto en Android para compatibilidad y actualización directa entre PC de escritorio y laptop.
 
 ---
 
@@ -31,7 +27,7 @@
 
 | Versión | Archivo Físico | Tamaño | Requerimientos | Fecha y Hora de Compilación | Enlace de Descarga Inmediata |
 | :--- | :--- | :---: | :---: | :---: | :--- |
-| **Última Versión Oficial (v2.9)** | [`app-debug.apk`](./app-debug.apk) | **8.8 MB** | **Android 7.0 a 14+** | **02 Nov 2026 — 04:56 PM** | 📥 **[Descargar APK Directo (Sin 404)](https://github.com/Bryanrys/Task/raw/main/apk/app-debug.apk)** |
+| **Última Versión Oficial (v3.0)** | [`app-debug.apk`](./app-debug.apk) | **8.8 MB** | **Android 7.0 a 14+** | **02 Nov 2026 — 07:01 PM** | 📥 **[Descargar APK Directo (Sin 404)](https://github.com/Bryanrys/Task/raw/main/apk/app-debug.apk)** |
 | **Página de Releases** | Releases y Tags | N/A | Android | Ver historial | 📦 **[Ver Releases en GitHub](https://github.com/Bryanrys/Task/releases)** |
 
 ---

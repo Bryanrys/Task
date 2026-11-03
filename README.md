@@ -16,7 +16,7 @@ Plataforma integral y moderna de organización académica universitaria (Ciclo I
 
 | 🏷️ Versión | 📦 Tamaño | 📱 Requerimientos | 📅 Día y Fecha | 🕒 Hora (GMT-6) |
 | :---: | :---: | :---: | :---: | :---: |
-| **v2.9 (Solución Error #310 & Tutorial Interactivo en Vivo)** | **8.8 MB** | **Android 7.0 - Android 14+** | **Lunes, 02 de Noviembre de 2026** | **04:56 PM** |
+| **v3.0 (Login Profesional & Dashboard Diferenciado Estudiante vs Admin)** | **8.8 MB** | **Android 7.0 - Android 14+** | **Lunes, 02 de Noviembre de 2026** | **07:01 PM** |
 
 [![Descargar APK Directo](https://img.shields.io/badge/Descargar-APK%20Directo%20(8.8%20MB)-000000?style=for-the-badge&logo=android&logoColor=white)](https://github.com/Bryanrys/Task/raw/main/apk/app-debug.apk)
 
@@ -25,7 +25,7 @@ Plataforma integral y moderna de organización académica universitaria (Ciclo I
 Puedes descargar e instalar la versión para Android directamente en tu teléfono móvil desde cualquiera de los siguientes enlaces:
 
 ### 📥 Enlaces de Descarga:
-- 🚀 **[Descarga Directa del APK (`app-debug.apk`)](https://github.com/Bryanrys/Task/raw/main/apk/app-debug.apk)** *(Compilado el 02 de Noviembre de 2026 a las 04:56 PM • 8.8 MB • Corrección de Regla de Hooks de React Error 310, Entrada Inmediata al Dashboard y Tutorial Interactivo Guiado en la Misma App con Acciones en Vivo)*
+- 🚀 **[Descarga Directa del APK (`app-debug.apk`)](https://github.com/Bryanrys/Task/raw/main/apk/app-debug.apk)** *(Compilado el 02 de Noviembre de 2026 a las 07:01 PM • 8.8 MB • Login Profesional con Selector Estudiante vs Administrador UEES, Inicio Personalizado Estudiantil con Parciales, Horario y Pomodoro, y Respaldo Nube en 1 Toque)*
 - 📂 **[Ver carpeta de APK en el Repositorio (con ficha técnica y detalles)](./apk)**
 - 📦 **[Ver todas las versiones y Releases en GitHub](https://github.com/Bryanrys/Task/releases)**
 

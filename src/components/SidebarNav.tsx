@@ -118,11 +118,13 @@ export const SidebarNav: React.FC<SidebarNavProps> = ({
             <h2 className={`text-xs font-black tracking-widest uppercase ${
               isDark ? 'text-white' : 'text-zinc-900'
             }`}>
-              REYES ALVARADO
+              {isAdmin ? 'REYES ALVARADO' : (loggedUser || 'Estudiante UEES')}
             </h2>
             <p className={`text-[10px] font-mono ${
               isDark ? 'text-zinc-400' : 'text-zinc-500'
-            }`}>UEES Dashboard</p>
+            }`}>
+              {isAdmin ? 'UEES Dashboard • Consola Admin' : 'Portal Estudiante UEES'}
+            </p>
           </div>
         </div>
 

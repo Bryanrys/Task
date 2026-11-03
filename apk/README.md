@@ -6,7 +6,7 @@
 
 | 🏷️ Versión | 📦 Tamaño | 📱 Requerimientos | 📅 Día y Fecha | 🕒 Hora (GMT-6) |
 | :---: | :---: | :---: | :---: | :---: |
-| **v3.0 (Login Profesional & Dashboard Diferenciado Estudiante vs Admin)** | **8.8 MB** | **Android 7.0 - Android 14+** | **Lunes, 02 de Noviembre de 2026** | **07:01 PM** |
+| **v3.1 (Aislamiento de Perfiles Estudiante vs Admin & Personalización de Inicio)** | **8.8 MB** | **Android 7.0 - Android 14+** | **Lunes, 02 de Noviembre de 2026** | **07:16 PM** |
 
 [![Descargar APK Directo](https://img.shields.io/badge/Descargar-APK%20Directo%20(8.8%20MB)-000000?style=for-the-badge&logo=android&logoColor=white)](https://github.com/Bryanrys/Task/raw/main/apk/app-debug.apk)
 
@@ -14,11 +14,10 @@
 
 > ℹ️ **Identidad APK Multi-Dispositivo:** `0` (`com.uees.dashboard`)  
 > 📦 **Archivo:** [`apk/app-debug.apk`](./app-debug.apk)  
-> ✨ **Novedades v3.0:**  
-> 1. **Login Profesional Neo-Fintech AMOLED:** Pantalla de autenticación rediseñada con selector de perfil de usuario claro (*Portal Estudiante Universitario* vs *Consola de Administración UEES*), sub-pestañas estilizadas de ingreso/registro y biometría táctil por huella.  
-> 2. **Inicio Personalizado para Estudiantes (`StudentHomeHero`):** El estudiante registrado ya no ve opciones de administración ni botones de base de datos con clave `oo`. En su lugar, cuenta con una vista principal personalizada con saludo universitario, conteo de semanas para los exámenes parciales (Semana 6, 12, 18), botones rápidos a *Mi Horario*, *Mis Notas UEES*, *Modo Concentración Pomodoro*, y respaldo seguro en la nube de 1 toque.  
-> 3. **Consola Exclusiva de Administración:** El rol de administrador mantiene el acceso completo a la descarga, restauración y configuración de base de datos protegida con la clave `oo`/`00`.  
-> 4. **Estabilidad React y Tutorial Interactivo:** Sin errores de renderizado ni pantallas de bloqueo, con guía interactiva en la misma aplicación.  
+> ✨ **Novedades v3.1:**  
+> 1. **Nombre Dinámico del Estudiante en Menú Lateral:** Se eliminó la etiqueta fija `REYES ALVARADO` del menú drawer. Ahora muestra de forma dinámica el nombre del estudiante conectado (ej. `CARLOS`) con el subtítulo `Portal Estudiante UEES`, mientras que el modo Administrador muestra su consola institucional.  
+> 2. **Aislamiento Total de Notas y Promedios:** Las notas ya no se filtran entre perfiles. Para los estudiantes las notas inician completamente limpias (sin notas inventadas ni el 5.5 de Bases de Datos del admin). Cada alumno puede ingresar sus notas personales en la calculadora de notas.  
+> 3. **Inicio 100% Personalizado y Limpio:** Se ocultaron las métricas fijas de administración del ciclo antiguo (119 días y sincronización administrativa) para los estudiantes, dejando visible el Hero interactivo con saludo, aviso de parciales, accesos rápidos a horario, notas, pomodoro y su propio respaldo en la nube.  
 > 🛡️ **Seguridad e Identidad:** Nombre de app `0` estricto en Android para compatibilidad y actualización directa entre PC de escritorio y laptop.
 
 ---
@@ -27,7 +26,7 @@
 
 | Versión | Archivo Físico | Tamaño | Requerimientos | Fecha y Hora de Compilación | Enlace de Descarga Inmediata |
 | :--- | :--- | :---: | :---: | :---: | :--- |
-| **Última Versión Oficial (v3.0)** | [`app-debug.apk`](./app-debug.apk) | **8.8 MB** | **Android 7.0 a 14+** | **02 Nov 2026 — 07:01 PM** | 📥 **[Descargar APK Directo (Sin 404)](https://github.com/Bryanrys/Task/raw/main/apk/app-debug.apk)** |
+| **Última Versión Oficial (v3.1)** | [`app-debug.apk`](./app-debug.apk) | **8.8 MB** | **Android 7.0 a 14+** | **02 Nov 2026 — 07:16 PM** | 📥 **[Descargar APK Directo (Sin 404)](https://github.com/Bryanrys/Task/raw/main/apk/app-debug.apk)** |
 | **Página de Releases** | Releases y Tags | N/A | Android | Ver historial | 📦 **[Ver Releases en GitHub](https://github.com/Bryanrys/Task/releases)** |
 
 ---

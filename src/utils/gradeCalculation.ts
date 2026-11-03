@@ -97,11 +97,12 @@ export function normalizeSubjectName(name: string): string {
 }
 
 /**
- * Obtiene los datos de notas guardados localmente, inicializando con los datos oficiales de UEES si está vacío
+ * Obtiene los datos de notas guardados localmente, inicializando con los datos oficiales de UEES si está vacío y es admin
  */
-export function getSavedGradesData(): Record<string, SubjectGradeData> {
+export function getSavedGradesData(storageKey?: string, isStudent?: boolean): Record<string, SubjectGradeData> {
+  const key = storageKey || GRADES_STORAGE_KEY;
   try {
-    const raw = localStorage.getItem(GRADES_STORAGE_KEY);
+    const raw = localStorage.getItem(key);
     if (raw) {
       const parsed = JSON.parse(raw);
       if (parsed && typeof parsed === 'object' && Object.keys(parsed).length > 0) {
@@ -109,7 +110,7 @@ export function getSavedGradesData(): Record<string, SubjectGradeData> {
       }
     }
   } catch {}
-  return { ...DEFAULT_UEES_GRADES };
+  return isStudent ? {} : { ...DEFAULT_UEES_GRADES };
 }
 
 /**
@@ -118,7 +119,8 @@ export function getSavedGradesData(): Record<string, SubjectGradeData> {
 export function findGradeDataForSubject(
   subjectId: string,
   subjectName: string,
-  gradesData: Record<string, SubjectGradeData>
+  gradesData: Record<string, SubjectGradeData>,
+  allowDefaultFallback: boolean = true
 ): SubjectGradeData {
   if (gradesData[subjectId]) {
     return gradesData[subjectId];
@@ -131,10 +133,12 @@ export function findGradeDataForSubject(
     }
   }
 
-  // Buscar en los predeterminados de la UEES
-  for (const [name, val] of Object.entries(DEFAULT_UEES_GRADES)) {
-    if (normalizeSubjectName(name) === normTarget) {
-      return val;
+  // Buscar en los predeterminados de la UEES (solo si allowDefaultFallback es true para no filtrar notas de admin a estudiantes)
+  if (allowDefaultFallback) {
+    for (const [name, val] of Object.entries(DEFAULT_UEES_GRADES)) {
+      if (normalizeSubjectName(name) === normTarget) {
+        return val;
+      }
     }
   }
 

@@ -410,23 +410,33 @@ export default function App() {
     return dashboards[0]?.id || 'dash-uees';
   });
 
+  const userGradesKey = useMemo(() => {
+    if (isAdmin) return 'academic_grades_tracker_v1';
+    const u = (loggedUser || 'student').toLowerCase();
+    return `academic_grades_tracker_${u}_v1`;
+  }, [isAdmin, loggedUser]);
+
   // Grades tracker state & synchronization for live UI updates
   const [gradesTracker, setGradesTracker] = useState<Record<string, SubjectGradeData>>(() => {
-    return getSavedGradesData();
+    const isAdm = userRole === 'admin';
+    const u = (loggedUser || 'student').toLowerCase();
+    const key = isAdm ? 'academic_grades_tracker_v1' : `academic_grades_tracker_${u}_v1`;
+    return getSavedGradesData(key, !isAdm);
   });
   const [selectedGradeSubjectId, setSelectedGradeSubjectId] = useState<string | undefined>(undefined);
 
   useEffect(() => {
     const handleSyncGrades = () => {
-      setGradesTracker(getSavedGradesData());
+      setGradesTracker(getSavedGradesData(userGradesKey, !isAdmin));
     };
+    handleSyncGrades();
     window.addEventListener('academic_data_synced', handleSyncGrades);
     window.addEventListener('storage', handleSyncGrades);
     return () => {
       window.removeEventListener('academic_data_synced', handleSyncGrades);
       window.removeEventListener('storage', handleSyncGrades);
     };
-  }, []);
+  }, [userGradesKey, isAdmin]);
 
   // Toggle whether to show completed subjects or keep them automatically hidden
   const [showCompletedSubjects, setShowCompletedSubjects] = useState<boolean>(false);
@@ -1019,16 +1029,18 @@ export default function App() {
     let sum = 0;
     let count = 0;
     for (const s of currentDashboard.subjects) {
-      const data = findGradeDataForSubject(s.id, s.name, gradesTracker);
-      const calc = calculateUeesGrade(data);
-      const avg = parseFloat(calc.ueesAverageFormatted);
-      if (!isNaN(avg)) {
-        sum += avg;
-        count++;
+      const data = findGradeDataForSubject(s.id, s.name, gradesTracker, isAdmin);
+      if (data.p1 || data.p2 || data.p3 || data.repo) {
+        const calc = calculateUeesGrade(data);
+        const avg = parseFloat(calc.ueesAverageFormatted);
+        if (!isNaN(avg)) {
+          sum += avg;
+          count++;
+        }
       }
     }
     return count > 0 ? (sum / count).toFixed(1) : '0.0';
-  }, [currentDashboard, gradesTracker]);
+  }, [currentDashboard, gradesTracker, isAdmin]);
 
   // Detección de próxima semana de evaluaciones parciales (Semana 6, 12 o 18)
   const { nextParcialWeek, weeksUntilParcial } = useMemo(() => {
@@ -2251,12 +2263,14 @@ export default function App() {
                   <h1 className={`text-sm sm:text-base font-extrabold tracking-tight ${
                     isDark ? 'text-white' : 'text-zinc-900'
                   }`}>
-                    Dashboard Académico
+                    {isAdmin ? 'Dashboard Académico' : `Portal Estudiante • ${loggedUser || 'UEES'}`}
                   </h1>
                   <p className={`text-[10px] font-mono -mt-0.5 ${
                     isDark ? 'text-zinc-400' : 'text-zinc-500'
                   }`}>
-                    UEES • Ciclo {currentDashboard.startDate || '2026'}
+                    {isAdmin
+                      ? `UEES • Ciclo ${currentDashboard.startDate || '2026'}`
+                      : 'Universidad Evangélica de El Salvador'}
                   </p>
                 </div>
               </div>
@@ -2494,7 +2508,7 @@ export default function App() {
                       <h2 className={`text-2xl sm:text-3xl font-extrabold tracking-tight ${
                         isDark ? 'text-white' : 'text-zinc-900'
                       }`}>
-                        Dashboard
+                        {isAdmin ? 'Dashboard Institucional' : 'Mis Materias y Actividades'}
                       </h2>
                       <div className="flex items-center gap-2 mt-1">
                         <span className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold border ${
@@ -2530,8 +2544,9 @@ export default function App() {
                     </div>
                   </div>
 
-                  {/* 4 Métricas Principales (Grid 4 columnas matching Reference Image) */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+                  {/* 4 Métricas Principales (Grid 4 columnas) - Exclusivo de Consola Administrador */}
+                  {isAdmin && (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
                     {/* 1. Actividades Pendientes (Hero Obsidian Card from image) */}
                     <div className="p-5 rounded-3xl neo-card-hero flex flex-col justify-between relative overflow-hidden group">
                       <div className="flex items-center justify-between mb-2">
@@ -2737,6 +2752,7 @@ export default function App() {
                       </div>
                     </div>
                   </div>
+                  )}
 
                   {/* Quick Actions Bar */}
                   <div className={`p-3 rounded-2xl border flex flex-wrap items-center justify-between gap-3 mb-6 transition-all ${
@@ -2846,7 +2862,8 @@ export default function App() {
                 const renderSubjectCard = (subject: SubjectItem, sIdx: number, isSingleView: boolean = false) => {
                   const tasks = currentWeek.subjectTasks[subject.id] || [];
                   const isSubjectAllDone = tasks.length > 0 && tasks.every((t) => t.completed);
-                  const subjectGradeData = findGradeDataForSubject(subject.id, subject.name, gradesTracker);
+                  const subjectGradeData = findGradeDataForSubject(subject.id, subject.name, gradesTracker, isAdmin);
+                  const hasAnyGrades = Boolean(subjectGradeData.p1 || subjectGradeData.p2 || subjectGradeData.p3 || subjectGradeData.repo);
                   const ueesCalc = calculateUeesGrade(subjectGradeData);
 
                   const statusLabel = isSubjectAllDone ? 'Lista ✓' : 'Pendiente';
@@ -2913,11 +2930,11 @@ export default function App() {
                               Prom. UEES:
                             </span>
                             <span className={`text-xs font-mono font-black ${
-                              ueesCalc.isPassed 
-                                ? 'text-emerald-400' 
-                                : isDark ? 'text-zinc-100' : 'text-zinc-900'
+                              hasAnyGrades
+                                ? (ueesCalc.isPassed ? 'text-emerald-400' : isDark ? 'text-zinc-100' : 'text-zinc-900')
+                                : isDark ? 'text-zinc-500' : 'text-zinc-400'
                             }`}>
-                              {ueesCalc.ueesAverageFormatted}
+                              {hasAnyGrades ? ueesCalc.ueesAverageFormatted : '--'}
                             </span>
                           </div>
 

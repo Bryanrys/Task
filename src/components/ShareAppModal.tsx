@@ -342,7 +342,7 @@ export const ShareAppModal: React.FC<ShareAppModalProps> = ({
                 <span className={`block text-[10px] uppercase font-mono tracking-wider ${
                   isDark ? 'text-zinc-400' : 'text-zinc-500'
                 }`}>Versión</span>
-                <span className="block text-xs sm:text-sm font-bold font-mono mt-0.5">3.0</span>
+                <span className="block text-xs sm:text-sm font-bold font-mono mt-0.5">3.1</span>
               </div>
               <div className={`p-2 sm:p-2.5 ${isDark ? 'bg-white/[0.02]' : 'bg-black/[0.02]'}`}>
                 <span className={`block text-[10px] uppercase font-mono tracking-wider ${
@@ -361,7 +361,7 @@ export const ShareAppModal: React.FC<ShareAppModalProps> = ({
               isDark ? 'border-white/10 bg-black/20 text-zinc-400' : 'border-zinc-200 bg-white/50 text-zinc-600'
             }`}>
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-              <span>Compilación Oficial v3.0 • 02 Nov 2026, 07:01 PM (GMT-6)</span>
+              <span>Compilación Oficial v3.1 • 02 Nov 2026, 07:16 PM (GMT-6)</span>
             </div>
           </div>
 

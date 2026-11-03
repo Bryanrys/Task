@@ -32,6 +32,8 @@ interface GradeCalculatorModalProps {
   subjects: SubjectItem[];
   isDark?: boolean;
   initialSubjectId?: string;
+  storageKey?: string;
+  isAdmin?: boolean;
 }
 
 export const GradeCalculatorModal: React.FC<GradeCalculatorModalProps> = ({
@@ -40,7 +42,10 @@ export const GradeCalculatorModal: React.FC<GradeCalculatorModalProps> = ({
   subjects,
   isDark = true,
   initialSubjectId,
+  storageKey,
+  isAdmin = false,
 }) => {
+  const effectiveKey = storageKey || GRADES_STORAGE_KEY;
   const [activeTab, setActiveTab] = useState<'cards' | 'simulator'>('cards');
   const [selectedSubjId, setSelectedSubjId] = useState<string>(
     initialSubjectId || subjects[0]?.id || ''
@@ -48,8 +53,15 @@ export const GradeCalculatorModal: React.FC<GradeCalculatorModalProps> = ({
   const [passingGrade, setPassingGrade] = useState<number>(6.0); // Nota mínima oficial en El Salvador / UEES
 
   const [gradesData, setGradesData] = useState<Record<string, SubjectGradeData>>(() => {
-    return getSavedGradesData();
+    return getSavedGradesData(effectiveKey, !isAdmin);
   });
+
+  // Sincronizar cuando se abre el modal o cambia la clave de almacenamiento
+  useEffect(() => {
+    if (isOpen) {
+      setGradesData(getSavedGradesData(effectiveKey, !isAdmin));
+    }
+  }, [isOpen, effectiveKey, isAdmin]);
 
   // Sincronizar subject id inicial cuando se abre el modal
   useEffect(() => {
@@ -81,7 +93,7 @@ export const GradeCalculatorModal: React.FC<GradeCalculatorModalProps> = ({
   const persistGradesData = (newData: Record<string, SubjectGradeData>) => {
     setGradesData(newData);
     try {
-      localStorage.setItem(GRADES_STORAGE_KEY, JSON.stringify(newData));
+      localStorage.setItem(effectiveKey, JSON.stringify(newData));
       window.dispatchEvent(new Event('academic_data_synced'));
     } catch {}
   };
@@ -93,7 +105,8 @@ export const GradeCalculatorModal: React.FC<GradeCalculatorModalProps> = ({
   const currentGrade = findGradeDataForSubject(
     selectedSubjId,
     currentSubjectObj.name,
-    gradesData
+    gradesData,
+    isAdmin
   );
 
   const updateCurrentGrade = (field: keyof SubjectGradeData, value: any) => {
@@ -112,8 +125,12 @@ export const GradeCalculatorModal: React.FC<GradeCalculatorModalProps> = ({
     persistGradesData(nextData);
   };
 
-  // Restaurar notas oficiales de las capturas de la UEES
+  // Restaurar notas oficiales de las capturas de la UEES (solo Admin) o Limpiar Notas (Estudiante)
   const handleRestoreOfficialGrades = () => {
+    if (!isAdmin) {
+      persistGradesData({});
+      return;
+    }
     const merged = { ...gradesData, ...DEFAULT_UEES_GRADES };
     // Asignar también a los IDs de subjects del dashboard
     subjects.forEach((subj) => {
@@ -188,7 +205,7 @@ export const GradeCalculatorModal: React.FC<GradeCalculatorModalProps> = ({
           <div className="flex items-center gap-2">
             <button
               onClick={handleRestoreOfficialGrades}
-              title="Cargar notas exactas de mis fotos UEES"
+              title={isAdmin ? "Cargar notas exactas de mis fotos UEES" : "Limpiar todas las notas"}
               className={`hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold border transition-all cursor-pointer ${
                 isDark
                   ? 'bg-white/5 hover:bg-white/10 border-white/10 text-zinc-300'
@@ -196,7 +213,7 @@ export const GradeCalculatorModal: React.FC<GradeCalculatorModalProps> = ({
               }`}
             >
               <RefreshCw className="w-3.5 h-3.5" />
-              <span>Cargar Notas de Fotos</span>
+              <span>{isAdmin ? 'Cargar Notas de Fotos' : 'Limpiar Notas'}</span>
             </button>
             <button
               onClick={onClose}
@@ -280,7 +297,7 @@ export const GradeCalculatorModal: React.FC<GradeCalculatorModalProps> = ({
                   }`}
                 >
                   <RefreshCw className="w-3 h-3" />
-                  <span>Restaurar de Fotos</span>
+                  <span>{isAdmin ? 'Restaurar de Fotos' : 'Limpiar Notas'}</span>
                 </button>
               </div>
 
